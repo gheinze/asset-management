@@ -35,4 +35,8 @@ public enum TimePeriod {
         this.compoundingPeriod = compoundingPeriod;
     }
 
+    public String getDisplayName() {
+        return this.name();
+    }
+
 }

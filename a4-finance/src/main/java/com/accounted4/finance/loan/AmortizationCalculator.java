@@ -1,7 +1,7 @@
 package com.accounted4.finance.loan;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import com.accounted4.finance.math.AnyUpMonetaryRounder;
+import com.accounted4.finance.math.HalfUpMonetaryRounder;
 import java.time.LocalDate;
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -22,27 +22,8 @@ public class AmortizationCalculator {
     private static final int STANDARD_DAYS_IN_A_YEAR = 365; // 366 in leap year
     private static final int STANDARD_WEEKS_IN_A_YEAR = 52; // 52 * 7 = 364
 
-    private static final MonetaryOperator CEILING_ROUNDING_MODE = (MonetaryAmount amount) -> {
-        int fractionDigits = amount.getCurrency().getDefaultFractionDigits();
-        BigDecimal roundedAmount = amount.getNumber().numberValue(BigDecimal.class)
-                .setScale(fractionDigits + 1, RoundingMode.HALF_UP)  // dismiss fractions < .05 of a cent
-                .setScale(fractionDigits, RoundingMode.CEILING);     // all remaining fractional cents forced up
-        return Monetary.getDefaultAmountFactory()
-                .setCurrency(amount.getCurrency())
-                .setNumber(roundedAmount)
-                .create();
-    };
-
-
-    private static final MonetaryOperator HALF_UP_ROUNDING_MODE = (MonetaryAmount amount) -> {
-        int fractionDigits = amount.getCurrency().getDefaultFractionDigits();
-        BigDecimal roundedAmount = amount.getNumber().numberValue(BigDecimal.class)
-                .setScale(fractionDigits, RoundingMode.HALF_UP);
-        return Monetary.getDefaultAmountFactory()
-                .setCurrency(amount.getCurrency())
-                .setNumber(roundedAmount)
-                .create();
-    };
+    private static final MonetaryOperator ANY_UP_ROUNDING_MODE = new AnyUpMonetaryRounder();
+    private static final MonetaryOperator HALF_UP_ROUNDING_MODE = new HalfUpMonetaryRounder();
 
 
     // No need to create an instance
@@ -62,7 +43,7 @@ public class AmortizationCalculator {
         MonetaryAmount loanAmount = amAttrs.getLoanAmount();
         double interestRateAsDecimal = amAttrs.getInterestRateAsPercent() / 100.;
         int paymentFrequency = amAttrs.getPaymentFrequency();
-        return loanAmount.multiply(interestRateAsDecimal / paymentFrequency).with(CEILING_ROUNDING_MODE);
+        return loanAmount.multiply(interestRateAsDecimal / paymentFrequency).with(ANY_UP_ROUNDING_MODE);
     }
 
 
@@ -91,7 +72,7 @@ public class AmortizationCalculator {
                 .setCurrency(amAttrs.getLoanAmount().getCurrency())
                 .setNumber(periodPayment)
                 .create()
-                .with(CEILING_ROUNDING_MODE)
+                .with(ANY_UP_ROUNDING_MODE)
                 ;
 
     }
@@ -116,7 +97,7 @@ public class AmortizationCalculator {
 
 
     public static MonetaryAmount getPerDiem(MonetaryAmount amount, double annualInterestRatePercent) {
-        return amount.multiply(annualInterestRatePercent * 0.01 / STANDARD_DAYS_IN_A_YEAR).with(CEILING_ROUNDING_MODE);
+        return amount.multiply(annualInterestRatePercent * 0.01 / STANDARD_DAYS_IN_A_YEAR).with(ANY_UP_ROUNDING_MODE);
     }
 
 
@@ -125,6 +106,22 @@ public class AmortizationCalculator {
                 generateInterestOnlySchedule(amAttrs) :
                 generateAmortizedSchedule(amAttrs)
                 ;
+    }
+
+
+    public static LocalDate getNextFirstOrFifteenthOfTheMonth(LocalDate baseDate) {
+
+        LocalDate nextDate = null == baseDate ? LocalDate.now() : baseDate;
+        int baseDayOfMonth = nextDate.getDayOfMonth();
+
+        if (baseDayOfMonth > 15) {
+            return nextDate.plusMonths(1).withDayOfMonth(1);
+        } else if (baseDayOfMonth > 1 && baseDayOfMonth < 15) {
+            return nextDate.withDayOfMonth(15);
+        }
+
+        return LocalDate.from(baseDate);
+
     }
 
 

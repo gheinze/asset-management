@@ -448,6 +448,30 @@ public class AmortizationCalculatorTest {
 
     }
 
+    @Test
+    public void testGetNextFirstOrFifteenthOfTheMonth() {
+
+        LocalDate baseDate = LocalDate.of(2016, 1, 1);
+        LocalDate expectedDate = LocalDate.of(2016, 1, 1);
+        LocalDate result = AmortizationCalculator.getNextFirstOrFifteenthOfTheMonth(baseDate);
+        assertEquals("Adjustment date from the 1st should remain on the 1st", expectedDate, result);
+
+        baseDate = LocalDate.of(2016, 1, 2);
+        expectedDate = LocalDate.of(2016, 1, 15);
+        result = AmortizationCalculator.getNextFirstOrFifteenthOfTheMonth(baseDate);
+        assertEquals("Adjustment date from the 2st should remain on the 15th", expectedDate, result);
+
+        baseDate = LocalDate.of(2016, 1, 15);
+        expectedDate = LocalDate.of(2016, 1, 15);
+        result = AmortizationCalculator.getNextFirstOrFifteenthOfTheMonth(baseDate);
+        assertEquals("Adjustment date from the 15th should remain on the 15th", expectedDate, result);
+
+        baseDate = LocalDate.of(2015, 12, 29);
+        expectedDate = LocalDate.of(2016, 1, 1);
+        result = AmortizationCalculator.getNextFirstOrFifteenthOfTheMonth(baseDate);
+        assertEquals("Adjustment date after the 15th should be 1st of next month", expectedDate, result);
+
+    }
 
     private AmortizationAttributes generateAmortizationAttributesObjectTemplate() {
 
