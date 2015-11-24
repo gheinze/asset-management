@@ -26,7 +26,7 @@ public class AmortizationCalculator {
     private static final MonetaryOperator HALF_UP_ROUNDING_MODE = new HalfUpMonetaryRounder();
 
 
-    // No need to create an instance
+    // Container for library methods, so should not be instantiated
     private AmortizationCalculator() {
     }
 

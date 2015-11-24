@@ -20,51 +20,65 @@ import static org.mockito.Mockito.when;
  */
 public class MonetaryAmountDecimalMinValidatorTest {
 
-    public MonetaryAmountDecimalMinValidatorTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
 
     @Test
-    public void testDecMinEqualExclusive() {
-
-        String minDecAmount = "0.125";
+    public void testAnnotationOnBoundaryWithBoundaryExcluded() {
         boolean inclusive = false;
-
-        MonetaryAmountDecimalMinValidator validator = getValidator(minDecAmount, inclusive);
-        boolean valid = validator.isValid(ofUSD(0.125), null);
-
-        assertEquals("MinDecimal exclusive", false, valid);
-
+        testAnnotationOnBoundary(inclusive);
     }
 
     @Test
-    public void testDecMinEqualInclusive() {
-
-        String minDecAmount = "0.125";
+    public void testAnnotationOnBoundaryWithBoundaryIncluded() {
         boolean inclusive = true;
+        testAnnotationOnBoundary(inclusive);
+    }
 
+    private void testAnnotationOnBoundary(boolean inclusive) {
+        String minDecAmount = "0.125";
         MonetaryAmountDecimalMinValidator validator = getValidator(minDecAmount, inclusive);
         boolean valid = validator.isValid(ofUSD(0.125), null);
-
-        assertEquals("MinDecimal inclusive", true, valid);
+        assertEquals("MinDecimal on boundary with inclusive set to " + inclusive, inclusive, valid);
 
     }
 
 
     @Test
-    public void testDecMinEqualLess() {
-
-        String minDecAmount = "0.125";
+    public void testAnnotationWithValueLessThanBoundaryWithInclusiveBoundary() {
         boolean inclusive = true;
+        testAnnotationWithValueLessThanBoundary(inclusive);
+    }
 
+    @Test
+    public void testAnnotationWithValueLessThanBoundaryWithExclusiveBoundary() {
+        boolean inclusive = false;
+        testAnnotationWithValueLessThanBoundary(inclusive);
+    }
+
+    private void testAnnotationWithValueLessThanBoundary(boolean inclusive) {
+        String minDecAmount = "0.125";
         MonetaryAmountDecimalMinValidator validator = getValidator(minDecAmount, inclusive);
         boolean valid = validator.isValid(ofUSD(0.1), null);
+        assertEquals("MinDecimal before boundary, inclusive = " + inclusive, false, valid);
+    }
 
-        assertEquals("MinDecimal less than", false, valid);
 
+    @Test
+    public void testAnnotationWithValueGreaterThanBoundaryWithInclusiveBoundary() {
+        boolean inclusive = true;
+        testAnnotationWithValueGreaterThanBoundary(inclusive);
+    }
+
+    @Test
+    public void testAnnotationWithValueGreaterThanBoundaryWithExclusiveBoundary() {
+        boolean inclusive = false;
+        testAnnotationWithValueGreaterThanBoundary(inclusive);
+    }
+
+    private void testAnnotationWithValueGreaterThanBoundary(boolean inclusive) {
+        String minDecAmount = "0.125";
+        MonetaryAmountDecimalMinValidator validator = getValidator(minDecAmount, inclusive);
+        boolean valid = validator.isValid(ofUSD(0.2), null);
+        assertEquals("MinDecimal after boundary, inclusive = " + inclusive, true, valid);
     }
 
 

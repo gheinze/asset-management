@@ -2,6 +2,7 @@ package com.accounted4.finance.loan;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Period;
 import java.util.List;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
@@ -472,6 +473,15 @@ public class AmortizationCalculatorTest {
         assertEquals("Adjustment date after the 15th should be 1st of next month", expectedDate, result);
 
     }
+
+    @Test
+    public void testGetNextFirstOrFifteenthOfTheMonthWithNullBaseDateReturnsValue() {
+        LocalDate today = LocalDate.now();
+        LocalDate adjustmentDate = AmortizationCalculator.getNextFirstOrFifteenthOfTheMonth(null);
+        long daysBetween = Period.between(today, adjustmentDate).getDays();
+        assertTrue("Adjustment date from the 1st should remain on the 1st", daysBetween <= 16);
+    }
+
 
     private AmortizationAttributes generateAmortizationAttributesObjectTemplate() {
 

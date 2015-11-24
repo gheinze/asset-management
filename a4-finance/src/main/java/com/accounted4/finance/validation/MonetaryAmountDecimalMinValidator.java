@@ -7,7 +7,8 @@ import javax.validation.ConstraintValidatorContext;
 import javax.validation.constraints.DecimalMin;
 
 /**
- *
+ * Enables the "@DecimalMin" annotation to be applied to a MonetaryAmount.
+ * 
  * @author gheinze
  */
 public class MonetaryAmountDecimalMinValidator implements ConstraintValidator<DecimalMin, MonetaryAmount> {
