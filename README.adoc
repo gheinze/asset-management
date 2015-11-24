@@ -2,6 +2,8 @@
 
 image:https://travis-ci.org/gheinze/asset-management.svg["Build Status", link="https://travis-ci.org/gheinze/asset-management"]
 
+[![Code Coverage](https://img.shields.io/codecov/c/github/pvorb/property-providers/develop.svg)](https://codecov.io/github/gheinze/asset-management?branch=master)
+
 Amortization Loan Calculator
 
 Online https://murmuring-brushlands-8890.herokuapp.com/[demo]
