@@ -122,7 +122,7 @@ public class PaymentScheduleCalculator extends Panel {
         loanDetailFormLayout.addComponent(amAttrBinder.buildAndBind("Interest only", INTEREST_ONLY_PROPERTY_ID));
         loanDetailFormLayout.addComponent(amortizationPanel);
         loanDetailFormLayout.addComponent(createLoanAmountField());
-        loanDetailFormLayout.addComponent(amAttrBinder.buildAndBind("Interest rate", "interestRateAsPercent"));
+        loanDetailFormLayout.addComponent(amAttrBinder.buildAndBind("Interest rate %", "interestRateAsPercent"));
         loanDetailFormLayout.addComponent(PaymentPeriodComboBox.create(amAttrBinder));
         loanDetailFormLayout.addComponent(createPaymentField());
 
@@ -242,7 +242,7 @@ public class PaymentScheduleCalculator extends Panel {
                     amAttrBinder.commit();
                 } catch (FieldGroup.CommitException ex) {
                     // TODO: slf4j logging
-                    new Notification("Failed to retrieve validated form field elements", "", Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
+                    new Notification("Please correct form fields before calculating", "", Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
                 }
             });
 

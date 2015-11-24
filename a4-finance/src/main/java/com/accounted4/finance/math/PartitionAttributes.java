@@ -18,7 +18,7 @@ public class PartitionAttributes {
     private final MonetaryAmount partitionSizeClosestToZero;
     private final MonetaryAmount partitionSizeFurthestFromZero;
     private final MonetaryAmount remainder;
-    private final int remainderInFractionalUnits;
+    private final long remainderInFractionalUnits;
 
 
     public PartitionAttributes(MonetaryAmount amount, int numberOfPartitions) {
@@ -31,7 +31,7 @@ public class PartitionAttributes {
         MonetaryAmount[] divideResult = divideAndRemainderWithCurrencyFractionalUnits(amount, numberOfPartitions);
         partitionSizeClosestToZero = divideResult[0];
         remainder = divideResult[1];
-        remainderInFractionalUnits = scaleUpToCurrencyFractionalUnits(remainder).getNumber().intValueExact();
+        remainderInFractionalUnits = scaleUpToCurrencyFractionalUnits(remainder).getNumber().longValueExact();
         partitionSizeFurthestFromZero = remainder.isZero() ? partitionSizeClosestToZero : addOneFractionalUnitTo(partitionSizeClosestToZero);
 
     }

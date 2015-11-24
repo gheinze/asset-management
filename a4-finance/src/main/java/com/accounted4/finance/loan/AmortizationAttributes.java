@@ -2,6 +2,7 @@ package com.accounted4.finance.loan;
 
 import java.time.LocalDate;
 import javax.money.MonetaryAmount;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import lombok.Getter;
@@ -18,8 +19,12 @@ import lombok.ToString;
 @ToString
 public class AmortizationAttributes {
 
+    @DecimalMin(value = "0.00", inclusive = false)
     private MonetaryAmount loanAmount;      // original principal amount
+
+    @DecimalMin("0.00")
     private MonetaryAmount regularPayment;  // monthly payment to be made, assumed monthly
+    
     private LocalDate startDate;            // loan start date
     private LocalDate adjustmentDate;       // date from which amortization calculations commence
 
@@ -37,7 +42,7 @@ public class AmortizationAttributes {
     @Min(1) @Max(52)
     private int paymentFrequency;           // number of times a year payments will be made
 
-    @Min(0) @Max(50)
+    @DecimalMin("0.001") @Max(50)
     private double interestRateAsPercent;   // the nominal interest rate being paid (effective rate can be higher if compounding)
 
 }

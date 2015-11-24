@@ -66,7 +66,7 @@ public class AmortizationCalculator {
 
         double paymentFrequency = (double)amAttrs.getPaymentFrequency();
         double periodPayment = loanAmount * (periodRate) /
-                (1.0 - Math.pow(periodRate + 1.0, -paymentFrequency * amortizationYears));
+                (1.0 - Math.pow(1.0 + periodRate, -paymentFrequency * amortizationYears));
 
         return Monetary.getDefaultAmountFactory()
                 .setCurrency(amAttrs.getLoanAmount().getCurrency())
@@ -173,13 +173,13 @@ public class AmortizationCalculator {
         final int expectedNumberOfPayments = getNumberOfExpectedPayments(amAttrs);
 
         MonetaryAmount remainingBalance = amAttrs.getLoanAmount();
-        double j = getPeriodRateAsDecimal(amAttrs);
+        double periodicRate = getPeriodRateAsDecimal(amAttrs);
 
         // loop
         for (int index = 0; index < expectedNumberOfPayments; index++) {
 
             // Interest amounts rounding take precedence
-            MonetaryAmount interest = remainingBalance.multiply(j).with(HALF_UP_ROUNDING_MODE);
+            MonetaryAmount interest = remainingBalance.multiply(periodicRate).with(HALF_UP_ROUNDING_MODE);
 
             // The periodic payment is consistent, so anything that is not interest is principal
             MonetaryAmount principal = actualPayment.subtract(interest);
