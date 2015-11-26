@@ -50,6 +50,8 @@ public class VaadinUI extends UI {
         setSizeUndefined();
     }
 
+    // JPA example will be re-inserted later
+    
     // tag::listCustomers[]
 //    private void listCustomers(String text) {
 //        if (StringUtils.isEmpty(text)) {

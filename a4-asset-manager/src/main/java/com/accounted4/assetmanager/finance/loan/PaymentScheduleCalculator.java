@@ -10,6 +10,7 @@ import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.Page;
+import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -30,12 +31,16 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.Reindeer;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import javax.money.MonetaryAmount;
+import net.sf.jasperreports.engine.JRException;
 import org.javamoney.moneta.Money;
 
 
@@ -53,6 +58,7 @@ public class PaymentScheduleCalculator extends Panel {
     private final BeanFieldGroup<AmortizationAttributes> amAttrBinder;
     private final Panel amortizationPanel;
     private Button generateButton;
+    private Button generatePdfButton;
 
 
     public PaymentScheduleCalculator(LoanService loanService) {
@@ -72,6 +78,9 @@ public class PaymentScheduleCalculator extends Panel {
     }
 
 
+    /*
+     * The compound component holding the Amortization Months and the Compounding Period components.
+    */
     private Panel createAmortizationPanel(BeanFieldGroup<AmortizationAttributes> binder) {
 
         GridLayout layout = new GridLayout(2, 2);
@@ -131,15 +140,19 @@ public class PaymentScheduleCalculator extends Panel {
     }
 
 
+    /*
+     * The buttons to process the form.
+    */
     private Panel getFooter() {
 
         HorizontalLayout footerLayout = new HorizontalLayout();
-        generateButton = new Button("Generate Schedule");
-        generateButton.addClickListener(e -> {
-            displaySchedule();
-        });
+
+        configureGenerateButton();
         footerLayout.addComponent(generateButton);
         footerLayout.setComponentAlignment(generateButton, Alignment.MIDDLE_CENTER);
+
+        configureGeneratePdfButton();
+        footerLayout.addComponent(generatePdfButton);
 
         Panel footerPanel = new Panel();
         footerPanel.setContent(footerLayout);
@@ -147,6 +160,21 @@ public class PaymentScheduleCalculator extends Panel {
 
         return footerPanel;
 
+    }
+
+
+    private void configureGenerateButton() {
+        generateButton = new Button("Generate Schedule");
+        generateButton.addClickListener(e -> {
+            displaySchedule();
+        });
+    }
+
+    private void configureGeneratePdfButton() {
+        generatePdfButton = new Button("pdf");
+        generatePdfButton.addClickListener(e -> {
+            displayPdfSchedule();
+        });
     }
 
 
@@ -197,6 +225,7 @@ public class PaymentScheduleCalculator extends Panel {
     }
 
     private void displaySchedule() {
+
         final Window window = new Window("Schedule");
         window.setSizeUndefined();
         final Grid grid = new Grid();
@@ -204,9 +233,7 @@ public class PaymentScheduleCalculator extends Panel {
         window.center();
 
         try {
-            amAttrBinder.commit();
-            AmortizationAttributes amAttrs = amAttrBinder.getItemDataSource().getBean();
-            MonetaryAmount regularPayment = loanService.getPeriodicPayment(amAttrs);
+            AmortizationAttributes amAttrs = flushFormAndRetrieveModel();
             List<ScheduledPayment> generatedSchedule = loanService.generateSchedule(amAttrs);
             grid.setContainerDataSource(new BeanItemContainer<>(ScheduledPayment.class, generatedSchedule));
             grid.setColumnOrder("paymentNumber", "paymentDate", "payment", "interest", "principal", "balance");
@@ -215,6 +242,39 @@ public class PaymentScheduleCalculator extends Panel {
             // TODO: slf4j logging
             new Notification("Please correct form field errors before generating a schedule", "", Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
         }
+    }
+
+    private AmortizationAttributes flushFormAndRetrieveModel() throws FieldGroup.CommitException {
+        amAttrBinder.commit();
+        return amAttrBinder.getItemDataSource().getBean();
+    }
+
+
+
+    private void displayPdfSchedule() {
+
+        StreamSource pdfStreamFromServer = () -> {
+            try {
+                AmortizationAttributes amAttrs = flushFormAndRetrieveModel();
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                loanService.writePdfScheduleToStream(amAttrs, outputStream);
+                byte[] data = outputStream.toByteArray();
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+                return inputStream;
+            } catch (FieldGroup.CommitException | JRException | IOException ex) {
+                // TODO: slf4j logging
+                new Notification("Error generating pdf schedule", "", Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
+            }
+            return null;
+        };
+
+        if (null == pdfStreamFromServer) {
+            return;
+        }
+
+        final Window window = new PdfScheduleWindow(pdfStreamFromServer);
+        UI.getCurrent().addWindow(window);
+
     }
 
 
@@ -235,8 +295,7 @@ public class PaymentScheduleCalculator extends Panel {
             Button calculateButton = new Button("calculate");
             calculateButton.addClickListener((Button.ClickEvent e) -> {
                 try {
-                    amAttrBinder.commit();
-                    AmortizationAttributes amAttrs = amAttrBinder.getItemDataSource().getBean();
+                    AmortizationAttributes amAttrs = flushFormAndRetrieveModel();
                     MonetaryAmount regularPayment = loanService.getPeriodicPayment(amAttrs);
                     field.setValue(monetaryAmountConverter.convertToPresentation(regularPayment, String.class, null));
                     amAttrBinder.commit();

@@ -7,8 +7,11 @@ package com.accounted4.assetmanager.finance.loan;
 
 import com.accounted4.finance.loan.AmortizationAttributes;
 import com.accounted4.finance.loan.ScheduledPayment;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import javax.money.MonetaryAmount;
+import net.sf.jasperreports.engine.JRException;
 
 /**
  *
@@ -17,7 +20,9 @@ import javax.money.MonetaryAmount;
 public interface LoanService {
 
     MonetaryAmount getPeriodicPayment(AmortizationAttributes amAttrs);
-    
+
     List<ScheduledPayment> generateSchedule(AmortizationAttributes amAttrs);
+
+    void writePdfScheduleToStream(final AmortizationAttributes amAttrs, final OutputStream outputStream) throws JRException, IOException;
 
 }
