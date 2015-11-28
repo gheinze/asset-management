@@ -19,10 +19,12 @@ import com.vaadin.ui.UI;
 import java.util.Locale;
 
 @SpringUI
-@Theme("reindeer")
+@Theme("a4am")
 public class VaadinUI extends UI {
 
-    @Autowired LoanService loanService;
+    @Autowired private LoanService loanService;
+    @Autowired private ApplicationLayout applicationLayout;
+
 
     public static final String LOCALE_KEY = "LOCALE";
 
@@ -46,12 +48,15 @@ public class VaadinUI extends UI {
     protected void init(VaadinRequest request) {
         Panel paymentCalculatorPanel = new PaymentScheduleCalculator(loanService);
         paymentCalculatorPanel.setSizeUndefined();
-        setContent(paymentCalculatorPanel);
+
+        applicationLayout.setSizeFull();
+        applicationLayout.setMainArea(paymentCalculatorPanel);
+        setContent(applicationLayout);
         setSizeUndefined();
     }
 
     // JPA example will be re-inserted later
-    
+
     // tag::listCustomers[]
 //    private void listCustomers(String text) {
 //        if (StringUtils.isEmpty(text)) {

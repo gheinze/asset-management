@@ -1,0 +1,26 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/*
+    Created on : 27-Nov-2015, 3:39:48 PM
+    Author     : gheinze
+*/
+
+@import "../reindeer/reindeer.scss";
+
+@mixin a4am {
+    @include reindeer;
+
+    .appHeader {
+        background-color: black;
+    }
+
+    .appAbout {
+        background: url("img/brownFrog.jpg") no-repeat;
+        background-size: 100% 100%;
+    }
+
+
+}

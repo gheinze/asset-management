@@ -18,12 +18,19 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+
     <properties>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <lombok.version>1.16.6</lombok.version>
         <jasperReport.version>6.2.0</jasperReport.version>
+
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+
     </properties>
+
 
     <dependencies>
 
@@ -31,6 +38,11 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
             <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-themes</artifactId>
         </dependency>
 
 <!--    JPA integration temporarily removed since initial tool development does not require db
@@ -86,7 +98,7 @@
             <dependency>
                 <groupId>com.vaadin</groupId>
                 <artifactId>vaadin-bom</artifactId>
-                <version>7.5.5</version>
+                <version>7.5.9</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -94,6 +106,33 @@
     </dependencyManagement>
 
     <build>
+
+        <!--
+             Include "webapp" folder as a source directory in order to pick up
+             custom themes which Vaadin expects in webapp/VAADIN/themes/myTheme/styles.scss
+             Enable resources plug-in filtering (i.e. text substitution in properties files)
+             Once you specify explicit filters, you need to specify all, even previous
+             defaults like "src/main/resources"
+
+             Note: Spring boot alters filtering by using @@ rather than ${}
+                 https://github.com/spring-projects/spring-boot/issues/980
+        -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/webapp</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>application.properties</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
 
             <plugin>
@@ -108,6 +147,21 @@
                     <showDeprecation>true</showDeprecation>
                     <compilerArgument>-Xlint:unchecked</compilerArgument>
                 </configuration>
+            </plugin>
+
+            <!-- For compiling Vaadin themes scss to css -->
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-maven-plugin</artifactId>
+                <version>7.6.0.alpha2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>update-theme</goal>
+                            <goal>compile-theme</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Compile Jasper Reports from  .jrxml (other sources) to .jasper (generated sources) -->
@@ -139,6 +193,7 @@
 
         </plugins>
     </build>
+
 
     <repositories>
         <repository>
