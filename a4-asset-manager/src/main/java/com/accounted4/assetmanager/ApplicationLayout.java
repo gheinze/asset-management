@@ -1,6 +1,7 @@
 package com.accounted4.assetmanager;
 
 import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author gheinze
  */
 @SpringComponent
+@UIScope
 public class ApplicationLayout extends VerticalLayout {
 
     private Panel mainContentArea;

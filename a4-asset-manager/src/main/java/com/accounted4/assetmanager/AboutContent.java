@@ -3,6 +3,7 @@ package com.accounted4.assetmanager;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @author gheinze
  */
 @SpringComponent
+@UIScope
 public class AboutContent {
 
     @Getter private PopupView aboutPopupView;
