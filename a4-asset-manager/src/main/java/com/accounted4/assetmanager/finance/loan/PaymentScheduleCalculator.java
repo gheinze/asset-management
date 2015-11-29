@@ -3,12 +3,14 @@ package com.accounted4.assetmanager.finance.loan;
 import com.accounted4.assetmanager.VaadinUI;
 import com.accounted4.assetmanager.util.vaadin.converter.FieldGroupFactory;
 import com.accounted4.assetmanager.util.vaadin.converter.MonetaryAmountConverter;
+import com.accounted4.assetmanager.util.vaadin.ui.BorderlessPanel;
 import com.accounted4.finance.loan.AmortizationAttributes;
 import com.accounted4.finance.loan.AmortizationCalculator;
 import com.accounted4.finance.loan.ScheduledPayment;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.server.VaadinSession;
@@ -30,7 +32,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.Reindeer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -65,7 +66,7 @@ public class PaymentScheduleCalculator extends Panel {
         this.loanService = loanService;
         amAttrBinder = createDataModel(getDefaultAmortizationAttributesTemplate());
         amortizationPanel = createAmortizationPanel(amAttrBinder);
-        setupMainPanel();
+        setupMainContentAreaPanel();
         wireListeners();
     }
 
@@ -92,10 +93,9 @@ public class PaymentScheduleCalculator extends Panel {
         ComboBox compoundingPeriodComboBox = CompoundingPeriodComboBox.create(binder);
         layout.addComponent(compoundingPeriodComboBox, 1, 1);
 
-        Panel subPanel = new Panel();
+        Panel subPanel = BorderlessPanel.create();
         subPanel.setSizeUndefined();
         subPanel.setContent(layout);
-        subPanel.addStyleName(Reindeer.PANEL_LIGHT);
         subPanel.setEnabled(true);
 
         return subPanel;
@@ -103,28 +103,26 @@ public class PaymentScheduleCalculator extends Panel {
     }
 
 
-    private void setupMainPanel() {
-        VerticalLayout masterPanelLayout = new VerticalLayout();
-        masterPanelLayout.addComponent(getLoanDetailPanel());
-        Panel footerPanel = getFooter();
-        masterPanelLayout.addComponent(footerPanel);
-        masterPanelLayout.setComponentAlignment(footerPanel, Alignment.MIDDLE_CENTER);
-        Panel masterPanel = new Panel();
-        masterPanel.setContent(masterPanelLayout);
-        setContent(masterPanel);
+    private void setupMainContentAreaPanel() {
+        VerticalLayout contentAreaLayout = new VerticalLayout();
+        contentAreaLayout.addComponent(getLoanDetailPanel());
+        Panel contentAreaFooterPanel = getGenerateButtonRow();
+        contentAreaLayout.addComponent(contentAreaFooterPanel);
+        contentAreaLayout.setComponentAlignment(contentAreaFooterPanel, Alignment.MIDDLE_CENTER);
+        Panel contentAreaPanel = BorderlessPanel.create();
+        contentAreaPanel.setContent(contentAreaLayout);
+        setContent(contentAreaPanel);
     }
 
 
     private Panel getLoanDetailPanel() {
 
         FormLayout loanDetailFormLayout = new FormLayout();
-        Panel loanDetailPanel = new Panel("Loan Details");
+        Panel loanDetailPanel = BorderlessPanel.create("Loan Details");
         loanDetailPanel.setContent(loanDetailFormLayout);
         loanDetailPanel.setSizeUndefined();
-        loanDetailPanel.addStyleName(Reindeer.PANEL_LIGHT); // remove border from panel
 
         loanDetailFormLayout.setCaption("Payment Schedule Calculator");
-        loanDetailFormLayout.setMargin(true);
         loanDetailFormLayout.setSpacing(true);
         loanDetailFormLayout.addComponent(createStartDateField());
         loanDetailFormLayout.addComponent(amAttrBinder.buildAndBind("Term in months", "termInMonths"));
@@ -143,7 +141,7 @@ public class PaymentScheduleCalculator extends Panel {
     /*
      * The buttons to process the form.
     */
-    private Panel getFooter() {
+    private Panel getGenerateButtonRow() {
 
         HorizontalLayout footerLayout = new HorizontalLayout();
 
@@ -154,9 +152,8 @@ public class PaymentScheduleCalculator extends Panel {
         configureGeneratePdfButton();
         footerLayout.addComponent(generatePdfButton);
 
-        Panel footerPanel = new Panel();
+        Panel footerPanel = BorderlessPanel.create();
         footerPanel.setContent(footerLayout);
-        footerPanel.addStyleName(Reindeer.PANEL_LIGHT);
 
         return footerPanel;
 
@@ -172,6 +169,9 @@ public class PaymentScheduleCalculator extends Panel {
 
     private void configureGeneratePdfButton() {
         generatePdfButton = new Button("pdf");
+        generatePdfButton.setIcon(FontAwesome.FILE_PDF_O);
+        generatePdfButton.addStyleName("redicon");
+        generatePdfButton.setDescription("Generate PDF schedule");
         generatePdfButton.addClickListener(e -> {
             displayPdfSchedule();
         });
@@ -293,6 +293,7 @@ public class PaymentScheduleCalculator extends Panel {
             field.setConverter(MonetaryAmount.class);
 
             Button calculateButton = new Button("calculate");
+            calculateButton.setDescription("Calculate periodic payment");
             calculateButton.addClickListener((Button.ClickEvent e) -> {
                 try {
                     AmortizationAttributes amAttrs = flushFormAndRetrieveModel();
@@ -308,8 +309,7 @@ public class PaymentScheduleCalculator extends Panel {
             layout.addComponent(field);
             layout.addComponent(calculateButton);
 
-            Panel panel = new Panel();
-            panel.addStyleName(Reindeer.PANEL_LIGHT); // remove border from panel
+            Panel panel = BorderlessPanel.create();
             panel.setSizeUndefined();
             panel.setContent(layout);
             return panel;

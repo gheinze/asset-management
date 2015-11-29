@@ -16,6 +16,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.themes.Reindeer;
 import java.util.Locale;
 
 @SpringUI
@@ -48,6 +49,7 @@ public class VaadinUI extends UI {
     protected void init(VaadinRequest request) {
         Panel paymentCalculatorPanel = new PaymentScheduleCalculator(loanService);
         paymentCalculatorPanel.setSizeUndefined();
+        paymentCalculatorPanel.addStyleName(Reindeer.PANEL_LIGHT);
 
         applicationLayout.setSizeFull();
         applicationLayout.setMainArea(paymentCalculatorPanel);

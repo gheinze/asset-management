@@ -7683,3 +7683,7 @@ body .a4am.v-app .v-app-loading {
 	background: url("img/brownFrog.jpg") no-repeat;
 	background-size: 100% 100%;
 }
+
+.a4am .redicon .v-icon {
+	color: red;
+}
