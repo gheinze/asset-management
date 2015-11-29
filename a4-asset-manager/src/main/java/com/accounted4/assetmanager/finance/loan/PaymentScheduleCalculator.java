@@ -88,6 +88,7 @@ public class PaymentScheduleCalculator extends Panel {
         layout.setSpacing(true);
 
         TextField amMonthsField = (TextField) binder.buildAndBind("Amortization months", "amortizationPeriodInMonths");
+        amMonthsField.setDescription(getMonthToYearMappingDescription());
         layout.addComponent(amMonthsField, 0, 1);
 
         ComboBox compoundingPeriodComboBox = CompoundingPeriodComboBox.create(binder);
@@ -125,7 +126,7 @@ public class PaymentScheduleCalculator extends Panel {
         loanDetailFormLayout.setCaption("Payment Schedule Calculator");
         loanDetailFormLayout.setSpacing(true);
         loanDetailFormLayout.addComponent(createStartDateField());
-        loanDetailFormLayout.addComponent(amAttrBinder.buildAndBind("Term in months", "termInMonths"));
+        loanDetailFormLayout.addComponent(creatTermField());
         loanDetailFormLayout.addComponent(amAttrBinder.buildAndBind("Interest only", INTEREST_ONLY_PROPERTY_ID));
         loanDetailFormLayout.addComponent(amortizationPanel);
         loanDetailFormLayout.addComponent(createLoanAmountField());
@@ -162,6 +163,8 @@ public class PaymentScheduleCalculator extends Panel {
 
     private void configureGenerateButton() {
         generateButton = new Button("Generate Schedule");
+        generateButton.setIcon(FontAwesome.TABLE);
+        generateButton.setDescription("Generate a tabular schedule");
         generateButton.addClickListener(e -> {
             displaySchedule();
         });
@@ -177,6 +180,12 @@ public class PaymentScheduleCalculator extends Panel {
         });
     }
 
+
+    private TextField creatTermField() {
+        TextField field = (TextField)amAttrBinder.buildAndBind("Term in months", "termInMonths");
+        field.setDescription(getMonthToYearMappingDescription());
+        return field;
+    }
 
     private PopupDateField createStartDateField() {
         PopupDateField field = amAttrBinder.buildAndBind("Start Date", "startDate", PopupDateField.class);
@@ -219,6 +228,7 @@ public class PaymentScheduleCalculator extends Panel {
     private PaymentField createPaymentField() {
         PaymentField paymentField = new PaymentField();
         paymentField.setCaption("Regular payment");
+        paymentField.setDescription("You can override the calculated amount for extra principal payment");
         paymentField.setImmediate(true);
         amAttrBinder.bind(paymentField.getInternal(), REGULAR_PAYMENT_PROPERTY_ID);
         return paymentField;
@@ -277,6 +287,19 @@ public class PaymentScheduleCalculator extends Panel {
 
     }
 
+    private String getMonthToYearMappingDescription() {
+        return "<table style='float:right'>"
+                + "<tr><th align='right'>Years</th><th align='right'>Months</th></tr>"
+                + "<tr><td align='right'>5</td><td align='right'>60</td></tr>"
+                + "<tr><td align='right'>10</td><td align='right'>120</td></tr>"
+                + "<tr><td align='right'>15</td><td align='right'>180</td></tr>"
+                + "<tr><td align='right'>20</td><td align='right'>240</td></tr>"
+                + "<tr><td align='right'>25</td><td align='right'>300</td></tr>"
+                + "</table>"
+        ;
+    }
+
+
 
     // Create a composite field showing a TextField for the regularPayment with a Button beside it to calculate
     private class PaymentField extends CustomField<MonetaryAmount> {
@@ -293,6 +316,8 @@ public class PaymentScheduleCalculator extends Panel {
             field.setConverter(MonetaryAmount.class);
 
             Button calculateButton = new Button("calculate");
+            calculateButton.setIcon(FontAwesome.DOLLAR);
+            calculateButton.addStyleName("greenicon");
             calculateButton.setDescription("Calculate periodic payment");
             calculateButton.addClickListener((Button.ClickEvent e) -> {
                 try {

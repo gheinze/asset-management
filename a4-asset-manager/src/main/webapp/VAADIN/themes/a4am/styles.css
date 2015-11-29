@@ -7687,3 +7687,19 @@ body .a4am.v-app .v-app-loading {
 .a4am .redicon .v-icon {
 	color: red;
 }
+
+.a4am .greenicon .v-icon {
+	color: green;
+}
+
+.a4am .v-popupview-popup {
+	position: absolute !important;
+	height: auto !important;
+	width: auto !important;
+	left: 50% !important;
+	top: 50% !important;
+	transform: translate(-50%, -50%) !important;
+	-webkit-transform: translate(-50%, -50%) !important;
+	-moz-transform: translate(-50%, -50%) !important;
+	-ms-transform: translate(-50%, -50%) !important;
+}

@@ -5,6 +5,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
@@ -40,9 +41,18 @@ public class ApplicationLayout extends VerticalLayout {
         header.setWidth("100%");
         header.setHeight("32px");
 
+        Label initialSpacer = new Label(" ");
+        initialSpacer.setWidth("10px");
+        initialSpacer.setHeight(null);
+        header.addComponent(initialSpacer);
+
         header.addComponents(aboutContent.getInvokingButton(), aboutContent.getAboutPopupView());
         header.setStyleName("appHeader");
         header.setComponentAlignment(aboutContent.getInvokingButton(), Alignment.MIDDLE_LEFT);
+
+        Label extraSpaceAbsorber = new Label(" ");
+        header.addComponent(extraSpaceAbsorber);
+        header.setExpandRatio(extraSpaceAbsorber, 1.0f);
 
         Panel headerPanel = new Panel();
         headerPanel.setHeightUndefined();
