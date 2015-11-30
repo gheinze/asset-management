@@ -141,7 +141,7 @@ public class AmortizationCalculator {
             @Override
             public ScheduledPayment get(int index) {
 
-                ScheduledPayment payment =  getTemplatePayment(index, expectedNumberOfPayments, amAttrs.getAdjustmentDate());
+                ScheduledPayment payment =  getTemplatePayment(index, expectedNumberOfPayments, amAttrs);
 
                 payment.setInterest(calculatedPayment);
                 payment.setPrincipal(overPayment);
@@ -189,7 +189,7 @@ public class AmortizationCalculator {
             }
             remainingBalance = remainingBalance.subtract(principal);
 
-            ScheduledPayment payment =  getTemplatePayment(index, expectedNumberOfPayments, amAttrs.getAdjustmentDate());
+            ScheduledPayment payment =  getTemplatePayment(index, expectedNumberOfPayments, amAttrs);
 
             payment.setInterest(interest);
             payment.setPrincipal(principal);
@@ -216,20 +216,39 @@ public class AmortizationCalculator {
     }
 
 
-    private static ScheduledPayment getTemplatePayment(int index, int totalPayments, LocalDate startDate) {
+    private static ScheduledPayment getTemplatePayment(int index, int totalPayments, AmortizationAttributes amAttrs) {
 
         int paymentNumber = index + 1;
         if (index < 0 || index >= totalPayments) {
             throw new IndexOutOfBoundsException(String.format("Payment number %d outside of schedule range 1 - %d", paymentNumber, totalPayments));
         }
 
-        LocalDate date = startDate.plusMonths(paymentNumber);
-
         ScheduledPayment templatePayment = new ScheduledPayment();
         templatePayment.setPaymentNumber(paymentNumber);
-        templatePayment.setPaymentDate(date);
+        templatePayment.setPaymentDate(getPaymentDate(paymentNumber, amAttrs));
 
         return templatePayment;
+    }
+
+    // TODO: Probably should migrate to TimePeriod enum, but bean doesn't hold enum...
+
+    private static LocalDate getPaymentDate(int paymentNumber, AmortizationAttributes amAttrs) {
+        LocalDate scheduleStartDate = amAttrs.getAdjustmentDate();
+        int paymentFrequency = amAttrs.getPaymentFrequency();
+        switch(paymentFrequency) {
+            case  1: return scheduleStartDate.plusMonths(paymentNumber * 12);  // 12 / 1
+            case  2: return scheduleStartDate.plusMonths(paymentNumber *  6);  // 12 / 2
+            case  4: return scheduleStartDate.plusMonths(paymentNumber *  3);  // 12 / 4
+            case  6: return scheduleStartDate.plusMonths(paymentNumber *  2);  // 12 / 6
+            case 12: return scheduleStartDate.plusMonths(paymentNumber);       // 12 / 12
+
+            // Every second payment: add a month; the alternate payment 14 days after that
+            case 24: return scheduleStartDate.plusMonths(paymentNumber / 2).plusDays(14 * (paymentNumber % 2));
+
+            case 26: return scheduleStartDate.plusWeeks(paymentNumber * 2);   // 52 / 26
+            case 52: return scheduleStartDate.plusWeeks(paymentNumber);       // 52 / 52
+        }
+        return scheduleStartDate;
     }
 
 

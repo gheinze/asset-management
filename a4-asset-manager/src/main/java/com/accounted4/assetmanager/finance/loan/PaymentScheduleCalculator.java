@@ -256,7 +256,10 @@ public class PaymentScheduleCalculator extends Panel {
 
     private AmortizationAttributes flushFormAndRetrieveModel() throws FieldGroup.CommitException {
         amAttrBinder.commit();
-        return amAttrBinder.getItemDataSource().getBean();
+        AmortizationAttributes amAttrs = amAttrBinder.getItemDataSource().getBean();
+        // We don't use adjustment date in this ui, but schedules are based on adjusment date, not start date.
+        amAttrs.setAdjustmentDate(amAttrs.getAdjustmentDate());
+        return amAttrs;
     }
 
 

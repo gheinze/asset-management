@@ -5,4 +5,4 @@ image:https://img.shields.io/codecov/c/github/pvorb/property-providers/develop.s
 
 Amortization Loan Calculator
 
-Online https://murmuring-brushlands-8890.herokuapp.com/[demo]
+https://murmuring-brushlands-8890.herokuapp.com/[Demo]

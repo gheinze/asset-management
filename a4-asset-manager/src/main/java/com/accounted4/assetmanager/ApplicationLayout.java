@@ -68,8 +68,8 @@ public class ApplicationLayout extends VerticalLayout {
 
     private void addMain() {
         HorizontalSplitPanel mainArea = new HorizontalSplitPanel();
-        mainArea.setFirstComponent(createMenu());
-        mainArea.setSecondComponent(createContentPanel());
+        mainArea.setFirstComponent(createMainAreaMenu());
+        mainArea.setSecondComponent(createMainAreaContentPanel());
         mainArea.setSplitPosition(10, Unit.PERCENTAGE);
         mainArea.setSizeFull();
         mainArea.setHeight("100%");
@@ -82,12 +82,12 @@ public class ApplicationLayout extends VerticalLayout {
         addComponent(footer);
     }
 
-    private Component createMenu() {
+    private Component createMainAreaMenu() {
         Tree menu = new Tree();
         return menu;
     }
 
-    private Component createContentPanel() {
+    private Component createMainAreaContentPanel() {
         mainContentArea = new Panel();
         mainContentArea.setSizeFull();
         return mainContentArea;

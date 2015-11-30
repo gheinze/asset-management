@@ -1,5 +1,6 @@
 package com.accounted4.finance.loan;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Period;
@@ -480,6 +481,119 @@ public class AmortizationCalculatorTest {
         LocalDate adjustmentDate = AmortizationCalculator.getNextFirstOrFifteenthOfTheMonth(null);
         long daysBetween = Period.between(today, adjustmentDate).getDays();
         assertTrue("Adjustment date from the 1st should remain on the 1st", daysBetween <= 16);
+    }
+
+
+    @Test
+    public void testPaymentDateAnnual() {
+        testPaymentDatesWithMonthlyIntervals(TimePeriod.Annually.getPeriodsPerYear());
+    }
+
+    @Test
+    public void testPaymentDateSemiAnnual() {
+        testPaymentDatesWithMonthlyIntervals(TimePeriod.SemiAnnually.getPeriodsPerYear());
+    }
+
+    @Test
+    public void testPaymentDateQuarterly() {
+        testPaymentDatesWithMonthlyIntervals(TimePeriod.Quarterly.getPeriodsPerYear());
+    }
+
+    @Test
+    public void testPaymentDateBiMonthly() {
+        testPaymentDatesWithMonthlyIntervals(TimePeriod.BiMonthly.getPeriodsPerYear());
+    }
+
+    @Test
+    public void testPaymentDateMonthly() {
+        testPaymentDatesWithMonthlyIntervals(TimePeriod.Monthly.getPeriodsPerYear());
+    }
+
+    private void testPaymentDatesWithMonthlyIntervals(int  periodsPerYear) {
+        LocalDate scheduleStartDate = LocalDate.of(2015, Month.DECEMBER, 2);
+        AmortizationAttributes amAttrs = generateAmortizationAttributesObjectTemplate();
+        amAttrs.setAdjustmentDate(scheduleStartDate);
+        amAttrs.setPaymentFrequency(periodsPerYear);
+        int termInMonths = 24;
+        amAttrs.setTermInMonths(termInMonths);
+
+        List<ScheduledPayment> schedule = AmortizationCalculator.generateSchedule(amAttrs);
+
+        for (int i = 1; i <= termInMonths / (12 / periodsPerYear); i++ ) {
+            String msg = String.format("Date for payment %d when %d payments a year", i, periodsPerYear);
+            assertEquals(msg, scheduleStartDate.plusMonths(i * (12 / periodsPerYear)), schedule.get(i - 1).getPaymentDate());
+        }
+
+    }
+
+    @Test
+    public void testPaymentDateWeekly() {
+        LocalDate scheduleStartDate = LocalDate.of(2015, Month.DECEMBER, 2);
+        AmortizationAttributes amAttrs = generateAmortizationAttributesObjectTemplate();
+        amAttrs.setAdjustmentDate(scheduleStartDate);
+        amAttrs.setPaymentFrequency(TimePeriod.Weekly.getPeriodsPerYear());
+        int termInMonths = 24;
+        amAttrs.setTermInMonths(termInMonths);
+
+        List<ScheduledPayment> schedule = AmortizationCalculator.generateSchedule(amAttrs);
+
+        for (int i = 1; i <= (52 * 2); i++ ) {
+            String msg = String.format("Date for weekly payment %d", i);
+            assertEquals(msg, scheduleStartDate.plusWeeks(i), schedule.get(i - 1).getPaymentDate());
+        }
+
+    }
+
+    @Test
+    public void testPaymentDateBiWeekly() {
+        LocalDate scheduleStartDate = LocalDate.of(2015, Month.DECEMBER, 2);
+        AmortizationAttributes amAttrs = generateAmortizationAttributesObjectTemplate();
+        amAttrs.setAdjustmentDate(scheduleStartDate);
+        amAttrs.setPaymentFrequency(TimePeriod.BiWeekly.getPeriodsPerYear());
+        int termInMonths = 24;
+        amAttrs.setTermInMonths(termInMonths);
+
+        DayOfWeek dayOfWeek = scheduleStartDate.getDayOfWeek();
+
+        List<ScheduledPayment> schedule = AmortizationCalculator.generateSchedule(amAttrs);
+
+        for (int i = 1; i <= 52; i++ ) {
+            String msg = String.format("Date for biweekly payment %d", i);
+            assertEquals(msg, scheduleStartDate.plusWeeks(i * 2), schedule.get(i - 1).getPaymentDate());
+            assertEquals("BiWeekly common day of week", dayOfWeek, schedule.get(i - 1).getPaymentDate().getDayOfWeek());
+        }
+
+    }
+
+
+    @Test
+    public void testPaymentDateSemiMonthly() {
+        LocalDate scheduleStartDate = LocalDate.of(2015, Month.DECEMBER, 2);
+        AmortizationAttributes amAttrs = generateAmortizationAttributesObjectTemplate();
+        amAttrs.setAdjustmentDate(scheduleStartDate);
+        amAttrs.setPaymentFrequency(TimePeriod.SemiMonthly.getPeriodsPerYear());
+        int termInMonths = 24;
+        amAttrs.setTermInMonths(termInMonths);
+
+        int dayOfMonthPayment1 = scheduleStartDate.getDayOfMonth();
+        int dayOfMonthPayment2 = scheduleStartDate.plusDays(14).getDayOfMonth();
+
+        List<ScheduledPayment> schedule = AmortizationCalculator.generateSchedule(amAttrs);
+
+        // First payment of month
+        for (int i = 1; i <= 48; i+=2 ) {
+            String msg = String.format("First date for semi-monthly payment %d", i);
+            assertEquals(msg, scheduleStartDate.plusMonths(i/2).plusDays(14), schedule.get(i - 1).getPaymentDate());
+            assertEquals("Semi-monthly common day of month", dayOfMonthPayment2, schedule.get(i - 1).getPaymentDate().getDayOfMonth());
+        }
+
+        // Second payment of month
+        for (int i = 2; i <= 48; i+=2 ) {
+            String msg = String.format("Second date for semi-monthly payment %d", i);
+            assertEquals(msg, scheduleStartDate.plusMonths(i/2), schedule.get(i - 1).getPaymentDate());
+            assertEquals("Semi-monthly common day of month", dayOfMonthPayment1, schedule.get(i - 1).getPaymentDate().getDayOfMonth());
+        }
+
     }
 
 
