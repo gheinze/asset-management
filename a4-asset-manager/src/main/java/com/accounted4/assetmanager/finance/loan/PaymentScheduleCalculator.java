@@ -70,7 +70,7 @@ public class PaymentScheduleCalculator extends Panel implements View {
     private Panel amortizationPanel;
     private Button generateButton;
     private Button generatePdfButton;
-
+    private Button calculateButton;
 
     @PostConstruct
     void init() {
@@ -335,7 +335,7 @@ public class PaymentScheduleCalculator extends Panel implements View {
             field.setImmediate(true);
             field.setConverter(MonetaryAmount.class);
 
-            Button calculateButton = new Button("calculate");
+            calculateButton = new Button("calculate");
             calculateButton.setIcon(FontAwesome.DOLLAR);
             calculateButton.addStyleName("greenicon");
             calculateButton.setDescription("Calculate periodic payment");
@@ -389,6 +389,8 @@ public class PaymentScheduleCalculator extends Panel implements View {
     private void formHasChanged() {
         boolean allFieldsValid = amAttrBinder.isValid();
         generateButton.setEnabled(allFieldsValid);
+        generatePdfButton.setEnabled(allFieldsValid);
+        calculateButton.setEnabled(allFieldsValid);
     }
 
 }

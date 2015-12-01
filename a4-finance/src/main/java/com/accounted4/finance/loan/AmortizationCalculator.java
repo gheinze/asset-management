@@ -213,9 +213,10 @@ public class AmortizationCalculator {
 
     private static MonetaryAmount getActualPayment(AmortizationAttributes amAttrs) {
         MonetaryAmount calculatedPayment = getPeriodicPayment(amAttrs);
-        return calculatedPayment.isGreaterThan(amAttrs.getRegularPayment()) ?
-                    calculatedPayment :
-                    amAttrs.getRegularPayment();
+        if (null == amAttrs.getRegularPayment() || calculatedPayment.isGreaterThan(amAttrs.getRegularPayment())) {
+            return calculatedPayment;
+        }
+        return amAttrs.getRegularPayment();
     }
 
 

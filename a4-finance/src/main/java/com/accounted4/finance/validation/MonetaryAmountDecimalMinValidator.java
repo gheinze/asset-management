@@ -8,7 +8,7 @@ import javax.validation.constraints.DecimalMin;
 
 /**
  * Enables the "@DecimalMin" annotation to be applied to a MonetaryAmount.
- * 
+ *
  * @author gheinze
  */
 public class MonetaryAmountDecimalMinValidator implements ConstraintValidator<DecimalMin, MonetaryAmount> {
@@ -25,7 +25,7 @@ public class MonetaryAmountDecimalMinValidator implements ConstraintValidator<De
     @Override
     public boolean isValid(MonetaryAmount value, ConstraintValidatorContext context) {
         if (null == value) {
-            return false;
+            return true;
         }
         final BigDecimal amount = value.getNumber().numberValueExact(BigDecimal.class);
         int comparisonResult = amount.compareTo(minValue);

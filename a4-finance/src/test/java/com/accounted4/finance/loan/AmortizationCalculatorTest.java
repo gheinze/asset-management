@@ -596,6 +596,13 @@ public class AmortizationCalculatorTest {
 
     }
 
+    @Test
+    public void testGetActualPaymentWithNullRegularPayment() {
+        AmortizationAttributes amAttrs = generateAmortizationAttributesObjectTemplate();
+        amAttrs.setRegularPayment(null);
+        MonetaryAmount periodicPayment = AmortizationCalculator.getPeriodicPayment(amAttrs);
+        assertNotNull("Regular payment computed when initialized as null", periodicPayment);
+    }
 
     private AmortizationAttributes generateAmortizationAttributesObjectTemplate() {
 
