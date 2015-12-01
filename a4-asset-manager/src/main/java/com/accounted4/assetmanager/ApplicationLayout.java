@@ -3,20 +3,32 @@ package com.accounted4.assetmanager;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A Layout for the Application:
+ *
+ * <pre>
+ * +--------------------+
+ * | Header             |
+ * +--------------------+
+ * | Menu | Content     |
+ * |      |             |
+ * +--------------------+
+ * | Footer             |
+ * +--------------------+
+ * </pre>
+ *
  *   o A "Header" area with a logo which pops up an "about" dialog
- *   o The "Main" area which contains a menu on the left and the content of selected menu item on the right
+ *   o The "Main" area which contains
+ *       o a menu on the left
+ *       o the content of selected menu item on the right
  *   o A "Footer" area
  * @author gheinze
  */
@@ -24,8 +36,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @UIScope
 public class ApplicationLayout extends VerticalLayout {
 
-    private Panel mainContentArea;
-
+    @Autowired private ViewContainer viewContainer;
+    @Autowired private ApplicationMenu applicationMenu;
     @Autowired private AboutContent aboutContent;
 
 
@@ -68,9 +80,9 @@ public class ApplicationLayout extends VerticalLayout {
 
     private void addMain() {
         HorizontalSplitPanel mainArea = new HorizontalSplitPanel();
-        mainArea.setFirstComponent(createMainAreaMenu());
-        mainArea.setSecondComponent(createMainAreaContentPanel());
-        mainArea.setSplitPosition(10, Unit.PERCENTAGE);
+        mainArea.setFirstComponent(applicationMenu);
+        mainArea.setSecondComponent(viewContainer);
+        mainArea.setSplitPosition(15, Unit.PERCENTAGE);
         mainArea.setSizeFull();
         mainArea.setHeight("100%");
         addComponent(mainArea);
@@ -82,20 +94,5 @@ public class ApplicationLayout extends VerticalLayout {
         addComponent(footer);
     }
 
-    private Component createMainAreaMenu() {
-        Tree menu = new Tree();
-        return menu;
-    }
-
-    private Component createMainAreaContentPanel() {
-        mainContentArea = new Panel();
-        mainContentArea.setSizeFull();
-        return mainContentArea;
-    }
-
-
-    public void setMainArea(Component component) {
-        mainContentArea.setContent(component);
-    }
 
 }

@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.UiRouter;
 import com.accounted4.assetmanager.VaadinUI;
 import com.accounted4.assetmanager.util.vaadin.converter.FieldGroupFactory;
 import com.accounted4.assetmanager.util.vaadin.converter.MonetaryAmountConverter;
@@ -10,10 +11,14 @@ import com.accounted4.finance.loan.ScheduledPayment;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.spring.annotation.SpringView;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
@@ -32,6 +37,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.Reindeer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,34 +46,45 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import javax.annotation.PostConstruct;
 import javax.money.MonetaryAmount;
 import net.sf.jasperreports.engine.JRException;
 import org.javamoney.moneta.Money;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
  *
  * @author gheinze
  */
-public class PaymentScheduleCalculator extends Panel {
+@UIScope
+@SpringView(name = UiRouter.ViewName.PAYMENT_CALCULATOR)
+public class PaymentScheduleCalculator extends Panel implements View {
 
     private static final String INTEREST_ONLY_PROPERTY_ID = "interestOnly";
     private static final String REGULAR_PAYMENT_PROPERTY_ID = "regularPayment";
 
+    @Autowired private LoanService loanService;
 
-    private final LoanService loanService;
-    private final BeanFieldGroup<AmortizationAttributes> amAttrBinder;
-    private final Panel amortizationPanel;
+    private BeanFieldGroup<AmortizationAttributes> amAttrBinder;
+    private Panel amortizationPanel;
     private Button generateButton;
     private Button generatePdfButton;
 
 
-    public PaymentScheduleCalculator(LoanService loanService) {
-        this.loanService = loanService;
+    @PostConstruct
+    void init() {
         amAttrBinder = createDataModel(getDefaultAmortizationAttributesTemplate());
         amortizationPanel = createAmortizationPanel(amAttrBinder);
         setupMainContentAreaPanel();
         wireListeners();
+        setSizeUndefined();
+        addStyleName(Reindeer.PANEL_LIGHT);
+    }
+
+    @Override
+    public void enter(ViewChangeEvent event) {
+        // the view is constructed in the init() method()
     }
 
 
