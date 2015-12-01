@@ -116,11 +116,14 @@ public class AmortizationCalculator {
 
         if (baseDayOfMonth > 15) {
             return nextDate.plusMonths(1).withDayOfMonth(1);
+
         } else if (baseDayOfMonth > 1 && baseDayOfMonth < 15) {
             return nextDate.withDayOfMonth(15);
         }
 
-        return LocalDate.from(baseDate);
+        assert baseDayOfMonth == 15 || baseDayOfMonth == 1;
+
+        return LocalDate.from(nextDate);
 
     }
 
