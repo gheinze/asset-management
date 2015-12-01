@@ -83,7 +83,7 @@ public class MonetaryAmountDecimalMinValidatorTest {
 
 
     @Test
-    public void testDecMinEqualNull() {
+    public void testDecMinIncludesNull() {
 
         String minDecAmount = "0.125";
         boolean inclusive = true;
@@ -91,7 +91,7 @@ public class MonetaryAmountDecimalMinValidatorTest {
         MonetaryAmountDecimalMinValidator validator = getValidator(minDecAmount, inclusive);
         boolean valid = validator.isValid(null, null);
 
-        assertEquals("MinDecimal inclusive", false, valid);
+        assertEquals("MinDecimal inclusive", true, valid);
 
     }
 
