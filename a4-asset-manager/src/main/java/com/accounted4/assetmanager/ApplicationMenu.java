@@ -33,9 +33,9 @@ public class ApplicationMenu extends Tree {
 
     private void configureValueChangeListener() {
         addValueChangeListener(e -> {
-            String selectedViewName = String.valueOf(e.getProperty().getValue());
+            String selectedItemDisplayName = String.valueOf(e.getProperty().getValue());
             for (UiRouter menuItem : UiRouter.values()) {
-                if (menuItem.getViewName().equals(selectedViewName)) {
+                if (menuItem.isNavigable() && menuItem.getDisplayName().equals(selectedItemDisplayName)) {
                     getUI().getNavigator().navigateTo(menuItem.getViewName());
                     return;
                 }

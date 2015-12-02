@@ -34,6 +34,8 @@
 
     <dependencies>
 
+        <!-- Vaadin -->
+
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
@@ -45,7 +47,8 @@
             <artifactId>vaadin-themes</artifactId>
         </dependency>
 
-<!--    JPA integration temporarily removed since initial tool development does not require db
+
+        <!-- Datasource -->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -57,13 +60,15 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
--->
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-dbcp</artifactId>
+            <version>7.0.47</version>
+            <type>jar</type>
         </dependency>
+
+        <!-- Utils -->
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -71,6 +76,8 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Libs -->
 
         <dependency>
             <groupId>org.javamoney</groupId>
@@ -91,6 +98,19 @@
             <version>${jasperReport.version}</version>
         </dependency>
 
+        <!-- Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
     </dependencies>
 
     <dependencyManagement>
