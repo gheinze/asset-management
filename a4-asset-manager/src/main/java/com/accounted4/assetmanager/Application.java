@@ -7,10 +7,10 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@ComponentScan(basePackageClasses = AssetManagerApplication.class)
-public class AssetManagerApplication {
+@ComponentScan(basePackageClasses = Application.class)
+public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(AssetManagerApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }

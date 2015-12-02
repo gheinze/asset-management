@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager;
+package com.accounted4.assetmanager.config;
 
 import java.net.URI;
 import java.net.URISyntaxException;

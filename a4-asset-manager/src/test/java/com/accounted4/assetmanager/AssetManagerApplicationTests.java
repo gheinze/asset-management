@@ -9,7 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {AssetManagerApplication.class, EmbeddedDataSourceConfiguration.class})
+@SpringApplicationConfiguration(classes = {Application.class, EmbeddedDataSourceConfiguration.class})
 @WebAppConfiguration
 @ActiveProfiles("test")
 public class AssetManagerApplicationTests {

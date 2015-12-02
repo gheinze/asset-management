@@ -1,6 +1,5 @@
 package com.accounted4.assetmanager;
 
-import com.accounted4.assetmanager.finance.loan.PaymentScheduleCalculator;
 import com.accounted4.assetmanager.util.vaadin.converter.ConverterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,7 +23,7 @@ import java.util.Locale;
 public class VaadinUI extends UI {
 
     @Autowired private SpringViewProvider viewProvider;
-    @Autowired private ViewContainer viewContainer;
+    @Autowired private ApplicationContentArea viewContainer;
     @Autowired private ApplicationLayout applicationLayout;
 
 

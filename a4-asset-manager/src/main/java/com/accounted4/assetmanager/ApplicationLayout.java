@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @UIScope
 public class ApplicationLayout extends VerticalLayout {
 
-    @Autowired private ViewContainer viewContainer;
+    @Autowired private ApplicationContentArea viewContainer;
     @Autowired private ApplicationMenu applicationMenu;
     @Autowired private AboutContent aboutContent;
 

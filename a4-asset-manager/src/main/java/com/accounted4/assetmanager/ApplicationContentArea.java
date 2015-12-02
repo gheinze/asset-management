@@ -12,7 +12,7 @@ import javax.annotation.PostConstruct;
  */
 @SpringComponent
 @UIScope
-public class ViewContainer extends Panel {
+public class ApplicationContentArea extends Panel {
 
     @PostConstruct
     public void postConstruct() {
