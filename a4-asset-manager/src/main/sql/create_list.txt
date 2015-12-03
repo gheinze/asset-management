@@ -1,0 +1,17 @@
+./system/purge_schemas.sql
+./system/create_schemas.sql
+
+# -------------------------
+# -- tenant application objects
+# -------------------------
+
+./system/switch_user_to_tenant_0.sql
+./system/installation_support_tools.sql
+./system/base.sql
+
+./tenant/address/country.sql
+./tenant/address/country_subdivision.sql
+./tenant/address/address.sql
+
+./tenant/party/party.sql
+./tenant/party/party_address.sql
