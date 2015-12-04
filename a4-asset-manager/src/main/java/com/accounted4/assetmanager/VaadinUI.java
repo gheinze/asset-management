@@ -11,6 +11,8 @@ import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
 import com.vaadin.ui.UI;
 import java.util.Locale;
+import javax.inject.Inject;
+import lombok.RequiredArgsConstructor;
 
 
 /**
@@ -20,22 +22,21 @@ import java.util.Locale;
  */
 @SpringUI
 @Theme("a4am")
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class VaadinUI extends UI {
-
-    @Autowired private SpringViewProvider viewProvider;
-    @Autowired private ApplicationContentArea viewContainer;
-    @Autowired private ApplicationLayout applicationLayout;
-
 
     public static final String LOCALE_KEY = "LOCALE";
 
-    public VaadinUI() {
-        VaadinSession.getCurrent().setConverterFactory(new ConverterFactory());
-        VaadinSession.getCurrent().setAttribute(LOCALE_KEY, Locale.CANADA);
-    }
+    private final SpringViewProvider viewProvider;
+    private final ApplicationContentArea viewContainer;
+    private final ApplicationLayout applicationLayout;
+
 
     @Override
     protected void init(VaadinRequest request) {
+
+        VaadinSession.getCurrent().setConverterFactory(new ConverterFactory());
+        VaadinSession.getCurrent().setAttribute(LOCALE_KEY, Locale.CANADA);
 
         Navigator navigator = new Navigator(UI.getCurrent(), viewContainer);
         navigator.addProvider(viewProvider);

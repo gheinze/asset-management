@@ -46,10 +46,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.money.MonetaryAmount;
+import lombok.RequiredArgsConstructor;
 import net.sf.jasperreports.engine.JRException;
 import org.javamoney.moneta.Money;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
@@ -58,12 +59,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @UIScope
 @SpringView(name = UiRouter.ViewName.PAYMENT_CALCULATOR)
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class PaymentScheduleCalculator extends Panel implements DefaultView {
 
     private static final String INTEREST_ONLY_PROPERTY_ID = "interestOnly";
     private static final String REGULAR_PAYMENT_PROPERTY_ID = "regularPayment";
 
-    @Autowired private LoanService loanService;
+    private final LoanService loanService;
 
     private BeanFieldGroup<AmortizationAttributes> amAttrBinder;
     private Panel amortizationPanel;

@@ -9,7 +9,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
+import lombok.RequiredArgsConstructor;
 
 /**
  * A Layout for the Application:
@@ -34,11 +35,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @SpringComponent
 @UIScope
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ApplicationLayout extends VerticalLayout {
 
-    @Autowired private ApplicationContentArea viewContainer;
-    @Autowired private ApplicationMenu applicationMenu;
-    @Autowired private AboutContent aboutContent;
+    private final ApplicationContentArea viewContainer;
+    private final ApplicationMenu applicationMenu;
+    private final AboutContent aboutContent;
 
 
     @PostConstruct
