@@ -1,7 +1,7 @@
 CREATE TABLE base(
   id                  bigint
- ,version             integer    DEFAULT 1
- ,inactive            boolean    DEFAULT false
+ ,version             integer    NOT NULL DEFAULT 1
+ ,inactive            boolean    NOT NULL DEFAULT false
 );
 
 COMMENT ON TABLE base IS 'Meta information of use for all tables in order to support auditing functions (timestamps) and concurrency (version).  This table should never be inserted to directly. It is to serve as a parent table for inheritance. They are never expected to be modified by the application.';

@@ -5,14 +5,13 @@ import com.accounted4.assetmanager.VaadinUI;
 import com.accounted4.assetmanager.util.vaadin.converter.FieldGroupFactory;
 import com.accounted4.assetmanager.util.vaadin.converter.MonetaryAmountConverter;
 import com.accounted4.assetmanager.util.vaadin.ui.BorderlessPanel;
+import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.accounted4.finance.loan.AmortizationAttributes;
 import com.accounted4.finance.loan.AmortizationCalculator;
 import com.accounted4.finance.loan.ScheduledPayment;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource.StreamSource;
@@ -59,7 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @UIScope
 @SpringView(name = UiRouter.ViewName.PAYMENT_CALCULATOR)
-public class PaymentScheduleCalculator extends Panel implements View {
+public class PaymentScheduleCalculator extends Panel implements DefaultView {
 
     private static final String INTEREST_ONLY_PROPERTY_ID = "interestOnly";
     private static final String REGULAR_PAYMENT_PROPERTY_ID = "regularPayment";
@@ -80,11 +79,6 @@ public class PaymentScheduleCalculator extends Panel implements View {
         wireListeners();
         setSizeUndefined();
         addStyleName(Reindeer.PANEL_LIGHT);
-    }
-
-    @Override
-    public void enter(ViewChangeEvent event) {
-        // the view is constructed in the init() method()
     }
 
 
