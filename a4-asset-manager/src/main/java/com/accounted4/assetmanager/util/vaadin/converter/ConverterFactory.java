@@ -18,6 +18,8 @@ import javax.money.MonetaryAmount;
  */
 public class ConverterFactory extends DefaultConverterFactory {
 
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected Converter<String, ?> createStringConverter(Class<?> sourceType) {
         if (MonetaryAmount.class.isAssignableFrom(sourceType)) {

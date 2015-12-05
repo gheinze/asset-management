@@ -2,6 +2,12 @@
 ./system/create_schemas.sql
 
 # -------------------------
+# -- public objects
+# -------------------------
+./system/set_schema_to.sql
+
+
+# -------------------------
 # -- tenant application objects
 # -------------------------
 

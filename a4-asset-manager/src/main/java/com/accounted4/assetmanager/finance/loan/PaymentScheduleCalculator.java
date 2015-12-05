@@ -62,6 +62,8 @@ import org.javamoney.moneta.Money;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class PaymentScheduleCalculator extends Panel implements DefaultView {
 
+    private static final long serialVersionUID = 1L;
+
     private static final String INTEREST_ONLY_PROPERTY_ID = "interestOnly";
     private static final String REGULAR_PAYMENT_PROPERTY_ID = "regularPayment";
 
@@ -239,6 +241,7 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
 
 
     private PaymentField createPaymentField() {
+        calculateButton = new Button();
         PaymentField paymentField = new PaymentField();
         paymentField.setCaption("Regular payment");
         paymentField.setDescription("You can override the calculated amount for extra principal payment");
@@ -316,12 +319,38 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
     }
 
 
+    private void wireListeners() {
+        wireAmortizationAttributesToListenToInterestOnlyCheckBox();
+        wireGenerateButtonToValidForm();
+    }
+
+    private void wireAmortizationAttributesToListenToInterestOnlyCheckBox() {
+        CheckBox interestOnlyCheckBox = (CheckBox)amAttrBinder.getField(INTEREST_ONLY_PROPERTY_ID);
+        interestOnlyCheckBox.addValueChangeListener(e -> amortizationPanel.setEnabled(!(Boolean)e.getProperty().getValue()));
+    }
+
+    private void wireGenerateButtonToValidForm() {
+        amAttrBinder.getFields().stream().forEach((f) -> {
+            f.addValueChangeListener(e -> { formHasChanged(); });
+        });
+    }
+
+    private void formHasChanged() {
+        boolean allFieldsValid = amAttrBinder.isValid();
+        generateButton.setEnabled(allFieldsValid);
+        generatePdfButton.setEnabled(allFieldsValid);
+        calculateButton.setEnabled(allFieldsValid);
+    }
+
+
+    // ---------------------------------
 
     // Create a composite field showing a TextField for the regularPayment with a Button beside it to calculate
     private class PaymentField extends CustomField<MonetaryAmount> {
 
         private final MonetaryAmountConverter monetaryAmountConverter = new MonetaryAmountConverter();
         private final TextField field = new TextField();
+
 
         @Override
         protected Component initContent() {
@@ -331,7 +360,7 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
             field.setImmediate(true);
             field.setConverter(MonetaryAmount.class);
 
-            calculateButton = new Button("calculate");
+            calculateButton.setCaption("calculate");
             calculateButton.setIcon(FontAwesome.DOLLAR);
             calculateButton.addStyleName("greenicon");
             calculateButton.setDescription("Calculate periodic payment");
@@ -366,27 +395,5 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
         }
     }
 
-    private void wireListeners() {
-        wireAmortizationAttributesToListenToInterestOnlyCheckBox();
-        wireGenerateButtonToValidForm();
-    }
-
-    private void wireAmortizationAttributesToListenToInterestOnlyCheckBox() {
-        CheckBox interestOnlyCheckBox = (CheckBox)amAttrBinder.getField(INTEREST_ONLY_PROPERTY_ID);
-        interestOnlyCheckBox.addValueChangeListener(e -> amortizationPanel.setEnabled(!(Boolean)e.getProperty().getValue()));
-    }
-
-    private void wireGenerateButtonToValidForm() {
-        amAttrBinder.getFields().stream().forEach((f) -> {
-            f.addValueChangeListener(e -> { formHasChanged(); });
-        });
-    }
-
-    private void formHasChanged() {
-        boolean allFieldsValid = amAttrBinder.isValid();
-        generateButton.setEnabled(allFieldsValid);
-        generatePdfButton.setEnabled(allFieldsValid);
-        calculateButton.setEnabled(allFieldsValid);
-    }
 
 }

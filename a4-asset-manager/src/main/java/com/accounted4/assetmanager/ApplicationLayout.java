@@ -38,6 +38,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class ApplicationLayout extends VerticalLayout {
 
+    private static final long serialVersionUID = 1L;
+
     private final ApplicationContentArea viewContainer;
     private final ApplicationMenu applicationMenu;
     private final AboutContent aboutContent;

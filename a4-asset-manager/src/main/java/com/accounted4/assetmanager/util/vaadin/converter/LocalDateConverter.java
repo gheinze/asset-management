@@ -13,6 +13,8 @@ import java.util.Locale;
  */
 public class LocalDateConverter implements Converter<Date, LocalDate> {
 
+    private static final long serialVersionUID = 1L;
+
     @Override
     public LocalDate convertToModel(Date value, Class<? extends LocalDate> targetType, Locale locale) throws ConversionException {
         return convertDateToLocalDate(value);

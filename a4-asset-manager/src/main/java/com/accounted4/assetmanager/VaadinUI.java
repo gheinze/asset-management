@@ -1,7 +1,6 @@
 package com.accounted4.assetmanager;
 
 import com.accounted4.assetmanager.util.vaadin.converter.ConverterFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;

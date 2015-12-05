@@ -14,6 +14,8 @@ import java.time.LocalDate;
  */
 public class FieldGroupFactory implements FieldGroupFieldFactory {
 
+    private static final long serialVersionUID = 1L;
+
 
     @Override
     public <T extends Field> T createField(Class<?> dataType, Class<T> fieldType) {

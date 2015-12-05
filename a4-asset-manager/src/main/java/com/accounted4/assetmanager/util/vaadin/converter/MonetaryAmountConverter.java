@@ -19,6 +19,7 @@ import org.javamoney.moneta.Money;
  */
 public class MonetaryAmountConverter implements Converter<String, MonetaryAmount> {
 
+    private static final long serialVersionUID = 1L;
     private static final MonetaryOperator HALF_UP_ROUNDING_MODE = new HalfUpMonetaryRounder();
 
     private final DecimalFormat currencyFormatterWithoutSymbol;

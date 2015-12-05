@@ -12,6 +12,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.BaseTheme;
+import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,8 +24,10 @@ import org.springframework.beans.factory.annotation.Value;
  */
 @SpringComponent
 @UIScope
-public class AboutContent {
+public class AboutContent implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     @Getter private PopupView aboutPopupView;
     @Getter private Button invokingButton;
 
