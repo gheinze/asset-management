@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.inject.Inject;
 import javax.sql.DataSource;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
  * @author gheinze
  */
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class AssetManagerMultiTenantConnectionProvider implements MultiTenantConnectionProvider {
 
     private static final long serialVersionUID = 1L;
