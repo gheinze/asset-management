@@ -70,7 +70,7 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
     private final LoanService loanService;
 
     private BeanFieldGroup<AmortizationAttributes> amAttrBinder;
-    private Panel amortizationPanel;
+    private GridLayout amortizationSettings;
     private Button generateButton;
     private Button generatePdfButton;
     private Button calculateButton;
@@ -78,7 +78,7 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
     @PostConstruct
     void init() {
         amAttrBinder = createDataModel(getDefaultAmortizationAttributesTemplate());
-        amortizationPanel = createAmortizationPanel(amAttrBinder);
+        amortizationSettings = createAmortizationPanel(amAttrBinder);
         setupMainContentAreaPanel();
         wireListeners();
         setSizeUndefined();
@@ -97,7 +97,7 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
     /*
      * The compound component holding the Amortization Months and the Compounding Period components.
     */
-    private Panel createAmortizationPanel(BeanFieldGroup<AmortizationAttributes> binder) {
+    private GridLayout createAmortizationPanel(BeanFieldGroup<AmortizationAttributes> binder) {
 
         GridLayout layout = new GridLayout(2, 2);
         layout.setSpacing(true);
@@ -108,13 +108,9 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
 
         ComboBox compoundingPeriodComboBox = CompoundingPeriodComboBox.create(binder);
         layout.addComponent(compoundingPeriodComboBox, 1, 1);
+        layout.setEnabled(true);
 
-        Panel subPanel = BorderlessPanel.create();
-        subPanel.setSizeUndefined();
-        subPanel.setContent(layout);
-        subPanel.setEnabled(true);
-
-        return subPanel;
+        return layout;
 
     }
 
@@ -122,32 +118,33 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
     private void setupMainContentAreaPanel() {
         VerticalLayout contentAreaLayout = new VerticalLayout();
         contentAreaLayout.addComponent(getLoanDetailPanel());
-        Panel contentAreaFooterPanel = getGenerateButtonRow();
-        contentAreaLayout.addComponent(contentAreaFooterPanel);
-        contentAreaLayout.setComponentAlignment(contentAreaFooterPanel, Alignment.MIDDLE_CENTER);
-        Panel contentAreaPanel = BorderlessPanel.create();
-        contentAreaPanel.setContent(contentAreaLayout);
-        setContent(contentAreaPanel);
+        HorizontalLayout contentAreaFooter = getGenerateButtonRow();
+        contentAreaLayout.addComponent(contentAreaFooter);
+        contentAreaLayout.setComponentAlignment(contentAreaFooter, Alignment.MIDDLE_CENTER);
+        contentAreaLayout.setSizeUndefined();
+        setContent(contentAreaLayout);
     }
 
 
     private Panel getLoanDetailPanel() {
 
         FormLayout loanDetailFormLayout = new FormLayout();
-        Panel loanDetailPanel = BorderlessPanel.create("Loan Details");
-        loanDetailPanel.setContent(loanDetailFormLayout);
-        loanDetailPanel.setSizeUndefined();
+        loanDetailFormLayout.setSizeUndefined();
 
         loanDetailFormLayout.setCaption("Payment Schedule Calculator");
         loanDetailFormLayout.setSpacing(true);
         loanDetailFormLayout.addComponent(createStartDateField());
         loanDetailFormLayout.addComponent(creatTermField());
         loanDetailFormLayout.addComponent(amAttrBinder.buildAndBind("Interest only", INTEREST_ONLY_PROPERTY_ID));
-        loanDetailFormLayout.addComponent(amortizationPanel);
+        loanDetailFormLayout.addComponent(amortizationSettings);
         loanDetailFormLayout.addComponent(createLoanAmountField());
         loanDetailFormLayout.addComponent(amAttrBinder.buildAndBind("Interest rate %", "interestRateAsPercent"));
         loanDetailFormLayout.addComponent(PaymentPeriodComboBox.create(amAttrBinder));
         loanDetailFormLayout.addComponent(createPaymentField());
+
+        Panel loanDetailPanel = BorderlessPanel.create("Loan Details");
+        loanDetailPanel.setContent(loanDetailFormLayout);
+        loanDetailPanel.setSizeUndefined();
 
         return loanDetailPanel;
 
@@ -157,7 +154,7 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
     /*
      * The buttons to process the form.
     */
-    private Panel getGenerateButtonRow() {
+    private HorizontalLayout getGenerateButtonRow() {
 
         HorizontalLayout footerLayout = new HorizontalLayout();
 
@@ -168,10 +165,7 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
         configureGeneratePdfButton();
         footerLayout.addComponent(generatePdfButton);
 
-        Panel footerPanel = BorderlessPanel.create();
-        footerPanel.setContent(footerLayout);
-
-        return footerPanel;
+        return footerLayout;
 
     }
 
@@ -245,6 +239,7 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
         PaymentField paymentField = new PaymentField();
         paymentField.setCaption("Regular payment");
         paymentField.setDescription("You can override the calculated amount for extra principal payment");
+        paymentField.setSizeUndefined();
         paymentField.setImmediate(true);
         amAttrBinder.bind(paymentField.getInternal(), REGULAR_PAYMENT_PROPERTY_ID);
         return paymentField;
@@ -326,7 +321,7 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
 
     private void wireAmortizationAttributesToListenToInterestOnlyCheckBox() {
         CheckBox interestOnlyCheckBox = (CheckBox)amAttrBinder.getField(INTEREST_ONLY_PROPERTY_ID);
-        interestOnlyCheckBox.addValueChangeListener(e -> amortizationPanel.setEnabled(!(Boolean)e.getProperty().getValue()));
+        interestOnlyCheckBox.addValueChangeListener(e -> amortizationSettings.setEnabled(!(Boolean)e.getProperty().getValue()));
     }
 
     private void wireGenerateButtonToValidForm() {
@@ -364,6 +359,7 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
             calculateButton.setIcon(FontAwesome.DOLLAR);
             calculateButton.addStyleName("greenicon");
             calculateButton.setDescription("Calculate periodic payment");
+
             calculateButton.addClickListener((Button.ClickEvent e) -> {
                 try {
                     AmortizationAttributes amAttrs = flushFormAndRetrieveModel();
@@ -379,10 +375,7 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
             layout.addComponent(field);
             layout.addComponent(calculateButton);
 
-            Panel panel = BorderlessPanel.create();
-            panel.setSizeUndefined();
-            panel.setContent(layout);
-            return panel;
+            return layout;
         }
 
         @Override

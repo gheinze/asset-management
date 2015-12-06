@@ -39,6 +39,8 @@ import lombok.RequiredArgsConstructor;
 public class ApplicationLayout extends VerticalLayout {
 
     private static final long serialVersionUID = 1L;
+    private static final String HEADER_HEIGHT = "32px";
+
 
     private final ApplicationContentArea viewContainer;
     private final ApplicationMenu applicationMenu;
@@ -49,7 +51,7 @@ public class ApplicationLayout extends VerticalLayout {
     public void init() {
         addHeader();
         addMain();
-        addFooter();
+        //addFooter();
     }
 
 
@@ -57,18 +59,21 @@ public class ApplicationLayout extends VerticalLayout {
 
         HorizontalLayout header  = new HorizontalLayout();
         header.setWidth("100%");
-        header.setHeight("32px");
+        header.setHeight(HEADER_HEIGHT);
 
         Label initialSpacer = new Label(" ");
         initialSpacer.setWidth("10px");
-        initialSpacer.setHeight(null);
+        initialSpacer.setHeight(HEADER_HEIGHT);
         header.addComponent(initialSpacer);
 
+        aboutContent.getAboutPopupView().setHeight(HEADER_HEIGHT);
+        aboutContent.getAboutPopupView().setWidth("10px");
         header.addComponents(aboutContent.getInvokingButton(), aboutContent.getAboutPopupView());
         header.setStyleName("appHeader");
         header.setComponentAlignment(aboutContent.getInvokingButton(), Alignment.MIDDLE_LEFT);
 
         Label extraSpaceAbsorber = new Label(" ");
+        extraSpaceAbsorber.setHeight(HEADER_HEIGHT);
         header.addComponent(extraSpaceAbsorber);
         header.setExpandRatio(extraSpaceAbsorber, 1.0f);
 
