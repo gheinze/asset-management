@@ -1,5 +1,7 @@
 package com.accounted4.assetmanager.core.party;
 
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.combobox.FilteringMode;
@@ -7,7 +9,8 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.Reindeer;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.vaadin.dialogs.ConfirmDialog;
 
@@ -22,17 +25,36 @@ public class PartySelector extends VerticalLayout {
     private final ComboBox partySelector;
     private final CheckBox showInactiveCheckBox;
 
+    private final List<Property.ValueChangeListener> valueChangeListeners;
+
+    private boolean enableValueChangeEventFiring = true;
+
+
     public PartySelector(PartyRepository repo) {
+        valueChangeListeners = new ArrayList<>();
         this.repo = repo;
         this.partySelector = new ComboBox();
         this.showInactiveCheckBox = new CheckBox("show inactive Parties");
         init();
     }
 
+    public void addValueChangeListener(Property.ValueChangeListener listener) {
+        valueChangeListeners.add(listener);
+    }
+
+
+    public String getValue() {
+        return (String)partySelector.getValue();
+    }
+
+
     private void init() {
         setupPartySelector();
         showInactiveCheckBox.setImmediate(true);
         addComponents(partySelector, showInactiveCheckBox);
+        partySelector.addValueChangeListener(e -> {
+            fireLocalValueChangeListenersIfNecessary(e);
+        });
     }
 
 
@@ -44,6 +66,7 @@ public class PartySelector extends VerticalLayout {
         partySelector.setItemCaptionPropertyId("partyName");
         partySelector.setNullSelectionAllowed(false);
         partySelector.setImmediate(true);
+
         partySelector.addFocusListener(e -> refreshPartyCombobox());
 
         partySelector.setNewItemsAllowed(true);
@@ -63,7 +86,10 @@ public class PartySelector extends VerticalLayout {
 
     private void refreshPartyCombobox() {
 
-        Object selectedParty = partySelector.getValue();
+        // Don't fire change events due to combo box refreshes from the datastore
+        enableValueChangeEventFiring = false;
+
+        String selectedParty = (String)partySelector.getValue();
 
         BeanContainer<String, Party> beanContainer = new BeanContainer<>(Party.class);
         beanContainer.setBeanIdProperty("partyName");
@@ -76,6 +102,8 @@ public class PartySelector extends VerticalLayout {
         partySelector.setContainerDataSource(beanContainer);
         partySelector.setValue(selectedParty);
 
+        enableValueChangeEventFiring = true;
+
     }
 
 
@@ -85,6 +113,15 @@ public class PartySelector extends VerticalLayout {
         newParty.setInactive(false);
         repo.save(newParty);
         new Notification(partyName + " has been created.", "", Notification.Type.TRAY_NOTIFICATION, true).show(Page.getCurrent());
+    }
+
+
+    private void fireLocalValueChangeListenersIfNecessary(ValueChangeEvent e) {
+        if (enableValueChangeEventFiring) {
+            valueChangeListeners.stream().forEach(listener -> {
+                listener.valueChange(e);
+            });
+        }
     }
 
 }
