@@ -14,6 +14,8 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Reindeer;
 import javax.annotation.PostConstruct;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -24,16 +26,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SpringView(name = UiRouter.ViewName.PARTIES)
 public class PartyPanel extends Panel implements DefaultView {
 
-    private final PartyRepository repo;
+    private final PartyRepository partyRepo;
+    private final PartyNoteRepository partyNoteRepo;
 
     private final PartySelector partySelector;
     private final VerticalLayout partyDetailContainer;
 
 
     @Autowired
-    public PartyPanel(PartyRepository repo) {
+    public PartyPanel(PartyRepository repo, PartyNoteRepository partyNoteRepo) {
         super("Parties");
-        this.repo = repo;
+        this.partyRepo = repo;
+        this.partyNoteRepo = partyNoteRepo;
         partySelector = new PartySelector(repo);
         partyDetailContainer = new VerticalLayout();
     }
@@ -65,11 +69,11 @@ public class PartyPanel extends Panel implements DefaultView {
 
     private void selectedPartyChanged(Property.ValueChangeEvent event) {
 
-        String newParty = (String)event.getProperty().getValue();
+        String newParty = String.valueOf(event.getProperty().getValue());
         setupPartyTabs(newParty);
         Notification.show(
                 "Value changed:",
-                String.valueOf(event.getProperty().getValue()),
+                newParty,
                 Type.TRAY_NOTIFICATION
         );
     }
@@ -91,10 +95,38 @@ public class PartyPanel extends Panel implements DefaultView {
 
 
     private RichTextArea getNotesArea() {
-        RichTextArea notes = new RichTextArea();
-        notes.setWidth("100%");
-        notes.setHeight("100%");
-        return notes;
+
+        RichTextArea noteArea = new RichTextArea();
+        noteArea.setStyleName("noImageButton");
+        noteArea.setWidth("100%");
+        noteArea.setHeight("100%");
+
+        String richText = getPartyNote().getNote();
+        noteArea.setValue(null == richText ? "" : richText);
+
+        noteArea.addValueChangeListener(event -> {
+            Notification.show(
+                    "Trigger a save to the notes",
+                    String.valueOf(event.getProperty().getValue()),
+                    Type.TRAY_NOTIFICATION
+            );
+
+            PartyNote partyNote = getPartyNote();
+            partyNote.setNote(Jsoup.clean(noteArea.getValue(), Whitelist.simpleText()));
+            partyNoteRepo.save(partyNote);
+        });
+
+        return noteArea;
     }
 
+    private PartyNote getPartyNote() {
+        Party selectedParty = partySelector.getSelectedParty();
+        PartyNote partyNote = selectedParty.getNote();
+        if (null == partyNote) {
+            partyNote = new PartyNote();
+            partyNote.setParty(selectedParty);
+            selectedParty.setNote(partyNote);
+        }
+        return partyNote;
+    }
 }

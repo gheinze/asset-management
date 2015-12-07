@@ -20,4 +20,5 @@
 ./tenant/address/address.sql
 
 ./tenant/party/party.sql
+./tenant/party/party_note.sql
 ./tenant/party/party_address.sql

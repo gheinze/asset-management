@@ -28,6 +28,7 @@ public class PartySelector extends VerticalLayout {
     private final List<Property.ValueChangeListener> valueChangeListeners;
 
     private boolean enableValueChangeEventFiring = true;
+    private BeanContainer<String, Party> beanContainer;
 
 
     public PartySelector(PartyRepository repo) {
@@ -47,6 +48,9 @@ public class PartySelector extends VerticalLayout {
         return (String)partySelector.getValue();
     }
 
+    public Party getSelectedParty() {
+        return beanContainer.getItem(getValue()).getBean();
+    }
 
     private void init() {
         setupPartySelector();
@@ -91,7 +95,7 @@ public class PartySelector extends VerticalLayout {
 
         String selectedParty = (String)partySelector.getValue();
 
-        BeanContainer<String, Party> beanContainer = new BeanContainer<>(Party.class);
+        beanContainer = new BeanContainer<>(Party.class);
         beanContainer.setBeanIdProperty("partyName");
         beanContainer.addAll(
                 showInactiveCheckBox.getValue() ?

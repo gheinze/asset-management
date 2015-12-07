@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Version;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,10 @@ public class Party implements Serializable {
     private @Version @Generated(GenerationTime.ALWAYS) Integer version;
     private String partyName;
     private Boolean inactive;
+
+    @OneToOne(mappedBy="party")
+    private PartyNote note;
+
 
     @Override
     public String toString() {
