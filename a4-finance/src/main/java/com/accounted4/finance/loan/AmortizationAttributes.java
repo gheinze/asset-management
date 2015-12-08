@@ -23,7 +23,7 @@ public class AmortizationAttributes {
     @DecimalMin(value = "0.00", inclusive = false) @NotNull
     private MonetaryAmount loanAmount;      // original principal amount
 
-    @DecimalMin("0.00")
+    //@DecimalMin("0.00")
     private MonetaryAmount regularPayment;  // monthly payment to be made, assumed monthly, null allowed since it will be calculated
 
     private LocalDate startDate;            // loan start date

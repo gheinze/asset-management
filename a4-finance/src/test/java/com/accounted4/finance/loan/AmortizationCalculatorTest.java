@@ -288,44 +288,6 @@ public class AmortizationCalculatorTest {
 
 
     @Test
-    public void testGenerateScheduleInterestOnlyMonthlyWithOverPayment() {
-        AmortizationAttributes amAttrs = generateAmortizationAttributesObjectTemplate();
-        MonetaryAmount loanAmount = ofUSD(10000);
-        amAttrs.setLoanAmount(loanAmount);
-        amAttrs.setInterestRateAsPercent(10.);
-        amAttrs.setInterestOnly(true);
-        amAttrs.setPaymentFrequency(TimePeriod.Monthly.getPeriodsPerYear());
-        int termInMonths = 12;
-        amAttrs.setTermInMonths(termInMonths);
-        amAttrs.setAdjustmentDate(LocalDate.of(2016, Month.JANUARY, 1));
-
-        MonetaryAmount overPayment = ofUSD(10);
-        MonetaryAmount expectedInterest = ofUSD(83.34);
-        MonetaryAmount expectedPrincipal = overPayment;
-        MonetaryAmount expectedPayment = expectedInterest.add(overPayment);
-        amAttrs.setRegularPayment(expectedInterest.add(overPayment));
-
-        List<ScheduledPayment> schedule = AmortizationCalculator.generateSchedule(amAttrs);
-        assertEquals("Interest only schedule term in months", termInMonths, schedule.size());
-
-        LocalDate expectedDate = amAttrs.getAdjustmentDate();
-        int paymentNumber = 0;
-
-        for (ScheduledPayment payment : schedule) {
-            expectedDate = expectedDate.plusMonths(1L);
-            paymentNumber += 1;
-            assertEquals("Interest only schedule with over payment: payment number", paymentNumber, payment.getPaymentNumber());
-            assertEquals("Interest only schedule with over payment: payment date", expectedDate, payment.getPaymentDate());
-            assertEquals("Interest only schedule with over payment: payment interest", expectedInterest, payment.getInterest());
-            assertEquals("Interest only schedule with over payment: payment principal", expectedPrincipal, payment.getPrincipal());
-            assertEquals("Interest only schedule with over payment: payment total payment", expectedPayment, payment.getPayment());
-            assertEquals("Interest only schedule with over payment: payment loan principal", loanAmount.subtract(overPayment.multiply(paymentNumber)), payment.getBalance());
-        }
-
-    }
-
-
-    @Test
     public void testGenerateScheduleInterestOnlyArrayBounds() {
         AmortizationAttributes amAttrs = generateAmortizationAttributesObjectTemplate();
         amAttrs.setLoanAmount(ofUSD(10000));
@@ -364,12 +326,12 @@ public class AmortizationCalculatorTest {
         amAttrs.setLoanAmount(ofUSD(200000));
         amAttrs.setInterestRateAsPercent(8.);
         amAttrs.setInterestOnly(false);
-        amAttrs.setRegularPayment(ofUSD(0));
         amAttrs.setPaymentFrequency(TimePeriod.Monthly.getPeriodsPerYear());
         int termInMonths = 36;
         amAttrs.setTermInMonths(termInMonths);
         amAttrs.setAmortizationPeriodInMonths(20 * 12);
         amAttrs.setCompoundingPeriodsPerYear(2);
+       amAttrs.setRegularPayment(AmortizationCalculator.getPeriodicPayment(amAttrs));
 
         List<ScheduledPayment> schedule = AmortizationCalculator.generateSchedule(amAttrs);
 
@@ -394,12 +356,12 @@ public class AmortizationCalculatorTest {
         amAttrs.setLoanAmount(loanAmount);
         amAttrs.setInterestRateAsPercent(7.);
         amAttrs.setInterestOnly(false);
-        amAttrs.setRegularPayment(ofUSD(0));
         amAttrs.setPaymentFrequency(TimePeriod.Monthly.getPeriodsPerYear());
         int termInMonths = 12;
         amAttrs.setTermInMonths(termInMonths);
         amAttrs.setAmortizationPeriodInMonths(12);
         amAttrs.setCompoundingPeriodsPerYear(2);
+        amAttrs.setRegularPayment(AmortizationCalculator.getPeriodicPayment(amAttrs));
 
         List<ScheduledPayment> schedule = AmortizationCalculator.generateSchedule(amAttrs);
 

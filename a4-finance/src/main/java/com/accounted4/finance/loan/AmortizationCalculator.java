@@ -136,8 +136,10 @@ public class AmortizationCalculator {
         return new AbstractList<ScheduledPayment>() {
 
             private final MonetaryAmount calculatedPayment = getPeriodicPayment(amAttrs);
-            private final MonetaryAmount actualPayment = getActualPayment(amAttrs);
-            private final MonetaryAmount overPayment = actualPayment.subtract(calculatedPayment);
+            private final MonetaryAmount principal = calculatedPayment.multiply(0l);
+
+//            private final MonetaryAmount actualPayment = getActualPayment(amAttrs);
+//            private final MonetaryAmount overPayment = actualPayment.subtract(calculatedPayment);
             private final int expectedNumberOfPayments = getNumberOfExpectedPayments(amAttrs);
 
 
@@ -147,12 +149,8 @@ public class AmortizationCalculator {
                 ScheduledPayment payment =  getTemplatePayment(index, expectedNumberOfPayments, amAttrs);
 
                 payment.setInterest(calculatedPayment);
-                payment.setPrincipal(overPayment);
-                payment.setBalance(
-                        amAttrs.getLoanAmount().subtract(
-                                overPayment.multiply(payment.getPaymentNumber())
-                        )
-                );
+                payment.setPrincipal(principal);
+                payment.setBalance(amAttrs.getLoanAmount());
 
                 return payment;
 
@@ -212,11 +210,9 @@ public class AmortizationCalculator {
 
 
     private static MonetaryAmount getActualPayment(AmortizationAttributes amAttrs) {
-        MonetaryAmount calculatedPayment = getPeriodicPayment(amAttrs);
-        if (null == amAttrs.getRegularPayment() || calculatedPayment.isGreaterThan(amAttrs.getRegularPayment())) {
-            return calculatedPayment;
-        }
-        return amAttrs.getRegularPayment();
+        return null == amAttrs.getRegularPayment() ?
+            getPeriodicPayment(amAttrs) :
+            amAttrs.getRegularPayment();
     }
 
 
