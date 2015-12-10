@@ -7704,6 +7704,6 @@ body .a4am.v-app .v-app-loading {
 	-ms-transform: translate(-50%, -50%) !important;
 }
 
-.a4am .noImageButton .gwt-RichTextToolbar .gwt-PushButton [title="Insert Image"] {
+.a4am .noImageButton .gwt-RichTextToolbar .gwt-RichTextToobar-top .gwt-PushButton gwt-PushButton-up [title="Insert Image"] {
 	display: none;
 }

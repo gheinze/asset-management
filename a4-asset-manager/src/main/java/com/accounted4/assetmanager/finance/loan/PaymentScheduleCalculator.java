@@ -269,7 +269,7 @@ public class PaymentScheduleCalculator extends Panel implements DefaultView {
         amAttrBinder.commit();
         AmortizationAttributes amAttrs = amAttrBinder.getItemDataSource().getBean();
         // We don't use adjustment date in this ui, but schedules are based on adjusment date, not start date.
-        amAttrs.setAdjustmentDate(amAttrs.getAdjustmentDate());
+        amAttrs.setAdjustmentDate(amAttrs.getStartDate());
         return amAttrs;
     }
 

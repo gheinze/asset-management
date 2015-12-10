@@ -1,12 +1,18 @@
 package com.accounted4.assetmanager.core.party;
 
 
+import com.accounted4.assetmanager.core.address.Address;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Version;
 import lombok.Getter;
@@ -33,6 +39,15 @@ public class Party implements Serializable {
 
     @OneToOne(mappedBy="party")
     private PartyNote note;
+
+
+    @ManyToMany
+    @JoinTable(name="party_address",
+            joinColumns = { @JoinColumn(name="party_id", nullable = false, updatable = false) },
+            inverseJoinColumns = { @JoinColumn(name="address_id", nullable = false, updatable = false) }
+    )
+    private Set<Address> addresses = new HashSet<>(0);
+
 
 
     @Override

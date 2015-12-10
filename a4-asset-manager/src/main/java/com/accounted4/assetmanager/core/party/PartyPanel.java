@@ -6,8 +6,6 @@ import com.vaadin.data.Property;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.RichTextArea;
 import com.vaadin.ui.TabSheet;
@@ -68,14 +66,8 @@ public class PartyPanel extends Panel implements DefaultView {
     }
 
     private void selectedPartyChanged(Property.ValueChangeEvent event) {
-
         String newParty = String.valueOf(event.getProperty().getValue());
         setupPartyTabs(newParty);
-        Notification.show(
-                "Value changed:",
-                newParty,
-                Type.TRAY_NOTIFICATION
-        );
     }
 
     private void setupPartyTabs(String party) {
@@ -85,7 +77,7 @@ public class PartyPanel extends Panel implements DefaultView {
         partyTabSheet.setWidth("100%");
         partyTabSheet.setHeight("100%");
 
-        partyTabSheet.addTab(getNotesArea(), "Notes for " + party);
+        partyTabSheet.addTab(getNotesArea(), "Notes");
         partyTabSheet.addTab(new Label("Tab 2 Content"), "Tab2");
 
         partyDetailContainer.removeAllComponents();
@@ -97,7 +89,7 @@ public class PartyPanel extends Panel implements DefaultView {
     private RichTextArea getNotesArea() {
 
         RichTextArea noteArea = new RichTextArea();
-        noteArea.setStyleName("noImageButton");
+        noteArea.addStyleName("noImageButton");
         noteArea.setWidth("100%");
         noteArea.setHeight("100%");
 
@@ -105,12 +97,6 @@ public class PartyPanel extends Panel implements DefaultView {
         noteArea.setValue(null == richText ? "" : richText);
 
         noteArea.addValueChangeListener(event -> {
-            Notification.show(
-                    "Trigger a save to the notes",
-                    String.valueOf(event.getProperty().getValue()),
-                    Type.TRAY_NOTIFICATION
-            );
-
             PartyNote partyNote = getPartyNote();
             partyNote.setNote(Jsoup.clean(noteArea.getValue(), Whitelist.simpleText()));
             partyNoteRepo.save(partyNote);

@@ -42,7 +42,7 @@ and open the template in the editor.
         -ms-transform: translate(-50%, -50%) !important;
     }
 
-    .noImageButton .gwt-RichTextToolbar .gwt-PushButton [title="Insert Image"] {
+    .noImageButton .gwt-RichTextToolbar .gwt-RichTextToobar-top .gwt-PushButton  gwt-PushButton-up [title="Insert Image"] {
         display: none;
     }
 
