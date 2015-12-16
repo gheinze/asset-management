@@ -1,25 +1,20 @@
 package com.accounted4.assetmanager.core.party;
 
 
+import com.accounted4.assetmanager.AbstractEntity;
 import com.accounted4.assetmanager.core.address.Address;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Version;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 
 /**
  *
@@ -28,23 +23,20 @@ import org.hibernate.annotations.GenerationTime;
 @Getter @Setter
 @RequiredArgsConstructor
 @Entity
-public class Party implements Serializable {
+public class Party extends AbstractEntity {
 
     private static final long serialVersionUID = 1L;
 
-    private @Id @GeneratedValue(strategy=GenerationType.IDENTITY) Long id;
-    private @Version @Generated(GenerationTime.ALWAYS) Integer version;
     private String partyName;
-    private Boolean inactive;
 
     @OneToOne(mappedBy="party")
     private PartyNote note;
 
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="party_address",
-            joinColumns = { @JoinColumn(name="party_id", nullable = false, updatable = false) },
-            inverseJoinColumns = { @JoinColumn(name="address_id", nullable = false, updatable = false) }
+            joinColumns = { @JoinColumn(name = "party_id", nullable = false, updatable = false) },
+            inverseJoinColumns = { @JoinColumn(name = "address_id", nullable = false, updatable = false) }
     )
     private Set<Address> addresses = new HashSet<>(0);
 

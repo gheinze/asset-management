@@ -16,8 +16,8 @@
 #     ALTER USER postgres SET search_path TO tia,public;
 
 BUILD_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )"/../../../target && pwd )
-
-CREATE_LIST=create_list.txt
+SOURCE_DIR=$( dirname "${BASH_SOURCE[0]}" )
+CREATE_LIST=$SOURCE_DIR/create_list.txt
 CREATE_SCRIPT=$BUILD_DIR/recreate_schemas.sql
 
 mkdir -p $BUILD_DIR
@@ -33,7 +33,7 @@ while read fileName; do
         echo ---------------------------   >> $CREATE_SCRIPT
         echo -- Processing File: $fileName >> $CREATE_SCRIPT
         echo ---------------------------   >> $CREATE_SCRIPT
-        cat $fileName                      >> $CREATE_SCRIPT
+        cat $SOURCE_DIR/$fileName          >> $CREATE_SCRIPT
     fi
 done < $CREATE_LIST
 

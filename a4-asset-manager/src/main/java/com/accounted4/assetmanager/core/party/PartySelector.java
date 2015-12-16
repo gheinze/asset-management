@@ -15,7 +15,8 @@ import org.springframework.data.domain.Sort;
 import org.vaadin.dialogs.ConfirmDialog;
 
 /**
- *
+ * UI component for the selection and creation of new parties.
+ * 
  * @author gheinze
  */
 public class PartySelector extends VerticalLayout {

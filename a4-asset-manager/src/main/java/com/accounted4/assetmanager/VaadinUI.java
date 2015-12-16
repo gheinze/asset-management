@@ -3,6 +3,7 @@ package com.accounted4.assetmanager;
 import com.accounted4.assetmanager.util.vaadin.converter.ConverterFactory;
 
 import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.Title;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
  */
 @SpringUI
 @Theme("a4am")
+@Title("Accounted4 Asset Management")
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class VaadinUI extends UI {
 

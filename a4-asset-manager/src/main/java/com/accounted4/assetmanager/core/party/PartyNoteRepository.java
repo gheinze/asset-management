@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author gheinze
  */
-public interface PartyNoteRepository  extends JpaRepository<PartyNote, Long> {
+public interface PartyNoteRepository extends JpaRepository<PartyNote, Long> {
 }
