@@ -1,7 +1,6 @@
 package com.accounted4.assetmanager.core.address;
 
 import com.accounted4.assetmanager.AbstractEntity;
-import java.io.Serializable;
 import javax.persistence.Entity;
 import lombok.Getter;
 
@@ -11,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 @Entity
-public class Country extends AbstractEntity implements Serializable {
+public class Country extends AbstractEntity {
 
     private static final long serialVersionUID = 1L;
 

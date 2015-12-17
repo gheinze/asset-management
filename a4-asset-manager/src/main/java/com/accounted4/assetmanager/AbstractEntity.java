@@ -21,9 +21,11 @@ import org.hibernate.annotations.GenerationTime;
 @MappedSuperclass
 public class AbstractEntity implements Serializable {
 
-    private @Id @GeneratedValue(strategy=GenerationType.IDENTITY) Long id;
-    private @Version @Generated(GenerationTime.ALWAYS) Integer version;
-    @Getter @Setter protected Boolean inactive;
+    private static final long serialVersionUID = 1L;
+
+    private @Id @GeneratedValue(strategy=GenerationType.IDENTITY) @Getter Long id;
+    private @Version @Generated(GenerationTime.ALWAYS) @Getter Integer version;
+    @Getter @Setter protected Boolean inactive = Boolean.FALSE;
 
     @Override
     public int hashCode() {

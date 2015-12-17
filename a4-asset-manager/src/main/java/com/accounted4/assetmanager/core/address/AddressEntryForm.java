@@ -25,6 +25,8 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
 @SpringView()
 public class AddressEntryForm extends AbstractForm<Address> implements DefaultView {
 
+    private static final long serialVersionUID = 1L;
+
     private Country defaultCountry = null;
     private CountrySubdivision defaultCountrySubdivision = null;
 

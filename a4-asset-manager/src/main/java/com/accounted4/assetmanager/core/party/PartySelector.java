@@ -16,10 +16,12 @@ import org.vaadin.dialogs.ConfirmDialog;
 
 /**
  * UI component for the selection and creation of new parties.
- * 
+ *
  * @author gheinze
  */
 public class PartySelector extends VerticalLayout {
+
+    private static final long serialVersionUID = 1L;
 
     private final PartyRepository repo;
 

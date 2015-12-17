@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +25,8 @@ public class Address extends AbstractEntity {
 
     private String line1;
     private String line2;
+
+    @NotNull
     private String city;
 
     @OneToOne(fetch = FetchType.EAGER)

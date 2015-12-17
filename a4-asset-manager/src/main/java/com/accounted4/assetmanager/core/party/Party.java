@@ -3,7 +3,6 @@ package com.accounted4.assetmanager.core.party;
 
 import com.accounted4.assetmanager.AbstractEntity;
 import com.accounted4.assetmanager.core.address.Address;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Entity;
@@ -15,6 +14,7 @@ import javax.persistence.OneToOne;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 
 /**
  *
@@ -30,15 +30,17 @@ public class Party extends AbstractEntity {
     private String partyName;
 
     @OneToOne(mappedBy="party")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private PartyNote note;
 
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="party_address",
-            joinColumns = { @JoinColumn(name = "party_id", nullable = false, updatable = false) },
-            inverseJoinColumns = { @JoinColumn(name = "address_id", nullable = false, updatable = false) }
+            joinColumns = { @JoinColumn(name = "party_id", nullable = false) },
+            inverseJoinColumns = { @JoinColumn(name = "address_id", nullable = false) }
     )
-    private Set<Address> addresses = new HashSet<>(0);
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private Set<Address> addresses;
 
 
 

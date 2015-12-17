@@ -98,10 +98,10 @@ public class ApplicationLayout extends VerticalLayout {
         setExpandRatio(mainArea, 1.0f);
     }
 
-    private void addFooter() {
-        HorizontalLayout footer  = new HorizontalLayout();
-        addComponent(footer);
-    }
+//    private void addFooter() {
+//        HorizontalLayout footer  = new HorizontalLayout();
+//        addComponent(footer);
+//    }
 
 
 }
