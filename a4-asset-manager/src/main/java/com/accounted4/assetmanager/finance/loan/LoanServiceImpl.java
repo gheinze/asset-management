@@ -53,11 +53,8 @@ public class LoanServiceImpl implements LoanService {
         customParameters.put("amount", amAttrs.getLoanAmount());
         customParameters.put("rate", amAttrs.getInterestRateAsPercent());
 
-        MonetaryAmount periodicPayment = getPeriodicPayment(amAttrs);
         MonetaryAmount requestedMonthlyPayment = amAttrs.getRegularPayment();
-        if (null != requestedMonthlyPayment && requestedMonthlyPayment.isGreaterThan(periodicPayment)) {
-            periodicPayment = requestedMonthlyPayment;
-        }
+        MonetaryAmount periodicPayment = (null == requestedMonthlyPayment) ? getPeriodicPayment(amAttrs) : requestedMonthlyPayment;
         customParameters.put("monthlyPayment", periodicPayment);
 
         customParameters.put("term", amAttrs.getTermInMonths());
