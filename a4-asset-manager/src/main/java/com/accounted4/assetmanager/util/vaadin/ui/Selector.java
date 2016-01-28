@@ -26,10 +26,10 @@ public class Selector<R> extends VerticalLayout {
     private static final long serialVersionUID = 1L;
 
 
-    private final Function<Boolean, BeanContainer<String, R>> beanContainerGenerator;
+    private final Function<Boolean, BeanContainer<String, R>> comboboxDataGenerator;
     private final Consumer<String> newItemPersistor;
 
-    private final ComboBox selector;
+    private final ComboBox comboBox;
     private final CheckBox showInactiveCheckBox;
 
     private final List<Property.ValueChangeListener> valueChangeListeners;
@@ -40,15 +40,15 @@ public class Selector<R> extends VerticalLayout {
 
     /**
      *
-     * @param beanContainerGenerator A method to create the backing bean container for the drop down combobox.
+     * @param comboboxDataGenerator A method to create the backing bean container for the drop down combobox.
      * The combobox has a String for display purposes and the backing bean type, R.
      * @param newItemPersistor Method to create a new R object based on the String entered into the combobox.
      */
-    public Selector(Function<Boolean, BeanContainer<String, R>> beanContainerGenerator, Consumer<String> newItemPersistor) {
-        this.beanContainerGenerator = beanContainerGenerator;
+    public Selector(Function<Boolean, BeanContainer<String, R>> comboboxDataGenerator, Consumer<String> newItemPersistor) {
+        this.comboboxDataGenerator = comboboxDataGenerator;
         this.newItemPersistor = newItemPersistor;
         valueChangeListeners = new ArrayList<>();
-        this.selector = new ComboBox();
+        this.comboBox = new ComboBox();
         this.showInactiveCheckBox = new CheckBox("show inactive");
         init();
     }
@@ -59,41 +59,43 @@ public class Selector<R> extends VerticalLayout {
 
 
     public String getValue() {
-        return (String)selector.getValue();
+        return (String)comboBox.getValue();
     }
 
     public R getSelected() {
-        return beanContainer.getItem(getValue()).getBean();
+        String selectedValue = getValue();
+        return null == selectedValue ? null : beanContainer.getItem(selectedValue).getBean();
     }
 
     private void init() {
         setupSelector();
         showInactiveCheckBox.setImmediate(true);
-        addComponents(selector, showInactiveCheckBox);
-        selector.addValueChangeListener(e -> {
+        addComponents(comboBox, showInactiveCheckBox);
+        comboBox.addValueChangeListener(e -> {
             fireLocalValueChangeListenersIfNecessary(e);
         });
+        refreshCombobox();
     }
 
 
     private void setupSelector() {
 
-        selector.setInputPrompt("Filter");
-        selector.setDescription("Type a new name and hit Enter to create a new list item");
-        selector.setFilteringMode(FilteringMode.CONTAINS);
-        selector.setNullSelectionAllowed(false);
-        selector.setImmediate(true);
+        comboBox.setInputPrompt("Filter");
+        comboBox.setDescription("Type a new name and hit Enter to create a new list item");
+        comboBox.setFilteringMode(FilteringMode.CONTAINS);
+        comboBox.setNullSelectionAllowed(false);
+        comboBox.setImmediate(true);
 
-        selector.addFocusListener(e -> refreshCombobox());
+        comboBox.addFocusListener(e -> refreshCombobox());
 
-        selector.setNewItemsAllowed(true);
+        comboBox.setNewItemsAllowed(true);
 
-        selector.setNewItemHandler(newItemCaption -> {
+        comboBox.setNewItemHandler(newItemCaption -> {
             ConfirmDialog.show(getUI(), "Create new item: " + newItemCaption + "?", dialog -> {
                 if (dialog.isConfirmed()) {
                     persistNewItem(newItemCaption);
                     refreshCombobox();
-                    selector.setValue(newItemCaption);
+                    comboBox.setValue(newItemCaption);
                 }
             });
         });
@@ -106,12 +108,12 @@ public class Selector<R> extends VerticalLayout {
         // Don't fire change events due to combo box refreshes from the datastore
         enableValueChangeEventFiring = false;
 
-        String selected = (String)selector.getValue();
+        String selected = (String)comboBox.getValue();
 
-        beanContainer = beanContainerGenerator.apply(showInactiveCheckBox.getValue());
+        beanContainer = comboboxDataGenerator.apply(showInactiveCheckBox.getValue());
 
-        selector.setContainerDataSource(beanContainer);
-        selector.setValue(selected);
+        comboBox.setContainerDataSource(beanContainer);
+        comboBox.setValue(selected);
 
         enableValueChangeEventFiring = true;
 

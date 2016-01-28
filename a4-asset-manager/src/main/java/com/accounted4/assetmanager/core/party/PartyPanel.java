@@ -2,42 +2,31 @@ package com.accounted4.assetmanager.core.party;
 
 import com.accounted4.assetmanager.UiRouter;
 import com.accounted4.assetmanager.core.address.AddressDisplay;
-import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
-import com.accounted4.assetmanager.util.vaadin.ui.Selector;
-import com.vaadin.data.Property;
+import com.accounted4.assetmanager.util.vaadin.ui.SelectorDetailPanel;
 import com.vaadin.data.util.BeanContainer;
-import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.RichTextArea;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.Reindeer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import javax.annotation.PostConstruct;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
 /**
+ * Master-detail panel for displaying Parties.
  *
  * @author gheinze
  */
 @UIScope
 @SpringView(name = UiRouter.ViewName.PARTIES)
-public class PartyPanel extends Panel implements DefaultView {
+public class PartyPanel extends SelectorDetailPanel<Party> {
 
     private final PartyRepository partyRepo;
     private final PartyNoteRepository partyNoteRepo;
     private final AddressDisplay addressDisplay;
-
-    private final Selector<Party> partySelector;
-    private final VerticalLayout partyDetailContainer;
 
 
     @Autowired
@@ -46,41 +35,22 @@ public class PartyPanel extends Panel implements DefaultView {
         this.partyRepo = partyRepo;
         this.partyNoteRepo = partyNoteRepo;
         this.addressDisplay = addressDisplay;
-        partySelector = createPartySelector();
-        partyDetailContainer = new VerticalLayout();
+        defineTabs();
     }
 
-    @PostConstruct
-    public void init() {
-
-        partySelector.addValueChangeListener(event -> {
-            selectedPartyChanged(event);
-        });
-
-        partyDetailContainer.setSizeFull();
-
-        Label verticalSpacer = new Label();
-        verticalSpacer.setHeight("20px");
-        verticalSpacer.setWidth("100%");
-
-        VerticalLayout mainLayout = new VerticalLayout();
-        mainLayout.addComponents(partySelector, verticalSpacer, partyDetailContainer);
-        mainLayout.setSizeFull();
-        mainLayout.setExpandRatio(partyDetailContainer, 1.0f);
-
-        setContent(mainLayout);
-
-        setSizeFull();
-        addStyleName(Reindeer.PANEL_LIGHT);
+    private void defineTabs() {
+        addDetailTab(getNotesAreaGenerator(), "Notes");
+        addDetailTab(getAddressDisplay(), "Addresses");
 
     }
 
 
     private static final String PARTY_NAME_FIELD = "partyName";
 
-    private Selector<Party> createPartySelector() {
+    @Override
+    public Function<Boolean, BeanContainer<String, Party>> getBeanContainerGenerator() {
 
-        Function<Boolean, BeanContainer<String, Party>> beanContainerGenerator = (showInactive) -> {
+        return (showInactive) -> {
             BeanContainer<String, Party> beanContainer = new BeanContainer<>(Party.class);
             beanContainer.setBeanIdProperty(PARTY_NAME_FIELD);
             beanContainer.addAll(
@@ -91,64 +61,51 @@ public class PartyPanel extends Panel implements DefaultView {
             return beanContainer;
         };
 
+    }
 
-        Consumer<String> newItemPersistor = (partyName) -> {
+
+    @Override
+    public Consumer<String> getNewItemPersistor() {
+
+        return (partyName) -> {
             Party newParty = new Party();
             newParty.setPartyName(partyName);
             newParty.setInactive(false);
             partyRepo.save(newParty);
-            new Notification(partyName + " has been created.", "", Notification.Type.TRAY_NOTIFICATION, true).show(Page.getCurrent());
         };
 
-
-        Selector<Party> selector = new Selector<>(beanContainerGenerator, newItemPersistor);
-
-        return selector;
     }
 
-    private void selectedPartyChanged(Property.ValueChangeEvent event) {
-        setupPartyTabs();
+    private Function<Party, Component> getAddressDisplay() {
+        return (selectedParty) -> {
+            addressDisplay.setParty(selectedParty);
+            return addressDisplay;
+        };
     }
 
-    private void setupPartyTabs() {
+    private Function<Party, Component> getNotesAreaGenerator() {
 
-        TabSheet partyTabSheet = new TabSheet();
+        return (selectedParty) -> {
+            
+            RichTextArea noteArea = new RichTextArea();
+            noteArea.addStyleName("noImageButton");
+            noteArea.setWidth("100%");
+            noteArea.setHeight("100%");
 
-        partyTabSheet.setWidth("100%");
-        partyTabSheet.setHeight("100%");
+            String richText = getPartyNote(selectedParty).getNote();
+            noteArea.setValue(null == richText ? "" : richText);
 
-        addressDisplay.setParty(partySelector.getSelected());
+            noteArea.addValueChangeListener(event -> {
+                PartyNote partyNote = getPartyNote(selectedParty);
+                partyNote.setNote(Jsoup.clean(noteArea.getValue(), Whitelist.simpleText()));
+                partyNoteRepo.save(partyNote);
+            });
 
-        partyTabSheet.addTab(getNotesArea(), "Notes");
-        partyTabSheet.addTab(addressDisplay, "Addresses");
-
-        partyDetailContainer.removeAllComponents();
-        partyDetailContainer.addComponent(partyTabSheet);
-
+            return noteArea;
+        };
     }
 
-
-    private RichTextArea getNotesArea() {
-
-        RichTextArea noteArea = new RichTextArea();
-        noteArea.addStyleName("noImageButton");
-        noteArea.setWidth("100%");
-        noteArea.setHeight("100%");
-
-        String richText = getPartyNote().getNote();
-        noteArea.setValue(null == richText ? "" : richText);
-
-        noteArea.addValueChangeListener(event -> {
-            PartyNote partyNote = getPartyNote();
-            partyNote.setNote(Jsoup.clean(noteArea.getValue(), Whitelist.simpleText()));
-            partyNoteRepo.save(partyNote);
-        });
-
-        return noteArea;
-    }
-
-    private PartyNote getPartyNote() {
-        Party selectedParty = partySelector.getSelected();
+    private PartyNote getPartyNote(Party selectedParty) {
         PartyNote partyNote = selectedParty.getNote();
         if (null == partyNote) {
             partyNote = new PartyNote();

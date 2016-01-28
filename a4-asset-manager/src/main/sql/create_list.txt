@@ -22,3 +22,5 @@
 ./tenant/party/party.sql
 ./tenant/party/party_note.sql
 ./tenant/party/party_address.sql
+
+./tenant/party/loan.sql
