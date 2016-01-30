@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+
 /**
  * Bean to hold the properties required to compute amortized payments.
  *
@@ -45,5 +46,28 @@ public class AmortizationAttributes {
 
     @DecimalMin("0.001") @Max(50)  @NotNull
     private double interestRateAsPercent;   // the nominal interest rate being paid (effective rate can be higher if compounding)
+
+
+
+    public static AmortizationAttributes getDefaultInstance(MonetaryAmount loanAmount) {
+
+        AmortizationAttributes amAttrs = new AmortizationAttributes();
+
+        amAttrs.setLoanAmount(loanAmount);
+        amAttrs.setRegularPayment(loanAmount.multiply(0L));
+
+        LocalDate adjustedDate = AmortizationCalculator.getNextFirstOrFifteenthOfTheMonth(LocalDate.now());
+        amAttrs.setAdjustmentDate(adjustedDate);
+        amAttrs.setStartDate(adjustedDate);
+
+        amAttrs.setTermInMonths(12);
+        amAttrs.setInterestOnly(false);
+        amAttrs.setAmortizationPeriodInMonths(240);
+        amAttrs.setCompoundingPeriodsPerYear(2);
+        amAttrs.setPaymentFrequency(12);
+        amAttrs.setInterestRateAsPercent(10.);
+
+        return amAttrs;
+    }
 
 }

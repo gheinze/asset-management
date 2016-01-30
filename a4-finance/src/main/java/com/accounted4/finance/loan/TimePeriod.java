@@ -19,9 +19,6 @@ public enum TimePeriod {
     ;
 
 
-    //private Function<AmortizationAttributes, Double> periodRateCalculator;
-
-
     @Getter private final int periodsPerYear;
     @Getter private final boolean compoundingPeriod;
 
