@@ -24,3 +24,4 @@
 ./tenant/party/party_address.sql
 
 ./tenant/party/loan.sql
+./tenant/party/loan_terms.sql

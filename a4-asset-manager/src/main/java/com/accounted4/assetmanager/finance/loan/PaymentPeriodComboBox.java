@@ -19,10 +19,10 @@ public class PaymentPeriodComboBox {
 
         ComboBox paymentFrequency = new ComboBox("Payment frequency", periodContainer);
         paymentFrequency.setNullSelectionAllowed(false);
+        paymentFrequency.setTextInputAllowed(false);
         paymentFrequency.setItemCaptionPropertyId("displayName");
 
         binder.bind(paymentFrequency, "paymentFrequency");
-        paymentFrequency.select(TimePeriod.Monthly.getPeriodsPerYear()); // called after bind
 
         return paymentFrequency;
 

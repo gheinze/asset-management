@@ -50,7 +50,12 @@ public class HibernateConfig {
 
         Map<String, Object> jpaProperties = new HashMap<>();
         jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        jpaProperties.put("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
+
+        // Improved naming strategy deprecated as of hibernate 5.0
+        // jpaProperties.put("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
+        jpaProperties.put("hibernate.implicit_naming_strategy", "org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyHbmImpl");
+        jpaProperties.put("hibernate.physical_naming_strategy", "com.accounted4.assetmanager.config.HibernateLegacyImprovedNamingStrategy");
+
         jpaProperties.put("hibernate.show_sql", "true");
         jpaProperties.put("hibernate.format_sql", "true");
         jpaProperties.put(org.hibernate.cfg.Environment.MULTI_TENANT, MultiTenancyStrategy.SCHEMA);

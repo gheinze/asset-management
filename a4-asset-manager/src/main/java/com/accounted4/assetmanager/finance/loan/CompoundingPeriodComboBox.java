@@ -20,10 +20,11 @@ public class CompoundingPeriodComboBox {
 
         ComboBox compoundingPeriod = new ComboBox("Compounded", compoundingPeriodContainer);
         compoundingPeriod.setNullSelectionAllowed(false);
+        compoundingPeriod.setTextInputAllowed(false);
         compoundingPeriod.setItemCaptionPropertyId("displayName");
 
         binder.bind(compoundingPeriod, "compoundingPeriodsPerYear");
-        compoundingPeriod.select(TimePeriod.SemiAnnually.getPeriodsPerYear()); // called after bind
+        //compoundingPeriod.select(TimePeriod.SemiAnnually.getPeriodsPerYear()); // called after bind
 
         return compoundingPeriod;
 

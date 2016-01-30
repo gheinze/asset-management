@@ -1,7 +1,11 @@
 package com.accounted4.assetmanager.loan;
 
 import com.accounted4.assetmanager.UiRouter;
+import com.accounted4.assetmanager.finance.loan.LoanService;
+import com.accounted4.assetmanager.finance.loan.TermsPanel;
 import com.accounted4.assetmanager.util.vaadin.ui.SelectorDetailPanel;
+import com.accounted4.finance.loan.AmortizationAttributes;
+import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -24,19 +28,45 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
     private static final String LOAN_NAME_FIELD = "loanName";
 
     private final LoanRepository loanRepo;
+    private final LoanService loanService;
 
     @Autowired
-    public LoanPanel(LoanRepository loanRepo) {
+    public LoanPanel(LoanRepository loanRepo, LoanService loanService) {
         super("Loans");
         this.loanRepo = loanRepo;
+        this.loanService = loanService;
         defineTabs();
     }
 
 
 
     private void defineTabs() {
-        addDetailTab(getPsuedoButtonGenerator(), "Terms");
+        addDetailTab(getTermsPanelGenerator(), "Terms");
+        addDetailTab(getPsuedoButtonGenerator(), "Payments");
+        addDetailTab(getPsuedoButtonGenerator(), "Charges");
     }
+
+    // A function to generate the ui for the terms of the selected loan
+    private Function<Loan, Component> getTermsPanelGenerator() {
+        return (selectedLoan) -> {
+            TermsPanel termsPanel = new TermsPanel(loanService, selectedLoan.getTerms().getAsAmAttributes());
+            termsPanel.addFormChangeListner((event) -> {
+                Property property = event.getProperty();
+                AmortizationAttributes termsFromUi = (AmortizationAttributes)property.getValue();
+                selectedLoan.getTerms().refreshFrom(termsFromUi);
+                termsChangedAction(selectedLoan);
+            });
+            return termsPanel;
+        };
+    }
+
+    private void termsChangedAction(Loan selectedLoan) {
+        loanRepo.save(selectedLoan);
+        LoanTerms newTermsFromDb = loanRepo.findOne(selectedLoan.getId()).getTerms();
+        selectedLoan.setTerms(newTermsFromDb);
+        // new Notification("Detected change to the terms", "", Notification.Type.TRAY_NOTIFICATION, true).show(Page.getCurrent());
+    }
+
 
     private Function<Loan, Component> getPsuedoButtonGenerator() {
         return (selectedLoan) -> {
@@ -44,6 +74,8 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
         };
     }
 
+
+    // Function to build the backing data structure of the loan selector combobox.
     @Override
     public Function<Boolean, BeanContainer<String, Loan>> getBeanContainerGenerator() {
 
@@ -61,14 +93,23 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
     }
 
 
+    // Function to persist a new loan to the db
     @Override
     public Consumer<String> getNewItemPersistor() {
 
         return (loanName) -> {
+
             Loan newLoan = new Loan();
             newLoan.setLoanName(loanName);
             newLoan.setInactive(false);
+
+            LoanTerms terms = new LoanTerms();
+            terms.refreshFrom(TermsPanel.getDefaultAmortizationAttributes());
+            terms.setLoan(newLoan);
+            newLoan.setTerms(terms);
+
             loanRepo.save(newLoan);
+
         };
 
     }
