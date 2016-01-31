@@ -3,16 +3,13 @@ package com.accounted4.assetmanager.core.address;
 import com.accounted4.assetmanager.core.party.Party;
 import com.accounted4.assetmanager.core.party.PartyRepository;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
-import com.vaadin.server.FontAwesome;
+import com.accounted4.assetmanager.util.vaadin.ui.FormEditToolBar;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import org.vaadin.viritin.button.ConfirmButton;
-import org.vaadin.viritin.button.MButton;
 import org.vaadin.viritin.fields.MTable;
-import org.vaadin.viritin.layouts.MHorizontalLayout;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
 /**
@@ -36,38 +33,26 @@ public class AddressDisplay extends MVerticalLayout implements DefaultView {
 
     private Party selectedParty;
 
-    private final Button addNew = new MButton(FontAwesome.PLUS, this::add);
-    private final Button edit = new MButton(FontAwesome.PENCIL_SQUARE_O, this::edit);
-    private final Button delete = new ConfirmButton(FontAwesome.TRASH_O,
-            "Are you sure you want to delete the entry?", this::remove);
+    private final FormEditToolBar editToolBar;
 
+    
     @Inject
     public AddressDisplay(AddressEntryForm addressEntryForm, PartyRepository partyRepo) {
         this.addressEntryForm = addressEntryForm;
         this.partyRepo = partyRepo;
+        this.editToolBar = new FormEditToolBar(this::add, this::edit, this::remove);
     }
 
 
     @PostConstruct
     public void init() {
-
-        addNew.addStyleName("greenicon");
-        delete.addStyleName("redicon");
-
-        addComponent(new MVerticalLayout(
-                new MHorizontalLayout(addNew, edit, delete),
-                addressTable
-                ).expand(addressTable)
-        );
-
+        addComponent(new MVerticalLayout(editToolBar, addressTable).expand(addressTable));
         addressTable.addMValueChangeListener(e -> adjustActionButtonState());
-
     }
 
     protected void adjustActionButtonState() {
         boolean hasSelection = addressTable.getValue() != null;
-        edit.setEnabled(hasSelection);
-        delete.setEnabled(hasSelection);
+        editToolBar.adjustActionButtonState(hasSelection);
     }
 
 
