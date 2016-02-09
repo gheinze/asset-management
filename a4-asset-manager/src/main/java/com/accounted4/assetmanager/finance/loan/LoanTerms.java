@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.loan;
+package com.accounted4.assetmanager.finance.loan;
 
 import com.accounted4.assetmanager.AbstractEntity;
 import com.accounted4.finance.loan.AmortizationAttributes;

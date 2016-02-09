@@ -1,9 +1,12 @@
-package com.accounted4.assetmanager.loan;
+package com.accounted4.assetmanager.finance.loan;
 
 
 import com.accounted4.assetmanager.AbstractEntity;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,11 @@ public class Loan extends AbstractEntity {
     @OneToOne(mappedBy="loan")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private LoanTerms terms;
+
+
+    @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private List<Cheque> cheques;
 
 
     @Override
@@ -53,7 +61,7 @@ public class Loan extends AbstractEntity {
             return false;
         }
         final Loan other = (Loan) obj;
-        if (!Objects.equals(this.loanName, other.loanName)) {
+        if (!loanName.equals(other.getLoanName())) {
             return false;
         }
         return true;

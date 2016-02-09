@@ -1,8 +1,6 @@
-package com.accounted4.assetmanager.loan;
+package com.accounted4.assetmanager.finance.loan;
 
 import com.accounted4.assetmanager.UiRouter;
-import com.accounted4.assetmanager.finance.loan.LoanService;
-import com.accounted4.assetmanager.finance.loan.TermsPanel;
 import com.accounted4.assetmanager.util.vaadin.ui.SelectorDetailPanel;
 import com.accounted4.finance.loan.AmortizationAttributes;
 import com.vaadin.data.Property;
@@ -30,11 +28,14 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
     private final LoanRepository loanRepo;
     private final LoanService loanService;
 
+    private final ChequeDisplay chequeDisplay;
+
     @Autowired
-    public LoanPanel(LoanRepository loanRepo, LoanService loanService) {
+    public LoanPanel(LoanRepository loanRepo, LoanService loanService, ChequeDisplay chequeDisplay) {
         super("Loans");
         this.loanRepo = loanRepo;
         this.loanService = loanService;
+        this.chequeDisplay = chequeDisplay;
         defineTabs();
     }
 
@@ -44,6 +45,7 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
         addDetailTab(getTermsPanelGenerator(), "Terms");
         addDetailTab(getPsuedoButtonGenerator(), "Payments");
         addDetailTab(getPsuedoButtonGenerator(), "Charges");
+        addDetailTab(getChequeDisplay(), "Cheques");
     }
 
     // A function to generate the ui for the terms of the selected loan
@@ -71,6 +73,13 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
     private Function<Loan, Component> getPsuedoButtonGenerator() {
         return (selectedLoan) -> {
             return new Button(selectedLoan.toString());
+        };
+    }
+
+    private Function<Loan, Component> getChequeDisplay() {
+        return (selectedLoan) -> {
+            chequeDisplay.setLoan(selectedLoan);
+            return chequeDisplay;
         };
     }
 

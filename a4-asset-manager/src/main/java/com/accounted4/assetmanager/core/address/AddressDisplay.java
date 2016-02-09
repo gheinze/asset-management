@@ -13,7 +13,10 @@ import org.vaadin.viritin.fields.MTable;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
 /**
- *
+ * UI component to display addresses with 3 basic parts:
+ *   o toolbar on top for standard crud operations. (FormEditToolBar)
+ *   o table of addresses below (MTable)
+ *   o popup data entry/edit form invoked by the toolbar (AddressEntryForm)
  * @author gheinze
  */
 @UIScope
@@ -35,7 +38,7 @@ public class AddressDisplay extends MVerticalLayout implements DefaultView {
 
     private final FormEditToolBar editToolBar;
 
-    
+
     @Inject
     public AddressDisplay(AddressEntryForm addressEntryForm, PartyRepository partyRepo) {
         this.addressEntryForm = addressEntryForm;
