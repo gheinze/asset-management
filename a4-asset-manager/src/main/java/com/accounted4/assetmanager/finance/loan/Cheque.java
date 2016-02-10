@@ -2,6 +2,7 @@ package com.accounted4.assetmanager.finance.loan;
 
 import com.accounted4.assetmanager.AbstractEntity;
 import java.time.LocalDate;
+import javax.money.MonetaryAmount;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -9,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
+import org.javamoney.moneta.Money;
 
 /**
  *
@@ -41,6 +43,13 @@ public class Cheque extends AbstractEntity {
         return this.toString();
     }
 
+    public MonetaryAmount getDisplayAmount() {
+        return Money.of(amount, loan.getTerms().getLoanCurrency());
+    }
+
+    public void setDisplayAmount(MonetaryAmount displayAmount) {
+        this.amount = displayAmount.getNumber().doubleValue();
+    }
 
     @Override
     public String toString() {

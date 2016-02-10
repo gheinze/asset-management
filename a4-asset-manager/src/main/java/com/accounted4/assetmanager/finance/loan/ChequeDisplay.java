@@ -28,7 +28,7 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView {
     private final LoanRepository loanRepo;
 
     private final MTable<Cheque> chequeTable = new MTable<>(Cheque.class)
-            .withProperties("documentType", "reference", "postDate", "amount", "documentStatus", "note")
+            .withProperties("documentType", "reference", "postDate", "displayAmount", "documentStatus", "note")
             .withColumnHeaders("Type", "Reference", "Date", "Amount", "Status", "Note")
             .setSortableProperties("documentType")
             .withFullWidth();

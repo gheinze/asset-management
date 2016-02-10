@@ -34,7 +34,7 @@ public class ChequeEntryForm extends AbstractForm<Cheque> implements DefaultView
 
     private TypedSelect<PaymentDocumentType> documentType;
     private PopupDateField postDate;
-    private MTextField amount;
+    private MTextField displayAmount;
     private TypedSelect<PaymentDocumentStatus> documentStatus;
     private final MTextField reference = new MTextField("Reference");
     private final MTextArea note = new MTextArea("Note");
@@ -102,9 +102,9 @@ public class ChequeEntryForm extends AbstractForm<Cheque> implements DefaultView
 
 
     private void prepareAmountField() {
-        amount = new MTextField("Amount");
-        amount.setImmediate(true);
-        amount.setConverter(MonetaryAmount.class);
+        displayAmount = new MTextField("Amount");
+        displayAmount.setImmediate(true);
+        displayAmount.setConverter(MonetaryAmount.class);
     }
 
 
@@ -141,7 +141,7 @@ public class ChequeEntryForm extends AbstractForm<Cheque> implements DefaultView
                 new MFormLayout(
                         documentType
                         ,postDate
-                        ,amount
+                        ,displayAmount
                         ,documentStatus
                         ,reference
                         ,note
