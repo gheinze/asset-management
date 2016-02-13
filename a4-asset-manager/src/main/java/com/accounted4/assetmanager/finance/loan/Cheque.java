@@ -13,7 +13,8 @@ import lombok.Setter;
 import org.javamoney.moneta.Money;
 
 /**
- *
+ * Entity representing a Payment Document (cheque, money order, draft, ...)
+ * 
  * @author gheinze
  */
 @Getter @Setter
@@ -39,27 +40,12 @@ public class Cheque extends AbstractEntity {
     private String reference;
     private String note;
 
-    public String getCheque() {
-        return this.toString();
-    }
 
+    // Used to support presentation of the amount in the ui cheque table
+    // ui supports MoentaryAmount formatting, but Entity does not: it is
+    // split into Number and Currency.
     public MonetaryAmount getDisplayAmount() {
         return Money.of(amount, loan.getTerms().getLoanCurrency());
-    }
-
-    public void setDisplayAmount(MonetaryAmount displayAmount) {
-        this.amount = displayAmount.getNumber().doubleValue();
-    }
-
-    @Override
-    public String toString() {
-        return (null != reference ? reference : "") +
-                " " +
-                postDate + " " +
-                amount + " " +
-                documentStatus +
-                (null != note ? " " + note : "")
-                ;
     }
 
 

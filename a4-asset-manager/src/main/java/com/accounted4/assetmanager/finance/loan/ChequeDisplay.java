@@ -5,14 +5,16 @@ import com.accounted4.assetmanager.util.vaadin.ui.FormEditToolBar;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import org.javamoney.moneta.Money;
 import org.vaadin.viritin.fields.MTable;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
 /**
  * Display a list of cheques:
- *   o toolbar for modifying table entries
+ *   o a toolbar for modifying table entries
  *   o a table of cheques associated with a loan
  *   o a popup form for adding/modifying a cheque
  *
@@ -30,7 +32,7 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView {
     private final MTable<Cheque> chequeTable = new MTable<>(Cheque.class)
             .withProperties("documentType", "reference", "postDate", "displayAmount", "documentStatus", "note")
             .withColumnHeaders("Type", "Reference", "Date", "Amount", "Status", "Note")
-            .setSortableProperties("documentType")
+            .setSortableProperties("documentType", "reference", "postDate", "displayAmount", "documentStatus")
             .withFullWidth();
 
     private Loan selectedLoan;
@@ -42,19 +44,21 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView {
     public ChequeDisplay(ChequeEntryForm chequeEntryForm, LoanRepository loanRepo) {
         this.chequeEntryForm = chequeEntryForm;
         this.loanRepo = loanRepo;
-        this.editToolBar = new FormEditToolBar(this::add, this::edit, this::remove);
+        this.editToolBar = new FormEditToolBar(this::addNewCheque, this::editSelectedCheque, this::removeSelectedCheque);
     }
 
     @PostConstruct
     public void init() {
+        chequeEntryForm.setSavedHandler(this::saveClickedOnChequeEntryForm);
+        chequeEntryForm.setResetHandler(this::cancelClickedOnChequeEntryForm);
         addComponent(new MVerticalLayout(editToolBar, chequeTable).expand(chequeTable));
         chequeTable.addMValueChangeListener(e -> adjustActionButtonState());
 
     }
 
-    protected void adjustActionButtonState() {
-        boolean hasSelection = chequeTable.getValue() != null;
-        editToolBar.adjustActionButtonState(hasSelection);
+    private void adjustActionButtonState() {
+        boolean aChequeIsSelected = chequeTable.getValue() != null;
+        editToolBar.adjustActionButtonState(aChequeIsSelected);
     }
 
 
@@ -63,29 +67,58 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView {
         adjustActionButtonState();
     }
 
-    public void add(Button.ClickEvent clickEvent) {
-        edit((Cheque)null);
+
+    // ====================
+    // == Exposed API
+    // ====================
+
+    public void setLoan(Loan selectedLoan) {
+        this.selectedLoan = selectedLoan;
+        listCheques();
     }
 
-    public void edit(Button.ClickEvent e) {
-        edit(chequeTable.getValue());
+
+    // ====================
+    // == Toolbar button click handlers
+    // ====================
+
+    private void addNewCheque(Button.ClickEvent clickEvent) {
+        displayEntryFormPopup(getDefaultChequeEntryFormBean());
     }
 
-    public void remove(Button.ClickEvent e) {
+    private void editSelectedCheque(Button.ClickEvent e) {
+        displayEntryFormPopup(ChequeBeanConversionUtils.getChequeEntryFormBean(chequeTable.getValue()));
+    }
+
+    private void removeSelectedCheque(Button.ClickEvent e) {
         selectedLoan.getCheques().remove(chequeTable.getValue());
         persistLoan();
     }
 
-    protected void edit(final Cheque cheque) {
-        chequeEntryForm.setCheque(cheque);
-        chequeEntryForm.setSavedHandler(this::saveEntry);
-        chequeEntryForm.setResetHandler(this::resetEntry);
+
+    private void displayEntryFormPopup(final ChequeEntryFormBean chequeEntryFormBean) {
+        chequeEntryForm.setBackingBean(chequeEntryFormBean);
         chequeEntryForm.openInModalPopup();
     }
 
-    public void saveEntry(final Cheque cheque) {
-        selectedLoan.getCheques().add(cheque);
+
+    // ====================
+    // == Entry Form button click handlers
+    // ====================
+
+    private void saveClickedOnChequeEntryForm(final ChequeEntryFormBean chequeEntryFormBean) {
+        if (chequeEntryFormBean.isBatchEntryEnabled()) { //insert
+            List<Cheque> cheques = ChequeBeanConversionUtils.generateChequeBatch(chequeEntryFormBean, selectedLoan);
+            selectedLoan.getCheques().addAll(cheques);
+        } else { // update
+            ChequeBeanConversionUtils.populateChequeWithFormValues(chequeTable.getValue(), chequeEntryFormBean);
+        }
         persistLoan();
+        closeWindow();
+    }
+
+    private void cancelClickedOnChequeEntryForm(final ChequeEntryFormBean chequeEntryFormBean) {
+        listCheques();
         closeWindow();
     }
 
@@ -95,19 +128,25 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView {
         listCheques();
     }
 
-    public void resetEntry(final Cheque cheque) {
-        listCheques();
-        closeWindow();
-    }
-
-    protected void closeWindow() {
+    private void closeWindow() {
         getUI().getWindows().stream().forEach(w -> getUI().removeWindow(w));
     }
 
-    public void setLoan(Loan selectedLoan) {
-        this.selectedLoan = selectedLoan;
-        chequeEntryForm.setSelectedLoan(selectedLoan);
-        listCheques();
+
+    // ====================
+    // == Helper utility
+    // ====================
+
+    private ChequeEntryFormBean getDefaultChequeEntryFormBean() {
+        ChequeEntryFormBean bean = new ChequeEntryFormBean();
+        bean.setDocumentStatus(loanRepo.getDefaultPaymentDocumentStatus());
+        bean.setDocumentType(loanRepo.getDefaultPaymentDocumentType());
+        bean.setPostDate(selectedLoan.getTerms().getAdjustmentDate());
+        Money regularPayemnt = Money.of(selectedLoan.getTerms().getRegularPayment(), selectedLoan.getTerms().getLoanCurrency());
+        bean.setAmount(regularPayemnt);
+        bean.setBatchEntryEnabled(true);
+        return bean;
     }
+
 
 }

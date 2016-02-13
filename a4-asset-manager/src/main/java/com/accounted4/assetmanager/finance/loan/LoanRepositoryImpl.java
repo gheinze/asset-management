@@ -14,11 +14,8 @@ public class LoanRepositoryImpl implements LoanRepositoryLov {
     @PersistenceContext
     private EntityManager em;
 
-    private static final String JPQL_FOR_PAYMENT_TYPES =
-            "SELECT t FROM PaymentDocumentType t";
 
-    private static final String JPQL_FOR_PAYMENT_STATUS =
-            "SELECT s FROM PaymentDocumentStatus s";
+    private static final String JPQL_FOR_PAYMENT_TYPES = "SELECT t FROM PaymentDocumentType t";
 
     @Override
     public List<PaymentDocumentType> getAllPaymentDocumentTypes() {
@@ -26,10 +23,32 @@ public class LoanRepositoryImpl implements LoanRepositoryLov {
         return (List<PaymentDocumentType>)paymentDocumentTypesQuery.getResultList();
     }
 
+
+    private static final String JPQL_FOR_PAYMENT_STATUS = "SELECT s FROM PaymentDocumentStatus s";
+
     @Override
     public List<PaymentDocumentStatus> getAllPaymentDocumentStatus() {
         TypedQuery<PaymentDocumentStatus> paymentDocumentStatusQuery = em.createQuery(JPQL_FOR_PAYMENT_STATUS, PaymentDocumentStatus.class);
         return (List<PaymentDocumentStatus>)paymentDocumentStatusQuery.getResultList();
+    }
+
+
+
+    private static final String JPQL_FOR_DEFAULT_PAYMENT_TYPE = "SELECT t FROM PaymentDocumentType t WHERE document_type = 'Cheque'";
+
+    @Override
+    public PaymentDocumentType getDefaultPaymentDocumentType() {
+        TypedQuery<PaymentDocumentType> defaultPaymentDocumentTypeQuery = em.createQuery(JPQL_FOR_DEFAULT_PAYMENT_TYPE, PaymentDocumentType.class);
+        return defaultPaymentDocumentTypeQuery.getSingleResult();
+    }
+
+
+    private static final String JPQL_FOR_DEFAULT_PAYMENT_STATUS = "SELECT s FROM PaymentDocumentStatus s WHERE document_status = 'On File'";
+
+    @Override
+    public PaymentDocumentStatus getDefaultPaymentDocumentStatus() {
+        TypedQuery<PaymentDocumentStatus> defaultPaymentDocumentStatusQuery = em.createQuery(JPQL_FOR_DEFAULT_PAYMENT_STATUS, PaymentDocumentStatus.class);
+        return defaultPaymentDocumentStatusQuery.getSingleResult();
     }
 
 }

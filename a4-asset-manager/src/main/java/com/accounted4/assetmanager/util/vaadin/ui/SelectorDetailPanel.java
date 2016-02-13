@@ -54,7 +54,7 @@ public abstract class SelectorDetailPanel<T> extends Panel implements DefaultVie
     private void init() {
 
         masterSelector = new Selector<>(getBeanContainerGenerator(), getNewItemPersistor());
-        
+
         masterSelector.addValueChangeListener(event -> {
             masterSelectionChanged(event);
         });

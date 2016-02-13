@@ -11,4 +11,7 @@ public interface LoanRepositoryLov {
     List<PaymentDocumentType> getAllPaymentDocumentTypes();
     List<PaymentDocumentStatus> getAllPaymentDocumentStatus();
 
+    PaymentDocumentType getDefaultPaymentDocumentType();
+    PaymentDocumentStatus getDefaultPaymentDocumentStatus();
+
 }
