@@ -1,5 +1,6 @@
 package com.accounted4.finance.loan;
 
+import java.time.LocalDate;
 import lombok.Getter;
 
 /**
@@ -35,5 +36,35 @@ public enum TimePeriod {
     public String getDisplayName() {
         return this.name();
     }
+
+
+    public static TimePeriod getTimePeriodWithPeriodCountOf(int periodsPerYear) {
+        for (TimePeriod period : TimePeriod.values()) {
+            if (period.periodsPerYear == periodsPerYear) {
+                return period;
+            }
+        }
+        throw new RuntimeException("TimePeriod not found with " + periodsPerYear + " periods a year.");
+    }
+
+
+    private static final int MONTHS_IN_A_YEAR = 12;
+    private static final int WEEKS_IN_A_YEAR = 52;
+
+    public LocalDate getDateFrom(LocalDate fromDate, int periods) {
+
+        if (periodsPerYear <= MONTHS_IN_A_YEAR) {
+            // Incrementing in multiples of months
+            return fromDate.plusMonths(MONTHS_IN_A_YEAR / periodsPerYear * periods);
+
+        } else if (periodsPerYear == 24) { // SemiMonthly
+            // Every second payment: add a month; the alternate payment 14 days after that
+            return fromDate.plusMonths(periods / 2).plusDays(14 * (periods % 2));
+        }
+
+        return fromDate.plusWeeks(WEEKS_IN_A_YEAR / periodsPerYear * periods);
+
+    }
+
 
 }
