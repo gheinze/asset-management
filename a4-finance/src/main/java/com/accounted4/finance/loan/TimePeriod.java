@@ -48,10 +48,10 @@ public enum TimePeriod {
     }
 
 
-    private static final int MONTHS_IN_A_YEAR = 12;
-    private static final int WEEKS_IN_A_YEAR = 52;
+    private static final long MONTHS_IN_A_YEAR = 12L;
+    private static final long WEEKS_IN_A_YEAR = 52L;
 
-    public LocalDate getDateFrom(LocalDate fromDate, int periods) {
+    public LocalDate getDateFrom(LocalDate fromDate, long periods) {
 
         if (periodsPerYear <= MONTHS_IN_A_YEAR) {
             // Incrementing in multiples of months
@@ -59,7 +59,7 @@ public enum TimePeriod {
 
         } else if (periodsPerYear == 24) { // SemiMonthly
             // Every second payment: add a month; the alternate payment 14 days after that
-            return fromDate.plusMonths(periods / 2).plusDays(14 * (periods % 2));
+            return fromDate.plusMonths(periods / 2L).plusDays(14L * (periods % 2L));
         }
 
         return fromDate.plusWeeks(WEEKS_IN_A_YEAR / periodsPerYear * periods);
