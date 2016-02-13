@@ -57,6 +57,7 @@ public class ChequeEntryForm extends AbstractForm<ChequeEntryFormBean> implement
     private void preparePaymentDocumentTypeSelect() {
         documentType = new TypedSelect<>(PaymentDocumentType.class);
         documentType.setCaption("Type");
+        documentType.setNullSelectionAllowed(false);
         documentType.setBeans(loanRepo.getAllPaymentDocumentTypes());
     }
 
@@ -65,6 +66,7 @@ public class ChequeEntryForm extends AbstractForm<ChequeEntryFormBean> implement
     private void preparePaymentDocumentStatusSelect() {
         documentStatus = new TypedSelect<>(PaymentDocumentStatus.class);
         documentStatus.setCaption("Status");
+        documentStatus.setNullSelectionAllowed(false);
         documentStatus.setBeans(loanRepo.getAllPaymentDocumentStatus());
     }
 
