@@ -1,7 +1,7 @@
 = Asset Manager
 
 image:https://travis-ci.org/gheinze/asset-management.svg["Build Status", link="https://travis-ci.org/gheinze/asset-management"]
-image:https://img.shields.io/codecov/c/github/pvorb/property-providers/develop.svg["Code Coverage", link="https://codecov.io/github/gheinze/asset-management?branch=master"]
+image:https://codecov.io/github/codecov/codecov-ruby/coverage.svg?branch=master["Code Coverage", link="https://codecov.io/github/gheinze/asset-management?branch=master"]
 
 Amortization Loan Calculator
 
