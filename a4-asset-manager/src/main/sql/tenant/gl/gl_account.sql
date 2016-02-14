@@ -1,5 +1,5 @@
 CREATE TABLE gl_account(
-   gl_account_type  varchar(32)
+   gl_account_type_id bigint
   ,name             varchar(64)
   ,currency_code    char(3)
   ,active_from      date
@@ -7,13 +7,13 @@ CREATE TABLE gl_account(
   ,balance          numeric DEFAULT 0
   ,description      varchar(256)
 
-  ,CONSTRAINT gl_account_gl_account_type_fk FOREIGN KEY(gl_account_type)
-     REFERENCES gl_account_type(gl_account_type)
+  ,CONSTRAINT gl_account_gl_account_type_fk FOREIGN KEY(gl_account_type_id)
+     REFERENCES gl_account_type(id)
 
 ) INHERITS(base);
 
 SELECT ist_pk('gl_account');
-SELECT ist_bk('gl_account', ARRAY['gl_account_type', 'name']);
+SELECT ist_bk('gl_account', ARRAY['gl_account_type_id', 'name']);
 
 COMMENT ON TABLE gl_account IS
   'A container in the accounting sub-system which groups together a set of '
@@ -24,9 +24,9 @@ COMMENT ON COLUMN gl_account.name IS
   'The name given to a container. It may be modified, but it must be unique '
   'across all accounts of a given account_type.';
 
-COMMENT ON COLUMN gl_account.gl_account_type IS
+COMMENT ON COLUMN gl_account.gl_account_type_id IS
   'Every account belongs to one of the 5 basic accounting categories: Assets, '
-  'Liabilities, Equity, Revenues, or Expenses.';
+  'Liabilities, Equity, Revenues, or Expenses. Reference to the account type.';
 
 COMMENT ON COLUMN gl_account.currency_code IS
   'The ISO 4217 alphabetic currency code of the amounts represented within '
@@ -50,4 +50,3 @@ COMMENT ON COLUMN gl_account.balance IS
 
 COMMENT ON COLUMN gl_account.description IS
   'The purpose of this account.';
-  
