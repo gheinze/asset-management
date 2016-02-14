@@ -15,6 +15,15 @@
 ./system/installation_support_tools.sql
 ./system/base.sql
 
+./tenant/gl/gl_account_type.sql
+./tenant/gl/gl_account.sql
+./tenant/gl/gl_account_tag.sql
+./tenant/gl/gl_account_gl_tag_map.sql
+./tenant/gl/gl_transaction.sql
+./tenant/gl/gl_transaction_detail.sql
+./tenant/gl/gl_tag_hierarchy.sql
+./tenant/gl/gl_tag_hierarchy_tag_map.sql
+
 ./tenant/address/country.sql
 ./tenant/address/country_subdivision.sql
 ./tenant/address/address.sql
