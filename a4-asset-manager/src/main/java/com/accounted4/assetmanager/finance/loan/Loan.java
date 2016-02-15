@@ -2,8 +2,8 @@ package com.accounted4.assetmanager.finance.loan;
 
 
 import com.accounted4.assetmanager.AbstractEntity;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
@@ -31,9 +31,19 @@ public class Loan extends AbstractEntity {
     private LoanTerms terms;
 
 
-    @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER, orphanRemoval = true)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<Cheque> cheques;
+    private Set<Cheque> cheques;
+
+
+    @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private Set<LoanPayment> payments;
+
+
+    @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private Set<LoanCharge> charges;
 
 
     @Override
@@ -65,6 +75,12 @@ public class Loan extends AbstractEntity {
             return false;
         }
         return true;
+    }
+
+
+    public void removeCheque(Cheque cheque) {
+        cheques.remove(cheque);
+        cheque.setLoan(null);
     }
 
 }

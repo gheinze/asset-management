@@ -2,6 +2,8 @@ package com.accounted4.assetmanager.finance.loan;
 
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.accounted4.assetmanager.util.vaadin.ui.FormEditToolBar;
+import com.accounted4.assetmanager.util.vaadin.ui.Refreshable;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
@@ -22,9 +24,13 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
  */
 @UIScope
 @SpringView
-public class ChequeDisplay extends MVerticalLayout implements DefaultView {
+public class ChequeDisplay extends MVerticalLayout implements DefaultView, Refreshable {
 
     private static final long serialVersionUID = 1L;
+
+    private static final String[] DEFAULT_TABLE_SORT_PROPERTIES = {"postDate"};
+    private static final boolean[] DEFAULT_TABLE_SORT_DIRECTIONS = {true};
+
 
     private final ChequeEntryForm chequeEntryForm;
     private final LoanRepository loanRepo;
@@ -53,7 +59,6 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView {
         chequeEntryForm.setResetHandler(this::cancelClickedOnChequeEntryForm);
         addComponent(new MVerticalLayout(editToolBar, chequeTable).expand(chequeTable));
         chequeTable.addMValueChangeListener(e -> adjustActionButtonState());
-
     }
 
     private void adjustActionButtonState() {
@@ -64,8 +69,10 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView {
 
     private void listCheques() {
         chequeTable.setBeans(selectedLoan.getCheques());
+        chequeTable.sort(DEFAULT_TABLE_SORT_PROPERTIES, DEFAULT_TABLE_SORT_DIRECTIONS);
         adjustActionButtonState();
     }
+
 
 
     // ====================
@@ -91,7 +98,7 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView {
     }
 
     private void removeSelectedCheque(Button.ClickEvent e) {
-        selectedLoan.getCheques().remove(chequeTable.getValue());
+        selectedLoan.removeCheque(chequeTable.getValue());
         persistLoan();
     }
 
@@ -146,6 +153,20 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView {
         bean.setAmount(regularPayemnt);
         bean.setBatchEntryEnabled(true);
         return bean;
+    }
+
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * A cheque may have been consumed by a payment, so refresh if the tab is selected...
+     */
+    @Override
+    public void refresh() {
+        selectedLoan = loanRepo.findOne(selectedLoan.getId());
+        listCheques();
     }
 
 

@@ -14,7 +14,7 @@ import org.javamoney.moneta.Money;
 
 /**
  * Entity representing a Payment Document (cheque, money order, draft, ...)
- * 
+ *
  * @author gheinze
  */
 @Getter @Setter
@@ -46,6 +46,17 @@ public class Cheque extends AbstractEntity {
     // split into Number and Currency.
     public MonetaryAmount getDisplayAmount() {
         return Money.of(amount, loan.getTerms().getLoanCurrency());
+    }
+
+
+    @Override
+    public String toString() {
+        return  String.format("%04d-%02d-%02d  $%(,.2f  %s  %s",
+                postDate.getYear(), postDate.getMonthValue(), postDate.getDayOfMonth(),
+                amount,
+                (null != reference ? reference : ""),
+                (null != note ? " " + note : "")
+        );
     }
 
 

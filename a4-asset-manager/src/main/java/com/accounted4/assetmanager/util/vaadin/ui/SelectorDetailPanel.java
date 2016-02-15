@@ -6,6 +6,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.Reindeer;
 import java.util.ArrayList;
@@ -95,6 +96,14 @@ public abstract class SelectorDetailPanel<T> extends Panel implements DefaultVie
 
         tabs.stream().forEach((tab) -> {
             tabSheet.addTab(tab.getComponentGenerator().apply(getSelected()), tab.getCaption());
+        });
+
+        tabSheet.addSelectedTabChangeListener((SelectedTabChangeEvent event) -> {
+            TabSheet tabsheet = event.getTabSheet();
+            Component tab = tabsheet.getSelectedTab();
+            if (tab instanceof Refreshable) {
+                ((Refreshable)tab).refresh();
+            }
         });
 
         detailContainer.removeAllComponents();

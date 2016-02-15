@@ -29,13 +29,20 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
     private final LoanService loanService;
 
     private final ChequeDisplay chequeDisplay;
+    private final PaymentDisplay paymentDisplay;
 
     @Autowired
-    public LoanPanel(LoanRepository loanRepo, LoanService loanService, ChequeDisplay chequeDisplay) {
+    public LoanPanel(
+            LoanRepository loanRepo
+            ,LoanService loanService
+            ,ChequeDisplay chequeDisplay
+            ,PaymentDisplay paymentDisplay
+    ) {
         super("Loans");
         this.loanRepo = loanRepo;
         this.loanService = loanService;
         this.chequeDisplay = chequeDisplay;
+        this.paymentDisplay = paymentDisplay;
         defineTabs();
     }
 
@@ -43,7 +50,7 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
 
     private void defineTabs() {
         addDetailTab(getTermsPanelGenerator(), "Terms");
-        addDetailTab(getPsuedoButtonGenerator(), "Payments");
+        addDetailTab(getPaymentDisplay(), "Payments");
         addDetailTab(getPsuedoButtonGenerator(), "Charges");
         addDetailTab(getChequeDisplay(), "Cheques");
     }
@@ -69,6 +76,14 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
         // new Notification("Detected change to the terms", "", Notification.Type.TRAY_NOTIFICATION, true).show(Page.getCurrent());
     }
 
+
+    // A function to generate the ui for the terms of the selected loan
+    private Function<Loan, Component> getPaymentDisplay() {
+        return (selectedLoan) -> {
+            paymentDisplay.setLoan(selectedLoan);
+            return paymentDisplay;
+        };
+    }
 
     private Function<Loan, Component> getPsuedoButtonGenerator() {
         return (selectedLoan) -> {

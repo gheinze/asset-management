@@ -37,3 +37,6 @@
 ./tenant/loan/payment_document_type.sql
 ./tenant/loan/payment_document_status.sql
 ./tenant/loan/cheque.sql
+./tenant/loan/loan_payment.sql
+./tenant/loan/loan_charge_type.sql
+./tenant/loan/loan_charge.sql
