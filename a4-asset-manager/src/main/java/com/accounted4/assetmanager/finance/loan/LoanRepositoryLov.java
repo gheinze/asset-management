@@ -8,6 +8,9 @@ import java.util.List;
  */
 public interface LoanRepositoryLov {
 
+    List<LoanChargeType> getAllLoanChargeTypes();
+    LoanChargeType getDefaultChargeType();
+
     List<PaymentDocumentType> getAllPaymentDocumentTypes();
     List<PaymentDocumentStatus> getAllPaymentDocumentStatus();
 

@@ -7,7 +7,6 @@ import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -30,6 +29,7 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
 
     private final ChequeDisplay chequeDisplay;
     private final PaymentDisplay paymentDisplay;
+    private final ChargeDisplay chargeDisplay;
 
     @Autowired
     public LoanPanel(
@@ -37,12 +37,14 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
             ,LoanService loanService
             ,ChequeDisplay chequeDisplay
             ,PaymentDisplay paymentDisplay
+            ,ChargeDisplay chargeDisplay
     ) {
         super("Loans");
         this.loanRepo = loanRepo;
         this.loanService = loanService;
         this.chequeDisplay = chequeDisplay;
         this.paymentDisplay = paymentDisplay;
+        this.chargeDisplay = chargeDisplay;
         defineTabs();
     }
 
@@ -51,7 +53,7 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
     private void defineTabs() {
         addDetailTab(getTermsPanelGenerator(), "Terms");
         addDetailTab(getPaymentDisplay(), "Payments");
-        addDetailTab(getPsuedoButtonGenerator(), "Charges");
+        addDetailTab(getChargeDisplay(), "Charges");
         addDetailTab(getChequeDisplay(), "Cheques");
     }
 
@@ -77,7 +79,6 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
     }
 
 
-    // A function to generate the ui for the terms of the selected loan
     private Function<Loan, Component> getPaymentDisplay() {
         return (selectedLoan) -> {
             paymentDisplay.setLoan(selectedLoan);
@@ -85,11 +86,14 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
         };
     }
 
-    private Function<Loan, Component> getPsuedoButtonGenerator() {
+
+    private Function<Loan, Component> getChargeDisplay() {
         return (selectedLoan) -> {
-            return new Button(selectedLoan.toString());
+            chargeDisplay.setLoan(selectedLoan);
+            return chargeDisplay;
         };
     }
+
 
     private Function<Loan, Component> getChequeDisplay() {
         return (selectedLoan) -> {

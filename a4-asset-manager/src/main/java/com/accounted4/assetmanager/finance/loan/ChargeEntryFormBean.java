@@ -7,18 +7,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Backing bean for a PaymentEntryForm
+ * Backing bean for a ChargeEntryForm
  * @author gheinze
  */
 @Getter @Setter
-public class PaymentEntryFormBean {
+public class ChargeEntryFormBean {
 
     private boolean editMode;
-    private List<Cheque> cheques;
+    private List<LoanChargeType> chargeTypes;
 
-    private Cheque cheque;
+    private LoanChargeType chargeType;
     private MonetaryAmount amount;
-    private LocalDate depositDate;
+    private LocalDate chargeDate;
     private String note;
 
 }

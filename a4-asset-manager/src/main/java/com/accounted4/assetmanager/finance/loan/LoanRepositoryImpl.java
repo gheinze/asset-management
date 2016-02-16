@@ -14,6 +14,28 @@ public class LoanRepositoryImpl implements LoanRepositoryLov {
     @PersistenceContext
     private EntityManager em;
 
+    
+
+    private static final String JPQL_FOR_CHARGE_TYPES = "SELECT t FROM LoanChargeType t";
+
+    @Override
+    public List<LoanChargeType> getAllLoanChargeTypes() {
+        TypedQuery<LoanChargeType> chargeTypesQuery = em.createQuery(JPQL_FOR_CHARGE_TYPES, LoanChargeType.class);
+        return (List<LoanChargeType>)chargeTypesQuery.getResultList();
+    }
+
+
+
+    private static final String JPQL_FOR_DEFAULT_CHARGE_TYPE = "SELECT t FROM LoanChargeType t WHERE charge_type = 'Interest'";
+
+    @Override
+    public LoanChargeType getDefaultChargeType() {
+        TypedQuery<LoanChargeType> defaultChargeTypeQuery = em.createQuery(JPQL_FOR_DEFAULT_CHARGE_TYPE, LoanChargeType.class);
+        return defaultChargeTypeQuery.getSingleResult();
+    }
+
+
+
 
     private static final String JPQL_FOR_PAYMENT_TYPES = "SELECT t FROM PaymentDocumentType t";
 

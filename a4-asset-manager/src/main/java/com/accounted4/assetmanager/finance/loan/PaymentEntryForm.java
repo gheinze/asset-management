@@ -33,15 +33,6 @@ public class PaymentEntryForm extends AbstractForm<PaymentEntryFormBean> impleme
     private MTextField amount;
     private final MTextArea note = new MTextArea("Note");
 
-    // Dependency on the loanRepo is for retrieving Combobox LOV options
-    private final LoanRepository loanRepo;
-
-
-    @Inject
-    public PaymentEntryForm(LoanRepository loanRepo) {
-        this.loanRepo = loanRepo;
-    }
-
 
     @PostConstruct
     private void init() {
