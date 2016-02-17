@@ -2,6 +2,7 @@ package com.accounted4.assetmanager.finance.loan;
 
 import com.accounted4.assetmanager.AbstractEntity;
 import java.time.LocalDate;
+import java.util.Objects;
 import javax.money.MonetaryAmount;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -42,6 +43,47 @@ public class LoanCharge extends AbstractEntity {
     // split into Number and Currency.
     public MonetaryAmount getDisplayAmount() {
         return Money.of(amount, currency);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 61 * hash + Objects.hashCode(this.loanChargeType);
+        hash = 61 * hash + Objects.hashCode(this.currency);
+        hash = 61 * hash + (int) (Double.doubleToLongBits(this.amount) ^ (Double.doubleToLongBits(this.amount) >>> 32));
+        hash = 61 * hash + Objects.hashCode(this.chargeDate);
+        hash = 61 * hash + Objects.hashCode(this.note);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final LoanCharge other = (LoanCharge) obj;
+        if (Double.doubleToLongBits(this.amount) != Double.doubleToLongBits(other.amount)) {
+            return false;
+        }
+        if (!Objects.equals(this.currency, other.currency)) {
+            return false;
+        }
+        if (!Objects.equals(this.note, other.note)) {
+            return false;
+        }
+        if (!Objects.equals(this.loanChargeType, other.loanChargeType)) {
+            return false;
+        }
+        if (!Objects.equals(this.chargeDate, other.chargeDate)) {
+            return false;
+        }
+        return true;
     }
 
 

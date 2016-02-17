@@ -2,6 +2,7 @@ package com.accounted4.assetmanager.finance.loan;
 
 import com.accounted4.assetmanager.AbstractEntity;
 import java.time.LocalDate;
+import java.util.Objects;
 import javax.money.MonetaryAmount;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -57,6 +58,47 @@ public class Cheque extends AbstractEntity {
                 (null != reference ? reference : ""),
                 (null != note ? " " + note : "")
         );
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.documentType);
+        hash = 37 * hash + Objects.hashCode(this.postDate);
+        hash = 37 * hash + Objects.hashCode(this.currency);
+        hash = 37 * hash + (int) (Double.doubleToLongBits(this.amount) ^ (Double.doubleToLongBits(this.amount) >>> 32));
+        hash = 37 * hash + Objects.hashCode(this.reference);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Cheque other = (Cheque) obj;
+        if (Double.doubleToLongBits(this.amount) != Double.doubleToLongBits(other.amount)) {
+            return false;
+        }
+        if (!Objects.equals(this.currency, other.currency)) {
+            return false;
+        }
+        if (!Objects.equals(this.reference, other.reference)) {
+            return false;
+        }
+        if (!Objects.equals(this.documentType, other.documentType)) {
+            return false;
+        }
+        if (!Objects.equals(this.postDate, other.postDate)) {
+            return false;
+        }
+        return true;
     }
 
 

@@ -3,10 +3,12 @@ package com.accounted4.assetmanager.finance.loan;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.accounted4.assetmanager.util.vaadin.ui.FormEditToolBar;
 import com.accounted4.assetmanager.util.vaadin.ui.Refreshable;
+import com.accounted4.finance.loan.TimePeriod;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import java.time.LocalDate;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -148,10 +150,17 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView, Refre
         ChequeEntryFormBean bean = new ChequeEntryFormBean();
         bean.setDocumentStatus(loanRepo.getDefaultPaymentDocumentStatus());
         bean.setDocumentType(loanRepo.getDefaultPaymentDocumentType());
-        bean.setPostDate(selectedLoan.getTerms().getAdjustmentDate());
+
+        // TODO: make this a function, base it off of the last cheque if it exists?
+        TimePeriod paymentFrequency = TimePeriod.getTimePeriodWithPeriodCountOf(selectedLoan.getTerms().getPaymentFrequency());
+        LocalDate firstPaymentDate = paymentFrequency.getDateFrom(selectedLoan.getTerms().getAdjustmentDate(), 1);
+        bean.setPostDate(firstPaymentDate);
+
         Money regularPayemnt = Money.of(selectedLoan.getTerms().getRegularPayment(), selectedLoan.getTerms().getLoanCurrency());
         bean.setAmount(regularPayemnt);
+
         bean.setBatchEntryEnabled(true);
+
         return bean;
     }
 

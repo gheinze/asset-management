@@ -3,6 +3,7 @@ package com.accounted4.assetmanager.core.address;
 import com.accounted4.assetmanager.AbstractEntity;
 import com.accounted4.assetmanager.core.party.Party;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -69,6 +70,51 @@ public class Address extends AbstractEntity {
         }
 
         return result;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.line1);
+        hash = 97 * hash + Objects.hashCode(this.line2);
+        hash = 97 * hash + Objects.hashCode(this.city);
+        hash = 97 * hash + Objects.hashCode(this.countrySubdivision);
+        hash = 97 * hash + Objects.hashCode(this.country);
+        hash = 97 * hash + Objects.hashCode(this.postalCode);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Address other = (Address) obj;
+        if (!Objects.equals(this.line1, other.line1)) {
+            return false;
+        }
+        if (!Objects.equals(this.line2, other.line2)) {
+            return false;
+        }
+        if (!Objects.equals(this.city, other.city)) {
+            return false;
+        }
+        if (!Objects.equals(this.postalCode, other.postalCode)) {
+            return false;
+        }
+        if (!Objects.equals(this.countrySubdivision, other.countrySubdivision)) {
+            return false;
+        }
+        if (!Objects.equals(this.country, other.country)) {
+            return false;
+        }
+        return true;
     }
 
 

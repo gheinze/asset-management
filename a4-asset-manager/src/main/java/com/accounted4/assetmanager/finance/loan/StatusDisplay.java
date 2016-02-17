@@ -5,6 +5,7 @@ import com.accounted4.assetmanager.util.vaadin.ui.Refreshable;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import org.vaadin.viritin.fields.MTable;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
@@ -28,8 +29,13 @@ public class StatusDisplay extends MVerticalLayout implements DefaultView, Refre
             .setSortableProperties("date")
             .withFullWidth();
 
+    private final LoanRepository loanRepo;
     private Loan selectedLoan;
 
+    @Inject
+    public StatusDisplay(LoanRepository loanRepo) {
+        this.loanRepo = loanRepo;
+    }
 
 
     @PostConstruct
@@ -57,6 +63,7 @@ public class StatusDisplay extends MVerticalLayout implements DefaultView, Refre
 
     @Override
     public void refresh() {
+        selectedLoan = loanRepo.findOne(selectedLoan.getId());
         refreshTable();
     }
 
