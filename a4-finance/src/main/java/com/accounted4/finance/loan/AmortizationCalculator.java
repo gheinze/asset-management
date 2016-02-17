@@ -101,6 +101,24 @@ public class AmortizationCalculator {
     }
 
 
+    /**
+     * The interest that would be owing for one period with the given terms.
+     * @param amAttrs
+     * @return
+     */
+    public static MonetaryAmount getPeriodInterest(AmortizationAttributes amAttrs) {
+        return amAttrs.isInterestOnly() ?
+                getInterestOnlyPeriodicPayment(amAttrs) :
+                getAmortizedPeriodInterest(amAttrs)
+                ;
+    }
+
+    private static MonetaryAmount getAmortizedPeriodInterest(AmortizationAttributes amAttrs) {
+        double periodicRate = getPeriodRateAsDecimal(amAttrs);
+        return amAttrs.getLoanAmount().multiply(periodicRate).with(HALF_UP_ROUNDING_MODE);
+    }
+
+
     public static List<ScheduledPayment> generateSchedule(AmortizationAttributes amAttrs) {
         return amAttrs.isInterestOnly() ?
                 generateInterestOnlySchedule(amAttrs) :

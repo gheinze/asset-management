@@ -566,6 +566,45 @@ public class AmortizationCalculatorTest {
         assertNotNull("Regular payment computed when initialized as null", periodicPayment);
     }
 
+
+    @Test
+    public void testGetPeriodInterest_InterestOnly() {
+
+        AmortizationAttributes amAttrs = generateAmortizationAttributesObjectTemplate();
+        amAttrs.setLoanAmount(USD50000);
+        amAttrs.setPaymentFrequency(12);
+        amAttrs.setInterestRateAsPercent(11.);
+        amAttrs.setInterestOnly(true);
+
+//        MonetaryAmount expectedResult = Monetary.getDefaultAmountFactory()
+//                .setCurrency("USD")
+//                .setNumber(458.34)
+//                .create();
+
+        MonetaryAmount periodicPaymentResult = AmortizationCalculator.getPeriodicPayment(amAttrs);
+        MonetaryAmount periodInterestRestult = AmortizationCalculator.getPeriodInterest(amAttrs);
+        assertEquals("Monthly interest-only payment should match interest computed for period.", periodicPaymentResult, periodInterestRestult);
+
+    }
+
+    @Test
+    public void testGetPeriodInterest_Amortized() {
+
+        AmortizationAttributes amAttrs = generateAmortizationAttributesObjectTemplate();
+        amAttrs.setLoanAmount(USD50000.multiply(2));
+        amAttrs.setInterestRateAsPercent(12.);
+        amAttrs.setCompoundingPeriodsPerYear(2);
+        amAttrs.setPaymentFrequency(12);
+
+        List<ScheduledPayment> generatedSchedule = AmortizationCalculator.generateSchedule(amAttrs);
+        generatedSchedule.stream().forEachOrdered( p -> {
+            MonetaryAmount periodInterest = AmortizationCalculator.getPeriodInterest(amAttrs);
+            assertEquals("Monthly amortized payment interest matches peirod interest", p.getInterest(), periodInterest);
+            amAttrs.setLoanAmount(p.getBalance());
+        });
+
+    }
+
     private AmortizationAttributes generateAmortizationAttributesObjectTemplate() {
 
         AmortizationAttributes amAttrs = new AmortizationAttributes();
