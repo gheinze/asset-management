@@ -4,6 +4,7 @@ import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.accounted4.assetmanager.util.vaadin.ui.Refreshable;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Table;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.vaadin.viritin.fields.MTable;
@@ -40,6 +41,11 @@ public class StatusDisplay extends MVerticalLayout implements DefaultView, Refre
 
     @PostConstruct
     public void init() {
+            transactionTable.setColumnAlignments(Table.ALIGN_LEFT,
+                    Table.ALIGN_RIGHT, Table.ALIGN_RIGHT, Table.ALIGN_RIGHT, Table.ALIGN_RIGHT,
+                    Table.ALIGN_RIGHT, Table.ALIGN_RIGHT, Table.ALIGN_RIGHT,
+                    Table.ALIGN_LEFT, Table.ALIGN_LEFT
+            );
         addComponent(new MVerticalLayout(transactionTable).expand(transactionTable));
     }
 

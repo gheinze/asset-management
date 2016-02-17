@@ -2,6 +2,7 @@ package com.accounted4.assetmanager.finance.loan;
 
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.accounted4.assetmanager.util.vaadin.ui.FormEditToolBar;
+import com.accounted4.assetmanager.util.vaadin.ui.Refreshable;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
@@ -22,7 +23,7 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
  */
 @UIScope
 @SpringView
-public class ChargeDisplay extends MVerticalLayout implements DefaultView {
+public class ChargeDisplay extends MVerticalLayout implements DefaultView, Refreshable  {
 
     private static final long serialVersionUID = 1L;
 
@@ -187,5 +188,10 @@ public class ChargeDisplay extends MVerticalLayout implements DefaultView {
 
     }
 
+    @Override
+    public void refresh() {
+        selectedLoan = loanRepo.findOne(selectedLoan.getId());
+        refreshTable();
+    }
 
 }
