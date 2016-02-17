@@ -32,7 +32,9 @@ public class AddressDisplay extends MVerticalLayout implements DefaultView {
             .withProperties("address", "note")
             .withColumnHeaders("Address", "Note")
             .setSortableProperties("address")
-            .withFullWidth();
+            .withFullWidth()
+            .withFullHeight()
+            ;
 
     private Party selectedParty;
 
@@ -51,6 +53,8 @@ public class AddressDisplay extends MVerticalLayout implements DefaultView {
     public void init() {
         addComponent(new MVerticalLayout(editToolBar, addressTable).expand(addressTable));
         addressTable.addMValueChangeListener(e -> adjustActionButtonState());
+        setWidth("100%");
+        setHeight("100%");
     }
 
     protected void adjustActionButtonState() {

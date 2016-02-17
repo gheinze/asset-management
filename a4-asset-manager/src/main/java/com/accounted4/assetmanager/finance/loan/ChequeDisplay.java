@@ -8,6 +8,7 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Table;
 import java.time.LocalDate;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -57,11 +58,17 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView, Refre
 
     @PostConstruct
     public void init() {
+
         chequeEntryForm.setSavedHandler(this::saveClickedOnChequeEntryForm);
         chequeEntryForm.setResetHandler(this::cancelClickedOnChequeEntryForm);
         addComponent(new MVerticalLayout(editToolBar, chequeTable).expand(chequeTable));
+
+        chequeTable.setColumnAlignments(Table.Align.LEFT, Table.Align.LEFT, Table.Align.LEFT, Table.Align.RIGHT, Table.Align.LEFT, Table.Align.LEFT);
         chequeTable.addMValueChangeListener(e -> adjustActionButtonState());
-    }
+
+        withFullWidth();
+        withFullHeight();
+   }
 
     private void adjustActionButtonState() {
         boolean aChequeIsSelected = chequeTable.getValue() != null;

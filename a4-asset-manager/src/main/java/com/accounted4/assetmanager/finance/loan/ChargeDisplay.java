@@ -6,6 +6,7 @@ import com.accounted4.assetmanager.util.vaadin.ui.Refreshable;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Table;
 import java.time.LocalDate;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -54,11 +55,16 @@ public class ChargeDisplay extends MVerticalLayout implements DefaultView, Refre
 
     @PostConstruct
     public void init() {
+
         chargeEntryForm.setSavedHandler(this::saveClickedOnEntryForm);
         chargeEntryForm.setResetHandler(this::cancelClickedOnEntryForm);
         addComponent(new MVerticalLayout(editToolBar, chargeTable).expand(chargeTable));
+
+        chargeTable.setColumnAlignments(Table.Align.LEFT, Table.Align.RIGHT, Table.Align.LEFT, Table.Align.LEFT);
         chargeTable.addMValueChangeListener(e -> adjustActionButtonState());
 
+        withFullWidth();
+        withFullHeight();
     }
 
     private void adjustActionButtonState() {

@@ -6,6 +6,7 @@ import com.accounted4.assetmanager.util.vaadin.ui.Refreshable;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Table;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,11 +57,16 @@ public class PaymentDisplay extends MVerticalLayout implements DefaultView, Refr
 
     @PostConstruct
     public void init() {
+
         paymentEntryForm.setSavedHandler(this::saveClickedOnEntryForm);
         paymentEntryForm.setResetHandler(this::cancelClickedOnEntryForm);
         addComponent(new MVerticalLayout(editToolBar, paymentTable).expand(paymentTable));
+
+        paymentTable.setColumnAlignments(Table.Align.LEFT, Table.Align.RIGHT, Table.Align.LEFT, Table.Align.LEFT);
         paymentTable.addMValueChangeListener(e -> adjustActionButtonState());
 
+        withFullWidth();
+        withFullHeight();
     }
 
     private void adjustActionButtonState() {

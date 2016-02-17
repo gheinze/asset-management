@@ -41,12 +41,14 @@ public class StatusDisplay extends MVerticalLayout implements DefaultView, Refre
 
     @PostConstruct
     public void init() {
-            transactionTable.setColumnAlignments(Table.ALIGN_LEFT,
-                    Table.ALIGN_RIGHT, Table.ALIGN_RIGHT, Table.ALIGN_RIGHT, Table.ALIGN_RIGHT,
-                    Table.ALIGN_RIGHT, Table.ALIGN_RIGHT, Table.ALIGN_RIGHT,
-                    Table.ALIGN_LEFT, Table.ALIGN_LEFT
-            );
+        transactionTable.setColumnAlignments(Table.Align.LEFT,
+                Table.Align.RIGHT, Table.Align.RIGHT, Table.Align.RIGHT, Table.Align.RIGHT,
+                Table.Align.RIGHT, Table.Align.RIGHT, Table.Align.RIGHT,
+                Table.Align.LEFT, Table.Align.LEFT
+        );
         addComponent(new MVerticalLayout(transactionTable).expand(transactionTable));
+        withFullWidth();
+        withFullHeight();
     }
 
     private void refreshTable() {
