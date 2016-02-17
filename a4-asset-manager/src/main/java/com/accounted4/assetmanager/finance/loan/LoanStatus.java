@@ -47,24 +47,25 @@ public class LoanStatus {
 
     private void populateScheduledPayments() {
 
+        // Key for sorting items: date (yyyy-mm-dd), type (1st scheduled, 2nd charges, 3rd payments), sequence #
         TreeMap<String, Object> orderedLineItems = new TreeMap<>();
 
         List<ScheduledPayment> scheduledPayments = AmortizationCalculator.generateSchedule(loan.getTerms().getAsAmAttributes());
         scheduledPayments.stream().forEach(p -> {
-            String key = String.format("%04d-%02d-%02d  A",
-                    p.getPaymentDate().getYear(), p.getPaymentDate().getMonthValue(), p.getPaymentDate().getDayOfMonth());
+            String key = String.format("%04d-%02d-%02d  A %d",
+                    p.getPaymentDate().getYear(), p.getPaymentDate().getMonthValue(), p.getPaymentDate().getDayOfMonth(), p.getPaymentNumber());
             orderedLineItems.put(key, p);
         });
 
         loan.getCharges().stream().forEach(c -> {
-            String key = String.format("%04d-%02d-%02d  B",
-                    c.getChargeDate().getYear(), c.getChargeDate().getMonthValue(), c.getChargeDate().getDayOfMonth());
+            String key = String.format("%04d-%02d-%02d  B %d",
+                    c.getChargeDate().getYear(), c.getChargeDate().getMonthValue(), c.getChargeDate().getDayOfMonth(), c.getId());
             orderedLineItems.put(key, c);
         });
 
         loan.getPayments().stream().forEach(p -> {
-            String key = String.format("%04d-%02d-%02d  C",
-                    p.getDepositDate().getYear(), p.getDepositDate().getMonthValue(), p.getDepositDate().getDayOfMonth());
+            String key = String.format("%04d-%02d-%02d  C %d",
+                    p.getDepositDate().getYear(), p.getDepositDate().getMonthValue(), p.getDepositDate().getDayOfMonth(), p.getId());
             orderedLineItems.put(key, p);
         });
 
