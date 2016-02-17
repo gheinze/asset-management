@@ -30,8 +30,8 @@ class ReferenceIncrementer {
     private long incrementCounter = 0;
 
     public ReferenceIncrementer(String reference) {
-        this.reference = reference;
-        String[] split = reference.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+        this.reference = null == reference ? "" : reference;
+        String[] split = this.reference.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
         for (int splitIndex = split.length - 1; splitIndex >= 0; splitIndex--) {
             try {
 
