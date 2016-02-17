@@ -30,6 +30,8 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
     private final ChequeDisplay chequeDisplay;
     private final PaymentDisplay paymentDisplay;
     private final ChargeDisplay chargeDisplay;
+    private final StatusDisplay statusDisplay;
+
 
     @Autowired
     public LoanPanel(
@@ -38,6 +40,7 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
             ,ChequeDisplay chequeDisplay
             ,PaymentDisplay paymentDisplay
             ,ChargeDisplay chargeDisplay
+            ,StatusDisplay statusDisplay
     ) {
         super("Loans");
         this.loanRepo = loanRepo;
@@ -45,6 +48,7 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
         this.chequeDisplay = chequeDisplay;
         this.paymentDisplay = paymentDisplay;
         this.chargeDisplay = chargeDisplay;
+        this.statusDisplay = statusDisplay;
         defineTabs();
     }
 
@@ -55,6 +59,7 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
         addDetailTab(getPaymentDisplay(), "Payments");
         addDetailTab(getChargeDisplay(), "Charges");
         addDetailTab(getChequeDisplay(), "Cheques");
+        addDetailTab(getStatusDisplay(), "Status");
     }
 
     // A function to generate the ui for the terms of the selected loan
@@ -99,6 +104,14 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
         return (selectedLoan) -> {
             chequeDisplay.setLoan(selectedLoan);
             return chequeDisplay;
+        };
+    }
+
+
+    private Function<Loan, Component> getStatusDisplay() {
+        return (selectedLoan) -> {
+            statusDisplay.setLoan(selectedLoan);
+            return statusDisplay;
         };
     }
 

@@ -3,7 +3,6 @@ package com.accounted4.assetmanager.finance.loan;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
 /**
  *
@@ -14,14 +13,16 @@ public class LoanRepositoryImpl implements LoanRepositoryLov {
     @PersistenceContext
     private EntityManager em;
 
-    
 
-    private static final String JPQL_FOR_CHARGE_TYPES = "SELECT t FROM LoanChargeType t";
+
+    private static final String JPQL_FOR_CHARGE_TYPES = "SELECT t FROM LoanChargeType t ORDER BY sort_order";
 
     @Override
     public List<LoanChargeType> getAllLoanChargeTypes() {
-        TypedQuery<LoanChargeType> chargeTypesQuery = em.createQuery(JPQL_FOR_CHARGE_TYPES, LoanChargeType.class);
-        return (List<LoanChargeType>)chargeTypesQuery.getResultList();
+        return em
+                .createQuery(JPQL_FOR_CHARGE_TYPES, LoanChargeType.class)
+                .getResultList()
+                ;
     }
 
 
@@ -30,8 +31,10 @@ public class LoanRepositoryImpl implements LoanRepositoryLov {
 
     @Override
     public LoanChargeType getDefaultChargeType() {
-        TypedQuery<LoanChargeType> defaultChargeTypeQuery = em.createQuery(JPQL_FOR_DEFAULT_CHARGE_TYPE, LoanChargeType.class);
-        return defaultChargeTypeQuery.getSingleResult();
+        return em
+                .createQuery(JPQL_FOR_DEFAULT_CHARGE_TYPE, LoanChargeType.class)
+                .getSingleResult()
+                ;
     }
 
 
@@ -41,8 +44,10 @@ public class LoanRepositoryImpl implements LoanRepositoryLov {
 
     @Override
     public List<PaymentDocumentType> getAllPaymentDocumentTypes() {
-        TypedQuery<PaymentDocumentType> paymentDocumentTypesQuery = em.createQuery(JPQL_FOR_PAYMENT_TYPES, PaymentDocumentType.class);
-        return (List<PaymentDocumentType>)paymentDocumentTypesQuery.getResultList();
+        return em
+                .createQuery(JPQL_FOR_PAYMENT_TYPES, PaymentDocumentType.class)
+                .getResultList()
+                ;
     }
 
 
@@ -50,8 +55,9 @@ public class LoanRepositoryImpl implements LoanRepositoryLov {
 
     @Override
     public List<PaymentDocumentStatus> getAllPaymentDocumentStatus() {
-        TypedQuery<PaymentDocumentStatus> paymentDocumentStatusQuery = em.createQuery(JPQL_FOR_PAYMENT_STATUS, PaymentDocumentStatus.class);
-        return (List<PaymentDocumentStatus>)paymentDocumentStatusQuery.getResultList();
+        return em
+                .createQuery(JPQL_FOR_PAYMENT_STATUS, PaymentDocumentStatus.class)
+                .getResultList();
     }
 
 
@@ -60,8 +66,10 @@ public class LoanRepositoryImpl implements LoanRepositoryLov {
 
     @Override
     public PaymentDocumentType getDefaultPaymentDocumentType() {
-        TypedQuery<PaymentDocumentType> defaultPaymentDocumentTypeQuery = em.createQuery(JPQL_FOR_DEFAULT_PAYMENT_TYPE, PaymentDocumentType.class);
-        return defaultPaymentDocumentTypeQuery.getSingleResult();
+        return em
+                .createQuery(JPQL_FOR_DEFAULT_PAYMENT_TYPE, PaymentDocumentType.class)
+                .getSingleResult()
+                ;
     }
 
 
@@ -69,8 +77,10 @@ public class LoanRepositoryImpl implements LoanRepositoryLov {
 
     @Override
     public PaymentDocumentStatus getDefaultPaymentDocumentStatus() {
-        TypedQuery<PaymentDocumentStatus> defaultPaymentDocumentStatusQuery = em.createQuery(JPQL_FOR_DEFAULT_PAYMENT_STATUS, PaymentDocumentStatus.class);
-        return defaultPaymentDocumentStatusQuery.getSingleResult();
+        return em
+                .createQuery(JPQL_FOR_DEFAULT_PAYMENT_STATUS, PaymentDocumentStatus.class)
+                .getSingleResult()
+                ;
     }
 
 }

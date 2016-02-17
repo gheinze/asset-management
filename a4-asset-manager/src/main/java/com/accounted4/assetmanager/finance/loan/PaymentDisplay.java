@@ -28,7 +28,7 @@ public class PaymentDisplay extends MVerticalLayout implements DefaultView {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] DEFAULT_TABLE_SORT_PROPERTIES = {"postDate"};
+    private static final String[] DEFAULT_TABLE_SORT_PROPERTIES = {"depositDate"};
     private static final boolean[] DEFAULT_TABLE_SORT_DIRECTIONS = {true};
 
 
