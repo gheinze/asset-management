@@ -1,13 +1,11 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.util.vaadin.ui.AmPopupDateField;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.PopupDateField;
-import java.time.LocalDate;
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import javax.money.MonetaryAmount;
 import org.javamoney.moneta.Money;
 import org.vaadin.viritin.fields.MTextArea;
@@ -29,7 +27,7 @@ public class PaymentEntryForm extends AbstractForm<PaymentEntryFormBean> impleme
     // The key to viritin's MFormLayout is that the if the names of the components on the
     // form match the bound entity, all the binding is done implicitly
     private TypedSelect<Cheque> cheque;
-    private PopupDateField depositDate;
+    private final AmPopupDateField depositDate = new AmPopupDateField("Deposit date");
     private MTextField amount;
     private final MTextArea note = new MTextArea("Note");
 
@@ -37,7 +35,6 @@ public class PaymentEntryForm extends AbstractForm<PaymentEntryFormBean> impleme
     @PostConstruct
     private void init() {
         prepareChequeSelect();
-        prepareDepositDateField();
         prepareAmountField();
     }
 
@@ -56,13 +53,6 @@ public class PaymentEntryForm extends AbstractForm<PaymentEntryFormBean> impleme
             getEntity().setAmount(Money.of(selectedCheque.getAmount(), selectedCheque.getCurrency()));
         }
         amount.setEnabled(enableEntry);
-    }
-
-
-    private void prepareDepositDateField() {
-        depositDate = new PopupDateField("Deposit date");
-        depositDate.setConverter(LocalDate.class);
-        depositDate.setImmediate(true);
     }
 
 

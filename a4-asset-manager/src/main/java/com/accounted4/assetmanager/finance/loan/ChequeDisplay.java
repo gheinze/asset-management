@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.util.vaadin.ui.AmMTable;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.accounted4.assetmanager.util.vaadin.ui.FormEditToolBar;
 import com.accounted4.assetmanager.util.vaadin.ui.Refreshable;
@@ -38,10 +39,10 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView, Refre
     private final ChequeEntryForm chequeEntryForm;
     private final LoanRepository loanRepo;
 
-    private final MTable<Cheque> chequeTable = new MTable<>(Cheque.class)
-            .withProperties("documentType", "reference", "postDate", "displayAmount", "documentStatus", "note")
-            .withColumnHeaders("Type", "Reference", "Date", "Amount", "Status", "Note")
-            .setSortableProperties("documentType", "reference", "postDate", "displayAmount", "documentStatus")
+    private final MTable<Cheque> chequeTable = new AmMTable<>(Cheque.class)
+            .withProperties("postDate", "displayAmount", "documentType", "reference", "documentStatus", "note")
+            .withColumnHeaders("Date", "Amount", "Type", "Reference", "Status", "Note")
+            .setSortableProperties("postDate", "displayAmount", "documentType", "reference", "documentStatus")
             .withFullWidth();
 
     private Loan selectedLoan;
@@ -63,7 +64,7 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView, Refre
         chequeEntryForm.setResetHandler(this::cancelClickedOnChequeEntryForm);
         addComponent(new MVerticalLayout(editToolBar, chequeTable).expand(chequeTable));
 
-        chequeTable.setColumnAlignments(Table.Align.LEFT, Table.Align.LEFT, Table.Align.LEFT, Table.Align.RIGHT, Table.Align.LEFT, Table.Align.LEFT);
+        chequeTable.setColumnAlignments(Table.Align.LEFT, Table.Align.RIGHT, Table.Align.LEFT, Table.Align.LEFT, Table.Align.LEFT, Table.Align.LEFT);
         chequeTable.addMValueChangeListener(e -> adjustActionButtonState());
 
         withFullWidth();

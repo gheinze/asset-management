@@ -1,11 +1,11 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.util.vaadin.ui.AmPopupDateField;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.PopupDateField;
-import java.time.LocalDate;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.money.MonetaryAmount;
@@ -27,7 +27,7 @@ public class ChargeEntryForm extends AbstractForm<ChargeEntryFormBean> implement
 
 
     private TypedSelect<LoanChargeType> chargeType;
-    private PopupDateField chargeDate;
+    private final PopupDateField chargeDate = new AmPopupDateField("Charge date");
     private MTextField amount;
     private final MTextArea note = new MTextArea("Note");
 
@@ -44,7 +44,6 @@ public class ChargeEntryForm extends AbstractForm<ChargeEntryFormBean> implement
     @PostConstruct
     private void init() {
         prepareChargeTypeSelect();
-        prepareChargeDateField();
         prepareAmountField();
     }
 
@@ -53,13 +52,6 @@ public class ChargeEntryForm extends AbstractForm<ChargeEntryFormBean> implement
         chargeType = new TypedSelect<>(LoanChargeType.class);
         chargeType.setCaption("Charge type");
         chargeType.setBeans(loanRepo.getAllLoanChargeTypes());
-    }
-
-
-    private void prepareChargeDateField() {
-        chargeDate = new PopupDateField("Charge date");
-        chargeDate.setConverter(LocalDate.class);
-        chargeDate.setImmediate(true);
     }
 
 

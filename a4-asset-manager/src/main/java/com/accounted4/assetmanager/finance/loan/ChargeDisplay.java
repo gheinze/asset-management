@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.util.vaadin.ui.AmMTable;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.accounted4.assetmanager.util.vaadin.ui.FormEditToolBar;
 import com.accounted4.assetmanager.util.vaadin.ui.Refreshable;
@@ -35,7 +36,7 @@ public class ChargeDisplay extends MVerticalLayout implements DefaultView, Refre
     private final ChargeEntryForm chargeEntryForm;
     private final LoanRepository loanRepo;
 
-    private final MTable<LoanCharge> chargeTable = new MTable<>(LoanCharge.class)
+    private final MTable<LoanCharge> chargeTable = new AmMTable<>(LoanCharge.class)
             .withProperties("chargeDate", "displayAmount", "loanChargeType", "note")
             .withColumnHeaders("Charge Date", "Amount", "Charge Type", "Note")
             .setSortableProperties("chargeDate")

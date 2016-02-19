@@ -207,6 +207,8 @@ public class TermsPanel extends Panel {
     private PopupDateField createStartDateField() {
         PopupDateField field = amAttrBinder.buildAndBind("Start Date", "startDate", PopupDateField.class);
         field.setConverter(LocalDate.class);
+        field.setDateFormat("dd-MMM-yyyy");
+        field.setWidth("10em");
         field.setImmediate(true);
         return field;
     }
