@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-02-19T22:47:37 -->
+<!-- 2016-02-20T15:20:04 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LoanStatus" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4df64cc7-6b22-4c2a-90dd-d8a64048c5b1">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="RedWhenNegative">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$P{daysToMaturity} < 0]]></conditionExpression>
+			<style forecolor="#FF0000"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="nextPaymentDate" class="java.time.LocalDate" isForPrompting="false"/>
+	<parameter name="loanName" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="regularDue" class="javax.money.MonetaryAmount"/>
+	<parameter name="actualDue" class="javax.money.MonetaryAmount"/>
+	<parameter name="balance" class="javax.money.MonetaryAmount"/>
+	<parameter name="nextChequeOnFile" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="daysToMaturity" class="java.lang.Long" isForPrompting="false"/>
+	<parameter name="perDiem" class="javax.money.MonetaryAmount" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -16,14 +30,103 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch">
+		<band height="102" splitType="Stretch">
 			<staticText>
-				<reportElement x="204" y="24" width="164" height="30" uuid="4f0af313-8aa6-4855-82ae-c92d08f424c5"/>
-				<textElement>
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Transaction History]]></text>
+				<reportElement x="0" y="34" width="73" height="15" uuid="4280f56d-db77-4c45-a070-84a246c37a5a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[As of:]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="0" y="49" width="73" height="15" uuid="db142a5f-38d7-4eba-8a49-814b9353be64">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Regular due:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="64" width="73" height="15" uuid="32695c03-b454-45c9-951f-9d339ce4e66b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Actual due:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="34" width="110" height="15" uuid="ceaaf4a1-8e5c-4dc3-81b7-edc39848cc5d">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Next cheque on file:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="49" width="110" height="15" uuid="8d928c85-3123-4760-af29-3d20bb9866c6">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Days to maturity]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="330" y="64" width="110" height="15" uuid="ab98f706-6263-4685-8905-93f33bd473d3">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Per diem:]]></text>
+			</staticText>
+			<textField pattern="yyyy MMM dd" isBlankWhenNull="true">
+				<reportElement x="80" y="34" width="70" height="15" uuid="865db143-9b8d-4999-86ad-455ab80fe113">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[Date.from($P{nextPaymentDate}.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="150" y="0" width="272" height="22" uuid="2615ccbd-c0e9-4c73-9325-34077e4c5a47"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{loanName}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="80" y="49" width="70" height="15" uuid="92bc0362-f974-4a10-a98d-6a246fd0fb82">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$P{regularDue}.getNumber()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="80" y="64" width="70" height="15" uuid="cc16c42c-4acc-47e7-a66b-e9de21893575">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$P{actualDue}.getNumber()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="79" width="73" height="15" uuid="0fa27702-6329-4080-b8fc-b0739a847acf">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Balance:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="80" y="79" width="70" height="15" uuid="e3770cdc-27b9-4541-b5c8-a90fb108100a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$P{balance}.getNumber()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="440" y="34" width="130" height="15" uuid="6cabd9ed-7280-4064-a3a2-26c18ca64016">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$P{nextChequeOnFile}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="RedWhenNegative" x="440" y="50" width="130" height="15" uuid="ec3e329c-af40-4099-9ae7-f7d865fa2d14">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$P{daysToMaturity}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="440" y="64" width="70" height="15" uuid="aa665018-da3f-45be-bb07-812957996088">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$P{perDiem}.getNumber()]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageHeader>
@@ -83,7 +186,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="21" splitType="Stretch">
+		<band height="18" splitType="Stretch">
 			<textField pattern="yyyy MMM dd">
 				<reportElement x="0" y="0" width="70" height="15" uuid="f574c66f-14dc-4b3f-9767-0773c74c7367">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -97,7 +200,7 @@
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{transaction}.getNumber()]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="false">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="150" y="0" width="70" height="15" uuid="55f00edf-1b93-4580-951d-6dd00c8287f8">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -129,7 +232,13 @@
 		<band height="45" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="54" splitType="Stretch"/>
+		<band height="54" splitType="Stretch">
+			<staticText>
+				<reportElement x="181" y="12" width="210" height="30" uuid="01c02d25-23bf-4762-b09e-18d6a795cf68"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[In development. Verification required.]]></text>
+			</staticText>
+		</band>
 	</pageFooter>
 	<summary>
 		<band height="42" splitType="Stretch"/>

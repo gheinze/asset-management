@@ -80,7 +80,17 @@ public class LoanServiceImpl implements LoanService {
     public void writePdfLoanStatusToStream(final Loan loan, final OutputStream outputStream) throws JRException, IOException {
         LoanStatus loanStatus = new LoanStatus(loan);
         List<LoanStatusLineItem> lineItems = loanStatus.getOrderedLineItems();
+
         Map<String, Object> customParameters = new HashMap<>();
+        customParameters.put("loanName", loanStatus.getLoanName());
+        customParameters.put("nextPaymentDate", loanStatus.getNextScheduledPaymentDate());
+        customParameters.put("regularDue", loanStatus.getRegularDue());
+        customParameters.put("actualDue", loanStatus.getActualDue());
+        customParameters.put("balance", loanStatus.getBalance());
+        customParameters.put("nextChequeOnFile", loanStatus.getNextChequeOnFile());
+        customParameters.put("daysToMaturity", loanStatus.getDaysToMaturity());
+        customParameters.put("perDiem", loanStatus.getPerDiem());
+
         writePdfScheduleToStream(LOAN_STATUS_REPORT, lineItems, customParameters, outputStream);
     }
 
