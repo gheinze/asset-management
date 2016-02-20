@@ -3,11 +3,23 @@ package com.accounted4.assetmanager.finance.loan;
 import com.accounted4.assetmanager.util.vaadin.ui.AmMTable;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.accounted4.assetmanager.util.vaadin.ui.Refreshable;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
+import com.vaadin.server.StreamResource;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Window;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import net.sf.jasperreports.engine.JRException;
+import org.slf4j.LoggerFactory;
 import org.vaadin.viritin.fields.MTable;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
@@ -19,30 +31,38 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
 @SpringView
 public class StatusDisplay extends MVerticalLayout implements DefaultView, Refreshable {
 
+    private final String[] fieldNames = {
+        "date",
+        "scheduledAmount", "scheduledInterest", "scheduledPrincipal", "scheduledBalance",
+        "transaction", "balance", "fees",
+        "type", "note"
+    };
+
     private final MTable<LoanStatusLineItem> transactionTable = new AmMTable<>(LoanStatusLineItem.class)
-            .withProperties("date",
-                    "scheduledAmount", "scheduledInterest", "scheduledPrincipal", "scheduledBalance",
-                    "transaction", "balance", "fees",
-                    "type", "note")
-            .withColumnHeaders("date",
-                    "date", "scheduledInterest", "scheduledPrincipal", "scheduledBalance",
-                    "transaction", "balance", "fees",
-                    "type", "note")
+            .withProperties(fieldNames)
+            .withColumnHeaders(fieldNames)
             .setSortableProperties("date")
             .withFullWidth()
             ;
 
+    private final LoanService loanService;
     private final LoanRepository loanRepo;
     private Loan selectedLoan;
 
+    private Button generatePdfButton;
+
+
     @Inject
-    public StatusDisplay(LoanRepository loanRepo) {
+    public StatusDisplay(LoanService loanService, LoanRepository loanRepo) {
+        this.loanService = loanService;
         this.loanRepo = loanRepo;
     }
 
 
     @PostConstruct
     public void init() {
+
+        configureGeneratePdfButton();
 
         transactionTable.setColumnAlignments(Table.Align.LEFT,
                 Table.Align.RIGHT, Table.Align.RIGHT, Table.Align.RIGHT, Table.Align.RIGHT,
@@ -55,9 +75,19 @@ public class StatusDisplay extends MVerticalLayout implements DefaultView, Refre
         transactionTable.setColumnCollapsed("scheduledPrincipal", true);
         transactionTable.setColumnCollapsed("scheduledBalance", true);
 
-        addComponent(new MVerticalLayout(transactionTable).expand(transactionTable));
+        addComponent(new MVerticalLayout(generatePdfButton, transactionTable).expand(transactionTable));
         withFullWidth();
         withFullHeight();
+    }
+
+    private void configureGeneratePdfButton() {
+        generatePdfButton = new Button("pdf");
+        generatePdfButton.setIcon(FontAwesome.FILE_PDF_O);
+        generatePdfButton.addStyleName("redicon");
+        generatePdfButton.setDescription("Generate PDF schedule");
+        generatePdfButton.addClickListener(e -> {
+            displayPdfSchedule();
+        });
     }
 
     private void refreshTable() {
@@ -66,6 +96,30 @@ public class StatusDisplay extends MVerticalLayout implements DefaultView, Refre
         String[] sortColumns = {"date"};
         boolean[] sortDirections = {true};
         transactionTable.sort(sortColumns, sortDirections);
+    }
+
+    private void displayPdfSchedule() {
+
+        StreamResource.StreamSource pdfStreamFromServer = () -> {
+            try {
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                loanService.writePdfLoanStatusToStream(selectedLoan, outputStream);
+                byte[] data = outputStream.toByteArray();
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+                return inputStream;
+            } catch (JRException | IOException ex) {
+                // TODO: slf4j logging
+            LoggerFactory
+                    .getLogger(StatusDisplay.class)
+                    .warn("Pdf generation failed", ex);
+                    new Notification("Error generating pdf schedule", "", Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
+            }
+            return null;
+        };
+
+        final Window window = new PdfScheduleWindow(pdfStreamFromServer);
+        UI.getCurrent().addWindow(window);
+
     }
 
 
