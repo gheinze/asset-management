@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-02-19T19:04:01 -->
+<!-- 2016-02-20T11:14:22 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AmortizationSchedule" pageWidth="612" pageHeight="792" columnWidth="552" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="9cd3da7d-d38d-43b0-a28c-b0f210c5ba95">
 	<property name="ireport.scriptlethandling" value="2"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -19,7 +19,7 @@
 	<parameter name="term" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="amortizationYears" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="amortizationMonths" class="java.lang.Integer" isForPrompting="false"/>
-	<parameter name="compoundPeriod" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="compoundPeriod" class="java.lang.String" isForPrompting="false"/>
 	<field name="balance" class="javax.money.MonetaryAmount">
 		<fieldDescription><![CDATA[balance]]></fieldDescription>
 	</field>
@@ -189,7 +189,7 @@
 				<text><![CDATA[months]]></text>
 			</staticText>
 			<staticText>
-				<reportElement key="staticText-12" x="463" y="18" width="32" height="13" uuid="5dea0f05-db44-4a39-a151-61b18d934a98"/>
+				<reportElement key="staticText-12" x="463" y="18" width="32" height="18" uuid="5dea0f05-db44-4a39-a151-61b18d934a98"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -220,19 +220,16 @@
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$P{amortizationYears} == null ? "" : $P{amortizationYears}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField" x="445" y="36" width="13" height="18" uuid="df0c5287-1c44-41ad-8bb1-14d750200602"/>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="445" y="36" width="104" height="18" uuid="df0c5287-1c44-41ad-8bb1-14d750200602"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$P{compoundPeriod} == null ? "" :
-    $P{compoundPeriod} == 1 ? "Annually" :
-    $P{compoundPeriod} == 6 ? "Semi-Annually" :
-    $P{compoundPeriod} == 12 ? "Monthly" : ""]]></textFieldExpression>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[$P{compoundPeriod}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement key="staticText-13" x="404" y="0" width="31" height="18" uuid="96f8ff7b-ad55-4e43-bdb1-b98ed6be8c23"/>
@@ -395,7 +392,7 @@
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$F{balance}.getNumber()]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="false">
+			<textField pattern="yyyy MMM dd" isBlankWhenNull="false">
 				<reportElement key="dateField" x="61" y="0" width="100" height="18" uuid="03af5325-66ad-4a01-9cf1-3e051aec5301"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
