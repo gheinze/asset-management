@@ -2,8 +2,6 @@ package com.accounted4.assetmanager.finance.loan;
 
 import com.accounted4.assetmanager.UiRouter;
 import com.accounted4.assetmanager.util.vaadin.ui.SelectorDetailPanel;
-import com.accounted4.finance.loan.AmortizationAttributes;
-import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -25,8 +23,8 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
     private static final String LOAN_NAME_FIELD = "loanName";
 
     private final LoanRepository loanRepo;
-    private final LoanService loanService;
 
+    private final TermsDisplay termsDisplay;
     private final ChequeDisplay chequeDisplay;
     private final PaymentDisplay paymentDisplay;
     private final ChargeDisplay chargeDisplay;
@@ -36,7 +34,7 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
     @Autowired
     public LoanPanel(
             LoanRepository loanRepo
-            ,LoanService loanService
+            ,TermsDisplay termsDisplay
             ,ChequeDisplay chequeDisplay
             ,PaymentDisplay paymentDisplay
             ,ChargeDisplay chargeDisplay
@@ -44,7 +42,7 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
     ) {
         super("Loans");
         this.loanRepo = loanRepo;
-        this.loanService = loanService;
+        this.termsDisplay = termsDisplay;
         this.chequeDisplay = chequeDisplay;
         this.paymentDisplay = paymentDisplay;
         this.chargeDisplay = chargeDisplay;
@@ -55,7 +53,7 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
 
 
     private void defineTabs() {
-        addDetailTab(getTermsPanelGenerator(), "Terms");
+        addDetailTab(getTermsDisplay(), "Terms");
         addDetailTab(getPaymentDisplay(), "Payments");
         addDetailTab(getChargeDisplay(), "Charges");
         addDetailTab(getChequeDisplay(), "Cheques");
@@ -63,25 +61,13 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
     }
 
     // A function to generate the ui for the terms of the selected loan
-    private Function<Loan, Component> getTermsPanelGenerator() {
+    private Function<Loan, Component> getTermsDisplay() {
         return (selectedLoan) -> {
-            TermsPanel termsPanel = new TermsPanel(loanService, selectedLoan.getTerms().getAsAmAttributes());
-            termsPanel.addFormChangeListner((event) -> {
-                Property property = event.getProperty();
-                AmortizationAttributes termsFromUi = (AmortizationAttributes)property.getValue();
-                selectedLoan.getTerms().refreshFrom(termsFromUi);
-                termsChangedAction(selectedLoan);
-            });
-            return termsPanel;
+            termsDisplay.setLoan(selectedLoan);
+            return termsDisplay;
         };
     }
 
-    private void termsChangedAction(Loan selectedLoan) {
-        loanRepo.save(selectedLoan);
-        LoanTerms newTermsFromDb = loanRepo.findOne(selectedLoan.getId()).getTerms();
-        selectedLoan.setTerms(newTermsFromDb);
-        // new Notification("Detected change to the terms", "", Notification.Type.TRAY_NOTIFICATION, true).show(Page.getCurrent());
-    }
 
 
     private Function<Loan, Component> getPaymentDisplay() {
