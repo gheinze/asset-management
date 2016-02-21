@@ -1,6 +1,5 @@
 package com.accounted4.assetmanager.finance.loan;
 
-import com.vaadin.server.Sizeable;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Window;
@@ -13,8 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PdfScheduleWindow extends Window {
 
     private static final AtomicInteger PDFS_GENERATED = new AtomicInteger(0);
-    private static final int PIXEL_OFFSET_FOR_NEW_WINDOW = 50;
-    private static final int NUMBER_OF_WINDOWS_TO_OFFSET_BEFORE_RESET = 5;
 
 
     public PdfScheduleWindow(StreamResource.StreamSource stream) {
@@ -33,19 +30,11 @@ public class PdfScheduleWindow extends Window {
         browserFrame.setSizeFull();
 
         setResizable(true);
-        setWidth(60, Sizeable.Unit.PERCENTAGE);
-        setHeight(70, Sizeable.Unit.PERCENTAGE);
-        setLocation();
+        setPosition(0,0);
+        setSizeFull();
         setContent(browserFrame);
 
     }
 
-    private void setLocation() {
-        int x = 380;
-        int y = 130;
-        int offset = (PDFS_GENERATED.get() % NUMBER_OF_WINDOWS_TO_OFFSET_BEFORE_RESET) * PIXEL_OFFSET_FOR_NEW_WINDOW;
-        setPositionX(x + offset);
-        setPositionY(y + offset);
-    }
 
 }
