@@ -21,10 +21,10 @@ public class TermsDisplay extends MVerticalLayout implements DefaultView, Refres
 
     private static final long serialVersionUID = 1L;
 
-    private final TermsPanel termsPanel;
     private final LoanRepository loanRepo;
     private final LoanService loanService;
 
+    private TermsPanel termsPanel;
     private Loan selectedLoan;
 
 
@@ -32,28 +32,26 @@ public class TermsDisplay extends MVerticalLayout implements DefaultView, Refres
     public TermsDisplay(LoanRepository loanRepo, LoanService loanService) {
         this.loanRepo = loanRepo;
         this.loanService = loanService;
-        termsPanel = new TermsPanel(loanService);
+    }
+
+    private void createTermsPanel(AmortizationAttributes amAttrs) {
+        termsPanel = new TermsPanel(loanService, amAttrs);
         termsPanel.addFormChangeListner((event) -> {
             Property property = event.getProperty();
             AmortizationAttributes termsFromUi = (AmortizationAttributes) property.getValue();
             selectedLoan.getTerms().refreshFrom(termsFromUi);
             termsChangedAction();
         });
+        removeAllComponents();
+        addComponent(new MVerticalLayout(termsPanel).expand(termsPanel));
+        withFullWidth();
+        withFullHeight();
     }
-
 
     private void termsChangedAction() {
         loanRepo.save(selectedLoan);
         selectedLoan = loanRepo.findOne(selectedLoan.getId());
         // new Notification("Detected change to the terms", "", Notification.Type.TRAY_NOTIFICATION, true).show(Page.getCurrent());
-    }
-
-
-    @PostConstruct
-    public void init() {
-        addComponent(new MVerticalLayout(termsPanel).expand(termsPanel));
-        withFullWidth();
-        withFullHeight();
     }
 
 
@@ -70,6 +68,7 @@ public class TermsDisplay extends MVerticalLayout implements DefaultView, Refres
     @Override
     public void refresh() {
         selectedLoan = loanRepo.findOne(selectedLoan.getId());
+        createTermsPanel(selectedLoan.getTerms().getAsAmAttributes());
     }
 
 }
