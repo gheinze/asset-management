@@ -4,6 +4,7 @@ import com.accounted4.finance.loan.AmortizationAttributes;
 import com.accounted4.finance.loan.AmortizationCalculator;
 import com.accounted4.finance.loan.ScheduledPayment;
 import com.accounted4.finance.loan.TimePeriod;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.MONTHS;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import javax.money.MonetaryAmount;
 import lombok.Getter;
+import org.javamoney.moneta.Money;
 
 /**
  * Object to hold ordered transaction history of mortgage.
@@ -43,7 +45,7 @@ public class LoanStatus {
     private final ArrayList<LoanStatusLineItem> transactions = new ArrayList<>();
 
     @Getter private LocalDate nextScheduledPaymentDate;
-    private LoanStatusLineItem activeLineItem;
+    private LoanStatusLineItem nextScheduledPaymentLineItem;
 
     private MonetaryAmount balance;
     private MonetaryAmount feeBalance;
@@ -55,18 +57,23 @@ public class LoanStatus {
 
         TimePeriod paymentFrequency = TimePeriod.getTimePeriodWithPeriodCountOf(amAttr.getPaymentFrequency());
         nowPlusOnePaymentPeriod = paymentFrequency.getDateFrom(now, 1);
+        nextScheduledPaymentDate = paymentFrequency.getDateFrom(loan.getTerms().getStartDate(), 1);
 
-        nextScheduledPaymentDate = loan.getTerms().getStartDate();
         populateScheduledPayments();
     }
 
 
     private void populateScheduledPayments() {
 
-        // Key for sorting items: date (yyyy-mm-dd), type (1st scheduled, 2nd charges, 3rd payments), sequence #
+        // Key for sorting items: date (yyyy-mm-dd), type (scheduled interest payment, charges, payments), sequence #
         TreeMap<String, Object> orderedLineItems = new TreeMap<>();
 
         List<ScheduledPayment> scheduledPayments = AmortizationCalculator.generateSchedule(amAttr);
+
+        LoanCharge forwardedFunds = getOpeningCharge();
+        String theKey = String.format("%04d-%02d-%02d  A %d",
+                forwardedFunds.getChargeDate().getYear(), forwardedFunds.getChargeDate().getMonthValue(), forwardedFunds.getChargeDate().getDayOfMonth(), forwardedFunds.getId());
+        orderedLineItems.put(theKey, forwardedFunds);
 
         scheduledPayments.stream().forEachOrdered(p -> {
             String key = String.format("%04d-%02d-%02d  A %d",
@@ -87,10 +94,8 @@ public class LoanStatus {
             orderedLineItems.put(key, p);
         });
 
-        LoanStatusLineItem openingLineItem = getOpeningBalance();
-        transactions.add(openingLineItem);
 
-        balance = openingLineItem.getScheduledBalance();
+        balance = Money.of(BigDecimal.ZERO, loan.getTerms().getLoanCurrency());
         feeBalance = balance.multiply(0L);
 
         orderedLineItems.values().stream().forEachOrdered((item) -> {
@@ -106,12 +111,17 @@ public class LoanStatus {
     }
 
 
-    private LoanStatusLineItem getOpeningBalance() {
-        LoanStatusLineItem lineItem = new LoanStatusLineItem();
-        lineItem.setDate(loan.getTerms().getStartDate());
-        lineItem.setScheduledBalance(loan.getTerms().getAsAmAttributes().getLoanAmount());
-        lineItem.setBalance(lineItem.getScheduledBalance());
-        return lineItem;
+    private LoanCharge getOpeningCharge() {
+
+        LoanCharge openingCharge = new LoanCharge();
+        openingCharge.setLoan(loan);
+        openingCharge.setLoanChargeType(LoanChargeType.getOtherCapitalizing());
+        openingCharge.setCurrency(loan.getTerms().getLoanCurrency());
+        openingCharge.setAmount(loan.getTerms().getLoanAmount());
+        openingCharge.setChargeDate(loan.getTerms().getStartDate());
+        openingCharge.setNote("Forwarded funds");
+
+        return openingCharge;
     }
 
 
@@ -181,7 +191,7 @@ public class LoanStatus {
         lineItem.setScheduledPrincipal(scheduledPayment.getPrincipal());
         lineItem.setScheduledBalance(scheduledPayment.getBalance());
 
-        if (!scheduledPayment.getPaymentDate().isAfter(nowPlusOnePaymentPeriod)) {
+        if (!scheduledPayment.getPaymentDate().isAfter(nextScheduledPaymentDate)) {
             AmortizationAttributes amAttrs = loan.getTerms().getAsAmAttributes();
             amAttrs.setLoanAmount(balance);
             MonetaryAmount periodInterest = AmortizationCalculator.getPeriodInterest(amAttrs);
@@ -193,8 +203,8 @@ public class LoanStatus {
             lineItem.setNote("Scheduled interest charge");
         }
 
-        if (scheduledPayment.getPaymentDate().isEqual(nextScheduledPaymentDate)) {
-            activeLineItem = lineItem;
+        if (null == nextScheduledPaymentLineItem || scheduledPayment.getPaymentDate().isEqual(nextScheduledPaymentDate)) {
+            nextScheduledPaymentLineItem = lineItem;
         }
 
         return lineItem;
@@ -203,8 +213,13 @@ public class LoanStatus {
 
 
 
+    /*
+     * The basis for the next scheduled payment is after the loan commences, but only at most
+     * one payment into the future.
+    */
     private void updateNextScheduledPaymentDate(ScheduledPayment p) {
-        if (!p.getPaymentDate().isAfter(nowPlusOnePaymentPeriod)) {
+        if (p.getPaymentDate().isAfter(nextScheduledPaymentDate) &&
+                !p.getPaymentDate().isAfter(nowPlusOnePaymentPeriod)) {
             nextScheduledPaymentDate = p.getPaymentDate();
         }
     }
@@ -225,13 +240,13 @@ public class LoanStatus {
 
     public MonetaryAmount getActualDue() {
         return balance
-                .subtract(activeLineItem.getScheduledBalance())
+                .subtract(nextScheduledPaymentLineItem.getScheduledBalance())
                 .add(feeBalance)
                 ;
     }
 
     public MonetaryAmount getBalance() {
-        return activeLineItem.getBalance();
+        return nextScheduledPaymentLineItem.getBalance();
     }
 
 

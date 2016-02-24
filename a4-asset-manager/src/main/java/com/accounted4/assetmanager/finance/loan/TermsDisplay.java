@@ -6,7 +6,6 @@ import com.accounted4.finance.loan.AmortizationAttributes;
 import com.vaadin.data.Property;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
