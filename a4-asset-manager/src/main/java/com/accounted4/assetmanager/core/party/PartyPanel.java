@@ -1,5 +1,7 @@
 package com.accounted4.assetmanager.core.party;
 
+import com.accounted4.assetmanager.repository.PartyRepository;
+import com.accounted4.assetmanager.repository.PartyNoteRepository;
 import com.accounted4.assetmanager.entity.PartyNote;
 import com.accounted4.assetmanager.entity.Party;
 import com.accounted4.assetmanager.UiRouter;

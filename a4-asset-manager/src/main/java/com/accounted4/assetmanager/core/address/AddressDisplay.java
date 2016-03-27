@@ -2,7 +2,7 @@ package com.accounted4.assetmanager.core.address;
 
 import com.accounted4.assetmanager.entity.Address;
 import com.accounted4.assetmanager.entity.Party;
-import com.accounted4.assetmanager.core.party.PartyRepository;
+import com.accounted4.assetmanager.repository.PartyRepository;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.accounted4.assetmanager.util.vaadin.ui.FormEditToolBar;
 import com.vaadin.spring.annotation.SpringView;

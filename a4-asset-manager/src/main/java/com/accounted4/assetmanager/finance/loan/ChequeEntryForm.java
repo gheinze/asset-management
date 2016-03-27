@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.repository.LoanRepository;
 import com.accounted4.assetmanager.entity.PaymentDocumentType;
 import com.accounted4.assetmanager.entity.PaymentDocumentStatus;
 import com.accounted4.assetmanager.util.vaadin.ui.AmPopupDateField;

@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.repository.LoanRepository;
 import com.accounted4.assetmanager.entity.LoanPayment;
 import com.accounted4.assetmanager.entity.Loan;
 import com.accounted4.assetmanager.entity.Cheque;

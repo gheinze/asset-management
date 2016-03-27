@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.useraccount;
+package com.accounted4.assetmanager.repository;
 
 import com.accounted4.assetmanager.entity.UserAccount;
 import javax.persistence.EntityManager;

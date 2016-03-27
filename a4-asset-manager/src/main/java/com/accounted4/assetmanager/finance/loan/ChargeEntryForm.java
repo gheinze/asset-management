@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.repository.LoanRepository;
 import com.accounted4.assetmanager.entity.LoanChargeType;
 import com.accounted4.assetmanager.util.vaadin.ui.AmPopupDateField;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;

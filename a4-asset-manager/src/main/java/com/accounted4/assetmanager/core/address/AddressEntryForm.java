@@ -1,5 +1,7 @@
 package com.accounted4.assetmanager.core.address;
 
+import com.accounted4.assetmanager.repository.CountrySubdivisionRepository;
+import com.accounted4.assetmanager.repository.CountryRepository;
 import com.accounted4.assetmanager.entity.CountrySubdivision;
 import com.accounted4.assetmanager.entity.Country;
 import com.accounted4.assetmanager.entity.Address;

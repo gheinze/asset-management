@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.repository;
 
 import com.accounted4.assetmanager.entity.PaymentDocumentType;
 import com.accounted4.assetmanager.entity.PaymentDocumentStatus;
