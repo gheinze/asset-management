@@ -1,11 +1,11 @@
-package com.accounted4.assetmanager.core.party;
+package com.accounted4.assetmanager.ui.party;
 
 import com.accounted4.assetmanager.repository.PartyRepository;
 import com.accounted4.assetmanager.repository.PartyNoteRepository;
 import com.accounted4.assetmanager.entity.PartyNote;
 import com.accounted4.assetmanager.entity.Party;
 import com.accounted4.assetmanager.UiRouter;
-import com.accounted4.assetmanager.core.address.AddressDisplay;
+import com.accounted4.assetmanager.ui.address.AddressSpringView;
 import com.accounted4.assetmanager.util.vaadin.ui.SelectorDetailPanel;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.spring.annotation.SpringView;
@@ -24,15 +24,15 @@ import org.springframework.data.domain.Sort;
  */
 @UIScope
 @SpringView(name = UiRouter.ViewName.PARTIES)
-public class PartyPanel extends SelectorDetailPanel<Party> {
+public class PartySpringView extends SelectorDetailPanel<Party> {
 
     private final PartyRepository partyRepo;
     private final PartyNoteRepository partyNoteRepo;
-    private final AddressDisplay addressDisplay;
+    private final AddressSpringView addressDisplay;
 
 
     @Autowired
-    public PartyPanel(PartyRepository partyRepo, PartyNoteRepository partyNoteRepo, AddressDisplay addressDisplay) {
+    public PartySpringView(PartyRepository partyRepo, PartyNoteRepository partyNoteRepo, AddressSpringView addressDisplay) {
         super("Parties");
         this.partyRepo = partyRepo;
         this.partyNoteRepo = partyNoteRepo;

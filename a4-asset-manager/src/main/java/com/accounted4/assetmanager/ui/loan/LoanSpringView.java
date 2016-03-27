@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.ui.loan;
 
 import com.accounted4.assetmanager.repository.LoanRepository;
 import com.accounted4.assetmanager.entity.LoanTerms;
@@ -21,27 +21,27 @@ import org.springframework.data.domain.Sort;
  */
 @UIScope
 @SpringView(name = UiRouter.ViewName.LOANS)
-public class LoanPanel extends SelectorDetailPanel<Loan> {
+public class LoanSpringView extends SelectorDetailPanel<Loan> {
 
     private static final String LOAN_NAME_FIELD = "loanName";
 
     private final LoanRepository loanRepo;
 
-    private final TermsDisplay termsDisplay;
-    private final ChequeDisplay chequeDisplay;
-    private final PaymentDisplay paymentDisplay;
-    private final ChargeDisplay chargeDisplay;
-    private final StatusDisplay statusDisplay;
+    private final LoanTermsSpringView termsDisplay;
+    private final ChequeSpringView chequeDisplay;
+    private final PaymentSpringView paymentDisplay;
+    private final ChargeSpringView chargeDisplay;
+    private final LoanStatusSpringView statusDisplay;
 
 
     @Autowired
-    public LoanPanel(
+    public LoanSpringView(
             LoanRepository loanRepo
-            ,TermsDisplay termsDisplay
-            ,ChequeDisplay chequeDisplay
-            ,PaymentDisplay paymentDisplay
-            ,ChargeDisplay chargeDisplay
-            ,StatusDisplay statusDisplay
+            ,LoanTermsSpringView termsDisplay
+            ,ChequeSpringView chequeDisplay
+            ,PaymentSpringView paymentDisplay
+            ,ChargeSpringView chargeDisplay
+            ,LoanStatusSpringView statusDisplay
     ) {
         super("Loans");
         this.loanRepo = loanRepo;
@@ -134,7 +134,7 @@ public class LoanPanel extends SelectorDetailPanel<Loan> {
             newLoan.setInactive(false);
 
             LoanTerms terms = new LoanTerms();
-            terms.refreshFrom(TermsPanel.getDefaultAmortizationAttributes());
+            terms.refreshFrom(LoanTermsPanel.getDefaultAmortizationAttributes());
             terms.setLoan(newLoan);
             newLoan.setTerms(terms);
 

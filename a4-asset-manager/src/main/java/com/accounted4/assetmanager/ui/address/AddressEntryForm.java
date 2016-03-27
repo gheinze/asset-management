@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.core.address;
+package com.accounted4.assetmanager.ui.address;
 
 import com.accounted4.assetmanager.repository.CountrySubdivisionRepository;
 import com.accounted4.assetmanager.repository.CountryRepository;

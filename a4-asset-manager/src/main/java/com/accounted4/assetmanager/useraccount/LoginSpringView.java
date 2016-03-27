@@ -23,7 +23,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
  */
 @UIScope
 @SpringView(name = UiRouter.ViewName.LOGIN)
-public class LoginView extends Panel implements DefaultView {
+public class LoginSpringView extends Panel implements DefaultView {
 
     private final LoginForm loginForm = new LoginForm();
     @Inject private UserAccountService userAccountService;

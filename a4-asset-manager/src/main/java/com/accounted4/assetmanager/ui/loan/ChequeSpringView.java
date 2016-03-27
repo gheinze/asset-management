@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.ui.loan;
 
 import com.accounted4.assetmanager.repository.LoanRepository;
 import com.accounted4.assetmanager.entity.Loan;
@@ -31,7 +31,7 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
  */
 @UIScope
 @SpringView
-public class ChequeDisplay extends MVerticalLayout implements DefaultView, Refreshable {
+public class ChequeSpringView extends MVerticalLayout implements DefaultView, Refreshable {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,7 +39,7 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView, Refre
     private static final boolean[] DEFAULT_TABLE_SORT_DIRECTIONS = {true};
 
 
-    private final ChequeEntryForm chequeEntryForm;
+    private final ChequeEntryFormSpringView chequeEntryForm;
     private final LoanRepository loanRepo;
 
     private final MTable<Cheque> chequeTable = new AmMTable<>(Cheque.class)
@@ -54,7 +54,7 @@ public class ChequeDisplay extends MVerticalLayout implements DefaultView, Refre
 
 
     @Inject
-    public ChequeDisplay(ChequeEntryForm chequeEntryForm, LoanRepository loanRepo) {
+    public ChequeSpringView(ChequeEntryFormSpringView chequeEntryForm, LoanRepository loanRepo) {
         this.chequeEntryForm = chequeEntryForm;
         this.loanRepo = loanRepo;
         this.editToolBar = new FormEditToolBar(this::addNewCheque, this::editSelectedCheque, this::removeSelectedCheque);

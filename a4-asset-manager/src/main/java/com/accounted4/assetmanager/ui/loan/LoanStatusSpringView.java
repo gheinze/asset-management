@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.ui.loan;
 
 import com.accounted4.assetmanager.service.LoanService;
 import com.accounted4.assetmanager.repository.LoanRepository;
@@ -32,7 +32,7 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
  */
 @UIScope
 @SpringView
-public class StatusDisplay extends MVerticalLayout implements DefaultView, Refreshable {
+public class LoanStatusSpringView extends MVerticalLayout implements DefaultView, Refreshable {
 
     private final String[] fieldNames = {
         "date",
@@ -56,7 +56,7 @@ public class StatusDisplay extends MVerticalLayout implements DefaultView, Refre
 
 
     @Inject
-    public StatusDisplay(LoanService loanService, LoanRepository loanRepo) {
+    public LoanStatusSpringView(LoanService loanService, LoanRepository loanRepo) {
         this.loanService = loanService;
         this.loanRepo = loanRepo;
     }
@@ -113,7 +113,7 @@ public class StatusDisplay extends MVerticalLayout implements DefaultView, Refre
             } catch (JRException | IOException ex) {
                 // TODO: slf4j logging
             LoggerFactory
-                    .getLogger(StatusDisplay.class)
+                    .getLogger(LoanStatusSpringView.class)
                     .warn("Pdf generation failed", ex);
                     new Notification("Error generating pdf schedule", "", Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
             }

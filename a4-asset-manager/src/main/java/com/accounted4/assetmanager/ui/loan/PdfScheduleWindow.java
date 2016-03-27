@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.ui.loan;
 
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.BrowserFrame;

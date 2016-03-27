@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.ui.loan;
 
 import com.accounted4.assetmanager.service.LoanService;
 import com.accounted4.assetmanager.VaadinUI;
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author gheinze
  */
-public class TermsPanel extends Panel {
+public class LoanTermsPanel extends Panel {
 
     private static final long serialVersionUID = 1L;
 
@@ -73,11 +73,11 @@ public class TermsPanel extends Panel {
     private final ArrayList<ValueChangeListener> formChangeListneres = new ArrayList<>();
 
 
-    public TermsPanel(LoanService loanService) {
+    public LoanTermsPanel(LoanService loanService) {
         this(loanService, getDefaultAmortizationAttributes());
     }
 
-    public TermsPanel(LoanService loanService, AmortizationAttributes amAttr) {
+    public LoanTermsPanel(LoanService loanService, AmortizationAttributes amAttr) {
         this.loanService = loanService;
         this.amAttrBinder = createDataModel(amAttr);
         init();
@@ -330,7 +330,7 @@ public class TermsPanel extends Panel {
                 fireFormChangeListeners(updatedAmAttr);
             } catch (FieldGroup.CommitException ex) {
                 LoggerFactory
-                        .getLogger(TermsPanel.class)
+                        .getLogger(LoanTermsPanel.class)
                         .warn("Failed firing terms form changed listeners", ex);
             }
         }

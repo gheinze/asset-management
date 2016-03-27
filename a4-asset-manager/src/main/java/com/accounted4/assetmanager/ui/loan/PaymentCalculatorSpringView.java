@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.ui.loan;
 
 import com.accounted4.assetmanager.service.LoanService;
 import com.accounted4.assetmanager.UiRouter;
@@ -18,15 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 @UIScope
 @SpringView(name = UiRouter.ViewName.PAYMENT_CALCULATOR)
 //@RequiredArgsConstructor(onConstructor = @__(@Inject))
-public class PaymentScheduleCalculator extends Panel implements DefaultView {
+public class PaymentCalculatorSpringView extends Panel implements DefaultView {
 
     private static final long serialVersionUID = 1L;
 
-    private final TermsPanel termsPanel;
+    private final LoanTermsPanel termsPanel;
 
     @Autowired
-    public PaymentScheduleCalculator(LoanService loanService) {
-        this.termsPanel = new TermsPanel(loanService);
+    public PaymentCalculatorSpringView(LoanService loanService) {
+        this.termsPanel = new LoanTermsPanel(loanService);
     }
 
     @PostConstruct

@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.ui.loan;
 
 /*
  * If we want to create a batch of cheques, try to automatically increment the number

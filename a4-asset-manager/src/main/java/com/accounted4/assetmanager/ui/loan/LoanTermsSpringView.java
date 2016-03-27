@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.ui.loan;
 
 import com.accounted4.assetmanager.service.LoanService;
 import com.accounted4.assetmanager.repository.LoanRepository;
@@ -19,25 +19,25 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
  */
 @UIScope
 @SpringView
-public class TermsDisplay extends MVerticalLayout implements DefaultView, Refreshable {
+public class LoanTermsSpringView extends MVerticalLayout implements DefaultView, Refreshable {
 
     private static final long serialVersionUID = 1L;
 
     private final LoanRepository loanRepo;
     private final LoanService loanService;
 
-    private TermsPanel termsPanel;
+    private LoanTermsPanel termsPanel;
     private Loan selectedLoan;
 
 
     @Inject
-    public TermsDisplay(LoanRepository loanRepo, LoanService loanService) {
+    public LoanTermsSpringView(LoanRepository loanRepo, LoanService loanService) {
         this.loanRepo = loanRepo;
         this.loanService = loanService;
     }
 
     private void createTermsPanel(AmortizationAttributes amAttrs) {
-        termsPanel = new TermsPanel(loanService, amAttrs);
+        termsPanel = new LoanTermsPanel(loanService, amAttrs);
         termsPanel.addFormChangeListner((event) -> {
             Property property = event.getProperty();
             AmortizationAttributes termsFromUi = (AmortizationAttributes) property.getValue();

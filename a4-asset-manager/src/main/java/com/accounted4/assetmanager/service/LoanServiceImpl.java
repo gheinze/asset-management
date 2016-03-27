@@ -1,8 +1,8 @@
 package com.accounted4.assetmanager.service;
 
 import com.accounted4.assetmanager.entity.Loan;
-import com.accounted4.assetmanager.finance.loan.LoanStatus;
-import com.accounted4.assetmanager.finance.loan.LoanStatusLineItem;
+import com.accounted4.assetmanager.ui.loan.LoanStatus;
+import com.accounted4.assetmanager.ui.loan.LoanStatusLineItem;
 import com.accounted4.assetmanager.util.JasperReportRegistry;
 import com.accounted4.finance.loan.AmortizationAttributes;
 import com.accounted4.finance.loan.AmortizationCalculator;

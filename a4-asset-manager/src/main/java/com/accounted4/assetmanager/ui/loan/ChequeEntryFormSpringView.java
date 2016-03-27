@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.ui.loan;
 
 import com.accounted4.assetmanager.repository.LoanRepository;
 import com.accounted4.assetmanager.entity.PaymentDocumentType;
@@ -26,7 +26,7 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
  */
 @UIScope
 @SpringView()
-public class ChequeEntryForm extends AbstractForm<ChequeEntryFormBean> implements DefaultView {
+public class ChequeEntryFormSpringView extends AbstractForm<ChequeEntryFormBean> implements DefaultView {
 
     // The key to viritin's MFormLayout is that the if the names of the components on the
     // form match the bound entity, all the binding is done implicitly
@@ -43,7 +43,7 @@ public class ChequeEntryForm extends AbstractForm<ChequeEntryFormBean> implement
 
 
     @Inject
-    public ChequeEntryForm(LoanRepository loanRepo) {
+    public ChequeEntryFormSpringView(LoanRepository loanRepo) {
         this.loanRepo = loanRepo;
     }
 

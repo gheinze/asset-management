@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.ui.loan;
 
 import com.accounted4.assetmanager.repository.LoanRepository;
 import com.accounted4.assetmanager.entity.LoanPayment;
@@ -31,7 +31,7 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
  */
 @UIScope
 @SpringView
-public class PaymentDisplay extends MVerticalLayout implements DefaultView, Refreshable {
+public class PaymentSpringView extends MVerticalLayout implements DefaultView, Refreshable {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,7 +39,7 @@ public class PaymentDisplay extends MVerticalLayout implements DefaultView, Refr
     private static final boolean[] DEFAULT_TABLE_SORT_DIRECTIONS = {true};
 
 
-    private final PaymentEntryForm paymentEntryForm;
+    private final PaymentEntryFormSpringView paymentEntryForm;
     private final LoanRepository loanRepo;
 
     private final MTable<LoanPayment> paymentTable = new AmMTable<>(LoanPayment.class)
@@ -54,7 +54,7 @@ public class PaymentDisplay extends MVerticalLayout implements DefaultView, Refr
 
 
     @Inject
-    public PaymentDisplay(PaymentEntryForm paymentEntryForm, LoanRepository loanRepo) {
+    public PaymentSpringView(PaymentEntryFormSpringView paymentEntryForm, LoanRepository loanRepo) {
         this.paymentEntryForm = paymentEntryForm;
         this.loanRepo = loanRepo;
         this.editToolBar = new FormEditToolBar(this::addNewPayment, this::editSelectedPayment, this::removeSelectedPayment);

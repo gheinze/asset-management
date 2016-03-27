@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.ui.loan;
 
 import com.accounted4.assetmanager.repository.LoanRepository;
 import com.accounted4.assetmanager.entity.LoanChargeType;
@@ -25,7 +25,7 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
  */
 @UIScope
 @SpringView()
-public class ChargeEntryForm extends AbstractForm<ChargeEntryFormBean> implements DefaultView {
+public class ChargeEntryFormSpringView extends AbstractForm<ChargeEntryFormBean> implements DefaultView {
 
 
     private TypedSelect<LoanChargeType> chargeType;
@@ -38,7 +38,7 @@ public class ChargeEntryForm extends AbstractForm<ChargeEntryFormBean> implement
 
 
     @Inject
-    public ChargeEntryForm(LoanRepository loanRepo) {
+    public ChargeEntryFormSpringView(LoanRepository loanRepo) {
         this.loanRepo = loanRepo;
     }
 

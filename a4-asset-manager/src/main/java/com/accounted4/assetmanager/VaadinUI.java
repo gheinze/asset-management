@@ -1,6 +1,6 @@
 package com.accounted4.assetmanager;
 
-import com.accounted4.assetmanager.useraccount.LoginView;
+import com.accounted4.assetmanager.useraccount.LoginSpringView;
 import com.accounted4.assetmanager.useraccount.UserSession;
 import com.accounted4.assetmanager.util.vaadin.converter.ConverterFactory;
 
@@ -65,7 +65,7 @@ public class VaadinUI extends UI implements ViewChangeListener {
 
         View requestedView = event.getNewView();
 
-        if (!(requestedView instanceof LoginView) && null == getSession().getAttribute(UserSession.USER_SESSION_KEY)) {
+        if (!(requestedView instanceof LoginSpringView) && null == getSession().getAttribute(UserSession.USER_SESSION_KEY)) {
             getNavigator().navigateTo(UiRouter.ViewName.LOGIN);
             return false;
         }

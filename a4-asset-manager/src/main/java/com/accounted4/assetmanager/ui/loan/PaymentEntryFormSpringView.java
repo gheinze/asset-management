@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.ui.loan;
 
 import com.accounted4.assetmanager.entity.Cheque;
 import com.accounted4.assetmanager.util.vaadin.ui.AmPopupDateField;
@@ -23,7 +23,7 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
  */
 @UIScope
 @SpringView()
-public class PaymentEntryForm extends AbstractForm<PaymentEntryFormBean> implements DefaultView {
+public class PaymentEntryFormSpringView extends AbstractForm<PaymentEntryFormBean> implements DefaultView {
 
     // The key to viritin's MFormLayout is that the if the names of the components on the
     // form match the bound entity, all the binding is done implicitly

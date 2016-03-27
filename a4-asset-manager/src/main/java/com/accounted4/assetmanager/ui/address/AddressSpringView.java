@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.core.address;
+package com.accounted4.assetmanager.ui.address;
 
 import com.accounted4.assetmanager.entity.Address;
 import com.accounted4.assetmanager.entity.Party;
@@ -22,7 +22,7 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
  */
 @UIScope
 @SpringView
-public class AddressDisplay extends MVerticalLayout implements DefaultView {
+public class AddressSpringView extends MVerticalLayout implements DefaultView {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,7 +43,7 @@ public class AddressDisplay extends MVerticalLayout implements DefaultView {
 
 
     @Inject
-    public AddressDisplay(AddressEntryForm addressEntryForm, PartyRepository partyRepo) {
+    public AddressSpringView(AddressEntryForm addressEntryForm, PartyRepository partyRepo) {
         this.addressEntryForm = addressEntryForm;
         this.partyRepo = partyRepo;
         this.editToolBar = new FormEditToolBar(this::add, this::edit, this::remove);
