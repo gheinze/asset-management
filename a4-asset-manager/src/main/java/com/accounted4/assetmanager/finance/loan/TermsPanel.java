@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.service.LoanService;
 import com.accounted4.assetmanager.VaadinUI;
 import com.accounted4.assetmanager.util.vaadin.converter.FieldGroupFactory;
 import com.accounted4.assetmanager.util.vaadin.converter.MonetaryAmountConverter;

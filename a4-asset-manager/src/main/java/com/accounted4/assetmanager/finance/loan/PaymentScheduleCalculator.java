@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.service.LoanService;
 import com.accounted4.assetmanager.UiRouter;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.vaadin.spring.annotation.SpringView;

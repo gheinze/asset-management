@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.useraccount;
 
+import com.accounted4.assetmanager.service.UserAccountService;
 import com.accounted4.assetmanager.entity.UserAccount;
 import com.accounted4.assetmanager.UiRouter;
 import com.accounted4.assetmanager.UiRouter.ViewName;
