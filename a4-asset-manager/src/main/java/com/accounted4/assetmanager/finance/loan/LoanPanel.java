@@ -1,5 +1,7 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.entity.LoanTerms;
+import com.accounted4.assetmanager.entity.Loan;
 import com.accounted4.assetmanager.UiRouter;
 import com.accounted4.assetmanager.util.vaadin.ui.SelectorDetailPanel;
 import com.vaadin.data.util.BeanContainer;

@@ -1,6 +1,5 @@
-package com.accounted4.assetmanager.useraccount;
+package com.accounted4.assetmanager.entity;
 
-import com.accounted4.assetmanager.AbstractEntity;
 import java.util.Objects;
 import javax.persistence.Entity;
 import lombok.Getter;
@@ -23,7 +22,7 @@ public class UserAccount extends AbstractEntity {
     private String email;
 
 
-    
+
     @Override
     public int hashCode() {
         int hash = 3;

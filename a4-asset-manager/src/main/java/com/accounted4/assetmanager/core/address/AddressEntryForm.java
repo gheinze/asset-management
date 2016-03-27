@@ -1,5 +1,8 @@
 package com.accounted4.assetmanager.core.address;
 
+import com.accounted4.assetmanager.entity.CountrySubdivision;
+import com.accounted4.assetmanager.entity.Country;
+import com.accounted4.assetmanager.entity.Address;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;

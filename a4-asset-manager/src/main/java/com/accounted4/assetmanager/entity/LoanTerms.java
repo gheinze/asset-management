@@ -1,6 +1,5 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.entity;
 
-import com.accounted4.assetmanager.AbstractEntity;
 import com.accounted4.finance.loan.AmortizationAttributes;
 import java.time.LocalDate;
 import javax.persistence.Entity;

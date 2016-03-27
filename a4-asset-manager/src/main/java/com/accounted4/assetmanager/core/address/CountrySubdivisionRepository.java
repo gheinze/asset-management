@@ -1,5 +1,7 @@
 package com.accounted4.assetmanager.core.address;
 
+import com.accounted4.assetmanager.entity.CountrySubdivision;
+import com.accounted4.assetmanager.entity.Country;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 

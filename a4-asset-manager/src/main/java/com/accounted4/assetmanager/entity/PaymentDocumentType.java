@@ -1,6 +1,6 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.entity;
 
-import com.accounted4.assetmanager.AbstractEntity;
+import com.accounted4.assetmanager.entity.AbstractEntity;
 import javax.persistence.Entity;
 import lombok.Getter;
 

@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.entity.LoanChargeType;
 import java.time.LocalDate;
 import java.util.List;
 import javax.money.MonetaryAmount;

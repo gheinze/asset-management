@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.useraccount;
 
+import com.accounted4.assetmanager.entity.UserAccount;
 import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 

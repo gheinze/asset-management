@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager;
+package com.accounted4.assetmanager.entity;
 
 import java.io.Serializable;
 import java.util.Objects;

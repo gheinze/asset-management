@@ -1,5 +1,8 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.entity.PaymentDocumentType;
+import com.accounted4.assetmanager.entity.PaymentDocumentStatus;
+import com.accounted4.assetmanager.entity.LoanChargeType;
 import java.util.List;
 
 /**

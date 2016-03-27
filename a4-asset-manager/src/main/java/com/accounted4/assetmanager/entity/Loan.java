@@ -1,7 +1,6 @@
-package com.accounted4.assetmanager.finance.loan;
+package com.accounted4.assetmanager.entity;
 
 
-import com.accounted4.assetmanager.AbstractEntity;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Entity;

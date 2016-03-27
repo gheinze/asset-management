@@ -1,8 +1,6 @@
-package com.accounted4.assetmanager.core.party;
+package com.accounted4.assetmanager.entity;
 
 
-import com.accounted4.assetmanager.AbstractEntity;
-import com.accounted4.assetmanager.core.address.Address;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Entity;

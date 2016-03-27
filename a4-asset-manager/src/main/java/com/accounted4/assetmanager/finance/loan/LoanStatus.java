@@ -1,5 +1,10 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.entity.LoanPayment;
+import com.accounted4.assetmanager.entity.LoanChargeType;
+import com.accounted4.assetmanager.entity.LoanCharge;
+import com.accounted4.assetmanager.entity.Loan;
+import com.accounted4.assetmanager.entity.Cheque;
 import com.accounted4.finance.loan.AmortizationAttributes;
 import com.accounted4.finance.loan.AmortizationCalculator;
 import com.accounted4.finance.loan.ScheduledPayment;

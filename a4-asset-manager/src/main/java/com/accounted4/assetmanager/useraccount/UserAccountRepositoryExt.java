@@ -1,5 +1,7 @@
 package com.accounted4.assetmanager.useraccount;
 
+import com.accounted4.assetmanager.entity.UserAccount;
+
 /**
  *
  * @author gheinze

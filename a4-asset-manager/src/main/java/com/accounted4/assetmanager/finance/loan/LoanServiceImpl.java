@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.entity.Loan;
 import com.accounted4.assetmanager.util.JasperReportRegistry;
 import com.accounted4.finance.loan.AmortizationAttributes;
 import com.accounted4.finance.loan.AmortizationCalculator;

@@ -1,5 +1,8 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.entity.LoanPayment;
+import com.accounted4.assetmanager.entity.Loan;
+import com.accounted4.assetmanager.entity.Cheque;
 import com.accounted4.assetmanager.util.vaadin.ui.AmMTable;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.accounted4.assetmanager.util.vaadin.ui.FormEditToolBar;

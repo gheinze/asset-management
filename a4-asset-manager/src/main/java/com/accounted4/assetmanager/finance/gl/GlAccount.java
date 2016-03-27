@@ -1,6 +1,6 @@
 package com.accounted4.assetmanager.finance.gl;
 
-import com.accounted4.assetmanager.AbstractEntity;
+import com.accounted4.assetmanager.entity.AbstractEntity;
 import java.time.LocalDate;
 import java.util.List;
 import javax.persistence.Entity;

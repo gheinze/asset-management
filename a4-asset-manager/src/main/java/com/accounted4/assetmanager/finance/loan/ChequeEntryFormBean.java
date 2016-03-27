@@ -1,5 +1,7 @@
 package com.accounted4.assetmanager.finance.loan;
 
+import com.accounted4.assetmanager.entity.PaymentDocumentType;
+import com.accounted4.assetmanager.entity.PaymentDocumentStatus;
 import java.time.LocalDate;
 import javax.money.MonetaryAmount;
 import lombok.Getter;

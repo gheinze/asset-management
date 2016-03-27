@@ -1,5 +1,7 @@
 package com.accounted4.assetmanager.core.party;
 
+import com.accounted4.assetmanager.entity.PartyNote;
+import com.accounted4.assetmanager.entity.Party;
 import com.accounted4.assetmanager.UiRouter;
 import com.accounted4.assetmanager.core.address.AddressDisplay;
 import com.accounted4.assetmanager.util.vaadin.ui.SelectorDetailPanel;

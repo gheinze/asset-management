@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.core.party;
 
+import com.accounted4.assetmanager.entity.Party;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 

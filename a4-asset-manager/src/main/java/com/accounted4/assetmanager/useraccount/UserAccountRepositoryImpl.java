@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.useraccount;
 
+import com.accounted4.assetmanager.entity.UserAccount;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 

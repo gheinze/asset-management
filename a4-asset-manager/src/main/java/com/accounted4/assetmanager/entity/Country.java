@@ -1,6 +1,5 @@
-package com.accounted4.assetmanager.core.address;
+package com.accounted4.assetmanager.entity;
 
-import com.accounted4.assetmanager.AbstractEntity;
 import javax.persistence.Entity;
 import lombok.Getter;
 

@@ -1,6 +1,6 @@
 package com.accounted4.assetmanager.finance.gl;
 
-import com.accounted4.assetmanager.AbstractEntity;
+import com.accounted4.assetmanager.entity.AbstractEntity;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;

@@ -1,6 +1,5 @@
-package com.accounted4.assetmanager.core.address;
+package com.accounted4.assetmanager.entity;
 
-import com.accounted4.assetmanager.AbstractEntity;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
