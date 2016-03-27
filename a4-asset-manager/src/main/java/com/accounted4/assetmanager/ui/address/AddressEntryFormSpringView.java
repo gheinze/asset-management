@@ -28,7 +28,7 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
  */
 @UIScope
 @SpringView()
-public class AddressEntryForm extends AbstractForm<Address> implements DefaultView {
+public class AddressEntryFormSpringView extends AbstractForm<Address> implements DefaultView {
 
     private static final long serialVersionUID = 1L;
 
@@ -50,7 +50,7 @@ public class AddressEntryForm extends AbstractForm<Address> implements DefaultVi
 
 
     @Inject
-    public AddressEntryForm(CountryRepository countryRepo, CountrySubdivisionRepository countrySubdivisionRepo) {
+    public AddressEntryFormSpringView(CountryRepository countryRepo, CountrySubdivisionRepository countrySubdivisionRepo) {
         this.countryRepo = countryRepo;
         this.countrySubdivisionRepo = countrySubdivisionRepo;
     }

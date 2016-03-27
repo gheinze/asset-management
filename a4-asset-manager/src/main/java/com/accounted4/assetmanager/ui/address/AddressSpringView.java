@@ -26,7 +26,7 @@ public class AddressSpringView extends MVerticalLayout implements DefaultView {
 
     private static final long serialVersionUID = 1L;
 
-    private final AddressEntryForm addressEntryForm;
+    private final AddressEntryFormSpringView addressEntryForm;
     private final PartyRepository partyRepo;
 
     private final MTable<Address> addressTable = new MTable<>(Address.class)
@@ -43,7 +43,7 @@ public class AddressSpringView extends MVerticalLayout implements DefaultView {
 
 
     @Inject
-    public AddressSpringView(AddressEntryForm addressEntryForm, PartyRepository partyRepo) {
+    public AddressSpringView(AddressEntryFormSpringView addressEntryForm, PartyRepository partyRepo) {
         this.addressEntryForm = addressEntryForm;
         this.partyRepo = partyRepo;
         this.editToolBar = new FormEditToolBar(this::add, this::edit, this::remove);
