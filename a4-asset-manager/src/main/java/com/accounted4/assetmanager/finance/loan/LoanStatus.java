@@ -75,12 +75,15 @@ public class LoanStatus {
                 forwardedFunds.getChargeDate().getYear(), forwardedFunds.getChargeDate().getMonthValue(), forwardedFunds.getChargeDate().getDayOfMonth(), forwardedFunds.getId());
         orderedLineItems.put(theKey, forwardedFunds);
 
-        scheduledPayments.stream().forEachOrdered(p -> {
-            String key = String.format("%04d-%02d-%02d  A %d",
-                    p.getPaymentDate().getYear(), p.getPaymentDate().getMonthValue(), p.getPaymentDate().getDayOfMonth(), p.getPaymentNumber());
-            orderedLineItems.put(key, p);
-            updateNextScheduledPaymentDate(p);
-        });
+        scheduledPayments.stream()
+                .filter(p -> !p.getPaymentDate().isAfter(nextScheduledPaymentDate))
+                .forEachOrdered(p -> {
+                    String key = String.format("%04d-%02d-%02d  A %d",
+                            p.getPaymentDate().getYear(), p.getPaymentDate().getMonthValue(), p.getPaymentDate().getDayOfMonth(), p.getPaymentNumber());
+                    orderedLineItems.put(key, p);
+                    updateNextScheduledPaymentDate(p);
+                }
+        );
 
         loan.getCharges().stream().forEach(c -> {
             String key = String.format("%04d-%02d-%02d  B %d",

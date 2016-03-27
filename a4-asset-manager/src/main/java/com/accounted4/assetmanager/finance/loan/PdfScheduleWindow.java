@@ -30,8 +30,9 @@ public class PdfScheduleWindow extends Window {
         browserFrame.setSizeFull();
 
         setResizable(true);
-        setPosition(0,0);
-        setSizeFull();
+        setPosition(30,30);
+        setHeight("90%");
+        setWidth("90%");
         setContent(browserFrame);
 
     }
