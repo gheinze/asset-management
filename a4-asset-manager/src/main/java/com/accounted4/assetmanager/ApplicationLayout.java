@@ -1,9 +1,9 @@
 package com.accounted4.assetmanager;
 
+import com.accounted4.assetmanager.useraccount.UserSessionMenu;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
@@ -46,6 +46,7 @@ public class ApplicationLayout extends VerticalLayout {
     private final ApplicationContentArea viewContainer;
     private final ApplicationMenu applicationMenu;
     private final AboutContent aboutContent;
+    private final UserSessionMenu userSessionMenu;
 
 
     @PostConstruct
@@ -78,7 +79,8 @@ public class ApplicationLayout extends VerticalLayout {
         header.addComponent(extraSpaceAbsorber);
         header.setExpandRatio(extraSpaceAbsorber, 1.0f);
 
-        header.addComponent(new Button("Glenn"));
+        header.addComponent(userSessionMenu);
+        header.setComponentAlignment(userSessionMenu, Alignment.MIDDLE_CENTER);
 
         Panel headerPanel = new Panel();
         headerPanel.setHeightUndefined();

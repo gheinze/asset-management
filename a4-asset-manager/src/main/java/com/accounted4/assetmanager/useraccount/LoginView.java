@@ -3,7 +3,6 @@ package com.accounted4.assetmanager.useraccount;
 import com.accounted4.assetmanager.UiRouter;
 import com.accounted4.assetmanager.UiRouter.ViewName;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
-import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.SpringView;
@@ -26,6 +25,8 @@ public class LoginView extends Panel implements DefaultView {
 
     private final LoginForm loginForm = new LoginForm();
     @Inject private UserAccountService userAccountService;
+    @Inject private UserSessionMenu userSessionMenu;
+
 
     @PostConstruct
     private void init() {
@@ -57,11 +58,13 @@ public class LoginView extends Panel implements DefaultView {
             userSession.setUserAccountName(authenticatedUser.getName());
 
             getSession().setAttribute(UserSession.USER_SESSION_KEY, userSession);
+            userSessionMenu.enableLogout();
+
             closeWindow();
-            getUI().getNavigator().navigateTo(ViewName.LOANS);
+            getUI().getNavigator().navigateTo(ViewName.PAYMENT_CALCULATOR);
 
         } catch (EmptyResultDataAccessException enfe) {
-            new Notification("Authentication failure", "", Notification.Type.WARNING_MESSAGE, true).show(Page.getCurrent());
+            new Notification("Authentication failure", "", Notification.Type.HUMANIZED_MESSAGE, true).show(Page.getCurrent());
         }
 
     }
@@ -69,9 +72,13 @@ public class LoginView extends Panel implements DefaultView {
     private void cancelClickedOnEntryForm(final LoginFormBean userAccount) {
         //this.navigator.setErrorView(myView);
         closeWindow();
+        // Navigate somewhere to force a login window, otherwise we are at a page with no usersession
+        getUI().getNavigator().navigateTo(ViewName.PAYMENT_CALCULATOR);
     }
 
     private void closeWindow() {
+
+        // Order of window removal is important: first get rid of login window, then wrapper window
         Collection<Window> childWindows = getUI().getWindows();
         childWindows.stream()
                 .filter((w) -> (w.getContent() instanceof LoginForm))
