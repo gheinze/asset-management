@@ -10,8 +10,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.RichTextArea;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
@@ -86,7 +84,7 @@ public class PartyPanel extends SelectorDetailPanel<Party> {
     private Function<Party, Component> getNotesAreaGenerator() {
 
         return (selectedParty) -> {
-            
+
             RichTextArea noteArea = new RichTextArea();
             noteArea.addStyleName("noImageButton");
             noteArea.setWidth("100%");
@@ -97,7 +95,8 @@ public class PartyPanel extends SelectorDetailPanel<Party> {
 
             noteArea.addValueChangeListener(event -> {
                 PartyNote partyNote = getPartyNote(selectedParty);
-                partyNote.setNote(Jsoup.clean(noteArea.getValue(), Whitelist.simpleText()));
+                partyNote.setNote(noteArea.getValue());
+//                partyNote.setNote(Jsoup.clean(noteArea.getValue(), Whitelist.simpleText()));
                 partyNoteRepo.save(partyNote);
             });
 

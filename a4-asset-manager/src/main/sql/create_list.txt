@@ -1,19 +1,22 @@
 ./system/purge_schemas.sql
 ./system/create_schemas.sql
+./system/extensions.sql
 
 # -------------------------
 # -- public objects
 # -------------------------
-./system/set_schema_to.sql
+./public/set_schema_to.sql
 
 
 # -------------------------
 # -- tenant application objects
 # -------------------------
 
-./system/switch_user_to_tenant_0.sql
+./system/switch_user_to_tenant.sql
 ./system/installation_support_tools.sql
 ./system/base.sql
+
+./public/user_account.sql
 
 ./tenant/gl/gl_account_type.sql
 ./tenant/gl/gl_account.sql

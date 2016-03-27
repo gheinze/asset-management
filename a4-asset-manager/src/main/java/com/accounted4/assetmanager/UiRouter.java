@@ -10,7 +10,8 @@ import lombok.Getter;
  */
 public enum UiRouter {
 
-     MortgageAdministration(null, ViewName.MORTGAGE_ADMINISTRATION, false)
+     Login(null, ViewName.LOGIN, true)
+    ,MortgageAdministration(null, ViewName.MORTGAGE_ADMINISTRATION, false)
     ,PaymentCalculator(MortgageAdministration, ViewName.PAYMENT_CALCULATOR)
     ,Parties(MortgageAdministration, ViewName.PARTIES)
     ,Loans(MortgageAdministration, ViewName.LOANS)
@@ -37,6 +38,7 @@ public enum UiRouter {
     // To allow usage within annotation
     // The displayName currently needs to be unique since it is the id of the menu's value change event
     public interface ViewName {
+        String LOGIN = "Login";
         String MORTGAGE_ADMINISTRATION = "Mortgage_Administration";
         String PAYMENT_CALCULATOR = "Payment_Calculator";
         String PARTIES = "Parties";

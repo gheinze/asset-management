@@ -3,6 +3,7 @@ package com.accounted4.assetmanager;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
@@ -77,6 +78,8 @@ public class ApplicationLayout extends VerticalLayout {
         header.addComponent(extraSpaceAbsorber);
         header.setExpandRatio(extraSpaceAbsorber, 1.0f);
 
+        header.addComponent(new Button("Glenn"));
+
         Panel headerPanel = new Panel();
         headerPanel.setHeightUndefined();
         headerPanel.setWidth(100, Unit.PERCENTAGE);
@@ -102,6 +105,7 @@ public class ApplicationLayout extends VerticalLayout {
 //        HorizontalLayout footer  = new HorizontalLayout();
 //        addComponent(footer);
 //    }
+
 
 
 }

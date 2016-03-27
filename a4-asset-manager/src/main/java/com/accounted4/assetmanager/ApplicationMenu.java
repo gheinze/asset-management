@@ -21,6 +21,9 @@ public class ApplicationMenu extends Tree {
 
     private void populateMenuFromUiRouter() {
         for (UiRouter menuItem : UiRouter.values()) {
+            if (menuItem.equals(UiRouter.Login)) {
+                continue;
+            }
             addItem(menuItem.getDisplayName());
             if (null != menuItem.getParent()) {
                 setParent(menuItem.getDisplayName(), menuItem.getParent().getDisplayName());

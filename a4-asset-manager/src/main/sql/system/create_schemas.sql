@@ -1,1 +1,1 @@
-CREATE SCHEMA tenant_0;
+CREATE SCHEMA :tenant;
