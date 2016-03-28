@@ -4,11 +4,14 @@ import com.accounted4.assetmanager.repository.LoanRepository;
 import com.accounted4.assetmanager.entity.LoanTerms;
 import com.accounted4.assetmanager.entity.Loan;
 import com.accounted4.assetmanager.UiRouter;
+import com.accounted4.assetmanager.entity.LoanNote;
+import com.accounted4.assetmanager.repository.LoanNoteRepository;
 import com.accounted4.assetmanager.util.vaadin.ui.SelectorDetailPanel;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.RichTextArea;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ public class LoanSpringView extends SelectorDetailPanel<Loan> {
     private static final String LOAN_NAME_FIELD = "loanName";
 
     private final LoanRepository loanRepo;
+    private final LoanNoteRepository loanNoteRepo;
 
     private final LoanTermsSpringView termsDisplay;
     private final ChequeSpringView chequeDisplay;
@@ -37,6 +41,7 @@ public class LoanSpringView extends SelectorDetailPanel<Loan> {
     @Autowired
     public LoanSpringView(
             LoanRepository loanRepo
+            ,LoanNoteRepository loanNoteRepo
             ,LoanTermsSpringView termsDisplay
             ,ChequeSpringView chequeDisplay
             ,PaymentSpringView paymentDisplay
@@ -45,6 +50,7 @@ public class LoanSpringView extends SelectorDetailPanel<Loan> {
     ) {
         super("Loans");
         this.loanRepo = loanRepo;
+        this.loanNoteRepo = loanNoteRepo;
         this.termsDisplay = termsDisplay;
         this.chequeDisplay = chequeDisplay;
         this.paymentDisplay = paymentDisplay;
@@ -61,6 +67,7 @@ public class LoanSpringView extends SelectorDetailPanel<Loan> {
         addDetailTab(getChargeDisplay(), "Charges");
         addDetailTab(getChequeDisplay(), "Cheques");
         addDetailTab(getStatusDisplay(), "Status");
+        addDetailTab(getNotesAreaGenerator(), "Notes");
     }
 
     // A function to generate the ui for the terms of the selected loan
@@ -102,6 +109,39 @@ public class LoanSpringView extends SelectorDetailPanel<Loan> {
             statusDisplay.setLoan(selectedLoan);
             return statusDisplay;
         };
+    }
+
+
+    private Function<Loan, Component> getNotesAreaGenerator() {
+
+        return (selectedLoan) -> {
+
+            RichTextArea noteArea = new RichTextArea();
+            noteArea.addStyleName("noImageButton");
+            noteArea.setWidth("100%");
+            noteArea.setHeight("100%");
+
+            String richText = getLoanNote(selectedLoan).getNote();
+            noteArea.setValue(null == richText ? "" : richText);
+
+            noteArea.addValueChangeListener(event -> {
+                LoanNote loanNote = getLoanNote(selectedLoan);
+                loanNote.setNote(noteArea.getValue());
+                loanNoteRepo.save(loanNote);
+            });
+
+            return noteArea;
+        };
+    }
+
+    private LoanNote getLoanNote(Loan selectedLoan) {
+        LoanNote loanNote = selectedLoan.getNote();
+        if (null == loanNote) {
+            loanNote = new LoanNote();
+            loanNote.setLoan(selectedLoan);
+            selectedLoan.setNote(loanNote);
+        }
+        return loanNote;
     }
 
 

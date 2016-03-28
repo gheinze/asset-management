@@ -44,6 +44,10 @@ public class Loan extends AbstractEntity {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Set<LoanCharge> charges;
 
+    @OneToOne(mappedBy="loan")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private LoanNote note;
+
 
     @Override
     public String toString() {

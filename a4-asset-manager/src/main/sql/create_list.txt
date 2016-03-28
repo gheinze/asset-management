@@ -34,3 +34,4 @@
 ./tenant/loan/loan_payment.sql
 ./tenant/loan/loan_charge_type.sql
 ./tenant/loan/loan_charge.sql
+./tenant/loan/loan_note.sql
