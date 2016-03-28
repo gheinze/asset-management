@@ -52,6 +52,7 @@ public class LoanStatusSpringView extends MVerticalLayout implements DefaultView
     private final LoanRepository loanRepo;
     private Loan selectedLoan;
 
+    private LoanStatusSummaryPanel loanSummaryPanel;
     private Button generatePdfButton;
 
 
@@ -78,7 +79,8 @@ public class LoanStatusSpringView extends MVerticalLayout implements DefaultView
         transactionTable.setColumnCollapsed("scheduledPrincipal", true);
         transactionTable.setColumnCollapsed("scheduledBalance", true);
 
-        addComponent(new MVerticalLayout(generatePdfButton, transactionTable).expand(transactionTable));
+        loanSummaryPanel = new LoanStatusSummaryPanel();
+        addComponent(new MVerticalLayout(generatePdfButton, loanSummaryPanel, transactionTable).expand(transactionTable));
         withFullWidth();
         withFullHeight();
     }
@@ -93,13 +95,21 @@ public class LoanStatusSpringView extends MVerticalLayout implements DefaultView
         });
     }
 
-    private void refreshTable() {
+
+    private void refreshTables() {
         LoanStatus status = new LoanStatus(selectedLoan);
+        loanSummaryPanel.refresh(status);
+        refreshTransactionTable(status);
+    }
+
+
+    private void refreshTransactionTable(LoanStatus status) {
         transactionTable.setBeans(status.getOrderedLineItems());
         String[] sortColumns = {"date"};
         boolean[] sortDirections = {true};
         transactionTable.sort(sortColumns, sortDirections);
     }
+
 
     private void displayPdfSchedule() {
 
@@ -132,13 +142,13 @@ public class LoanStatusSpringView extends MVerticalLayout implements DefaultView
 
     public void setLoan(Loan selectedLoan) {
         this.selectedLoan = selectedLoan;
-        refreshTable();
+        refreshTables();
     }
 
     @Override
     public void refresh() {
         selectedLoan = loanRepo.findOne(selectedLoan.getId());
-        refreshTable();
+        refreshTables();
     }
 
 }
