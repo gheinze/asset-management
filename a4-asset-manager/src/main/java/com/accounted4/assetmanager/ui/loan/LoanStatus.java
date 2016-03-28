@@ -45,11 +45,10 @@ public class LoanStatus {
     private final AmortizationAttributes amAttr;
 
     private final LocalDate now = LocalDate.now();
-    private final LocalDate nowPlusOnePaymentPeriod;
 
     private final ArrayList<LoanStatusLineItem> transactions = new ArrayList<>();
 
-    @Getter private LocalDate nextScheduledPaymentDate;
+    @Getter private final LocalDate nextScheduledPaymentDate;
     private LoanStatusLineItem nextScheduledPaymentLineItem;
 
     private MonetaryAmount balance;
@@ -59,12 +58,19 @@ public class LoanStatus {
     public LoanStatus(Loan loan) {
         this.loan = loan;
         this.amAttr = loan.getTerms().getAsAmAttributes();
-
-        TimePeriod paymentFrequency = TimePeriod.getTimePeriodWithPeriodCountOf(amAttr.getPaymentFrequency());
-        nowPlusOnePaymentPeriod = paymentFrequency.getDateFrom(now, 1);
-        nextScheduledPaymentDate = paymentFrequency.getDateFrom(loan.getTerms().getStartDate(), 1);
-
+        nextScheduledPaymentDate = calculateNextScheduledPaymentDate();
         populateScheduledPayments();
+    }
+
+
+    private LocalDate calculateNextScheduledPaymentDate() {
+        TimePeriod paymentFrequency = TimePeriod.getTimePeriodWithPeriodCountOf(amAttr.getPaymentFrequency());
+        LocalDate result = paymentFrequency.getDateFrom(loan.getTerms().getStartDate(), 1);
+        // TODO: This should be further restricted to the end of the mortgage if the mortgage is already completed
+        while (result.isBefore(now)) {
+            result = paymentFrequency.getDateFrom(result, 1);
+        }
+        return result;
     }
 
 
@@ -86,7 +92,6 @@ public class LoanStatus {
                     String key = String.format("%04d-%02d-%02d  A %d",
                             p.getPaymentDate().getYear(), p.getPaymentDate().getMonthValue(), p.getPaymentDate().getDayOfMonth(), p.getPaymentNumber());
                     orderedLineItems.put(key, p);
-                    updateNextScheduledPaymentDate(p);
                 }
         );
 
@@ -219,18 +224,6 @@ public class LoanStatus {
 
     }
 
-
-
-    /*
-     * The basis for the next scheduled payment is after the loan commences, but only at most
-     * one payment into the future.
-    */
-    private void updateNextScheduledPaymentDate(ScheduledPayment p) {
-        if (p.getPaymentDate().isAfter(nextScheduledPaymentDate) &&
-                !p.getPaymentDate().isAfter(nowPlusOnePaymentPeriod)) {
-            nextScheduledPaymentDate = p.getPaymentDate();
-        }
-    }
 
 
     public List<LoanStatusLineItem> getOrderedLineItems() {
