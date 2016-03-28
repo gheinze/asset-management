@@ -1,6 +1,8 @@
 package com.accounted4.assetmanager.useraccount;
 
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import org.vaadin.viritin.fields.MPasswordField;
 import org.vaadin.viritin.fields.MTextField;
 import org.vaadin.viritin.form.AbstractForm;
@@ -19,8 +21,10 @@ public class LoginForm extends AbstractForm<LoginFormBean>  {
 
     @Override
     protected Component createContent() {
+        Label guestMsg = new Label("<b>Demo account:</b> <i>guest/guest</i>", ContentMode.HTML);
         return new MVerticalLayout(
                 new MFormLayout(
+                        guestMsg,
                         userAccount,
                         password
                 ).withWidth(""),

@@ -48,10 +48,10 @@
             PERFORM ist_bk('user_account', ARRAY['name']);
 
             INSERT INTO user_account(name, encrypted_password, tenant, display_name, email)
-              VALUES ('gheinze', pgcrypto.crypt( concat('gheinze', 'admin'), pgcrypto.gen_salt('bf')), 'tenant_0', 'Glenn', 'a4.admin@gheinze.com');
+              VALUES ('guest', pgcrypto.crypt( concat('guest', 'guest'), pgcrypto.gen_salt('bf')), 'tenant_0', 'Guest Demo Account', 'a4.admin@gheinze.com');
 
             INSERT INTO user_account(name, encrypted_password, tenant, display_name, email)
-              VALUES ('kimamura', pgcrypto.crypt( concat('kimamura', 'admin'), pgcrypto.gen_salt('bf')), 'tenant_1', 'Kyoko', 'a4.admin@gheinze.com');
+              VALUES ('gheinze', pgcrypto.crypt( concat('gheinze', 'admin'), pgcrypto.gen_salt('bf')), 'tenant_1', 'Glenn', 'a4.admin@gheinze.com');
 
         END IF;
 

@@ -35,7 +35,7 @@ public class LoginSpringView extends Panel implements DefaultView {
         loginForm.setEagerValidation(true);
         loginForm.setSavedHandler(this::saveClickedOnEntryForm);
         loginForm.setResetHandler(this::cancelClickedOnEntryForm);
-        //loginForm..setModalWindowTitle("Login");
+        loginForm.setModalWindowTitle("Login");
     }
 
 
