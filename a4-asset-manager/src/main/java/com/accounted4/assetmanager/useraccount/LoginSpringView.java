@@ -7,6 +7,7 @@ import com.accounted4.assetmanager.UiRouter.ViewName;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Notification;
@@ -59,10 +60,17 @@ public class LoginSpringView extends Panel implements DefaultView {
             userSession.setTenant(authenticatedUser.getTenant());
             userSession.setUserAccountName(authenticatedUser.getName());
 
-            getSession().setAttribute(UserSession.USER_SESSION_KEY, userSession);
+            VaadinSession vaadinSession = VaadinSession.getCurrent();
+            if (null != vaadinSession.getAttribute(UserSession.USER_SESSION_KEY)) {
+                new Notification("Login aborted: user is already active in another tab", "", Notification.Type.HUMANIZED_MESSAGE, true).show(Page.getCurrent());
+            } else {
+                VaadinSession.getCurrent().setAttribute(UserSession.USER_SESSION_KEY, userSession);
+            }
             userSessionMenu.enableLogout();
 
             closeWindow();
+
+            // Need to go to some view other than the LoginView or TODO: welcome landing page?
             getUI().getNavigator().navigateTo(ViewName.PAYMENT_CALCULATOR);
 
         } catch (EmptyResultDataAccessException enfe) {

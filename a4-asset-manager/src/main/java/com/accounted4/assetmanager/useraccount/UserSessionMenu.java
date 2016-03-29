@@ -23,18 +23,19 @@ public class UserSessionMenu extends MenuBar {
 
     @PostConstruct
     private void init() {
+        // A session may already exist if we are opening a new tab...
         enableLogout();
     }
 
 
     private final Command logoutCommand = (final MenuItem selectedItem) -> {
         Page.getCurrent().setLocation("/");
-        getSession().getSession().invalidate();
+        VaadinSession.getCurrent().getSession().invalidate();
     };
 
 
     public void enableLogout() {
-        VaadinSession vaadinSession = getSession();
+        VaadinSession vaadinSession = VaadinSession.getCurrent();
         if (null != vaadinSession) {
             UserSession userSession = (UserSession) vaadinSession.getAttribute(UserSession.USER_SESSION_KEY);
             if (null != userSession) {

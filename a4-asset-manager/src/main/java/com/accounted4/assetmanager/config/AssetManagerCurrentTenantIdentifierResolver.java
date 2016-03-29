@@ -34,7 +34,7 @@ public class AssetManagerCurrentTenantIdentifierResolver implements CurrentTenan
     private UserSession getUserSession() {
         UI ui = UI.getCurrent();
         if (null != ui) {
-            VaadinSession vaadinSession = ui.getSession();
+            VaadinSession vaadinSession = VaadinSession.getCurrent();
             if (null != vaadinSession) {
                 return (UserSession)vaadinSession.getAttribute(UserSession.USER_SESSION_KEY);
             }

@@ -66,7 +66,7 @@ public class VaadinUI extends UI implements ViewChangeListener {
 
         View requestedView = event.getNewView();
 
-        if (!(requestedView instanceof LoginSpringView) && null == getSession().getAttribute(UserSession.USER_SESSION_KEY)) {
+        if (!(requestedView instanceof LoginSpringView) && null == VaadinSession.getCurrent().getAttribute(UserSession.USER_SESSION_KEY)) {
             getNavigator().navigateTo(UiRouter.ViewName.LOGIN);
             return false;
         }
