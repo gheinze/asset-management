@@ -3,6 +3,7 @@ package com.accounted4.assetmanager;
 import com.accounted4.assetmanager.useraccount.LoginSpringView;
 import com.accounted4.assetmanager.useraccount.UserSession;
 import com.accounted4.assetmanager.util.vaadin.converter.ConverterFactory;
+import com.vaadin.annotations.PreserveOnRefresh;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 @Theme("a4am")
 @Title("Accounted4 Asset Management")
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
+@PreserveOnRefresh
 public class VaadinUI extends UI implements ViewChangeListener {
 
     public static final String LOCALE_KEY = "LOCALE";
@@ -47,8 +49,7 @@ public class VaadinUI extends UI implements ViewChangeListener {
         Navigator navigator = new Navigator(UI.getCurrent(), viewContainer);
         navigator.addProvider(viewProvider);
         navigator.addViewChangeListener(this);
-
-        navigator.navigateTo(UiRouter.ViewName.PAYMENT_CALCULATOR);  // default view
+        navigator.navigateTo(UiRouter.ViewName.PAYMENT_CALCULATOR);  // initial landing page
 
         // TODO: Add an error view
         // navigator.setErrorView(myView);
