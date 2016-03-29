@@ -5,4 +5,4 @@ image:https://codecov.io/github/gheinze/asset-management/coverage.svg?branch=mas
 
 Amortization Loan Calculator
 
-https://murmuring-brushlands-8890.herokuapp.com/[Demo]
+http://www.accounted4.com/[Demo]
