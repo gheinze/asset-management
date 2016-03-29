@@ -1,6 +1,7 @@
 package com.accounted4.assetmanager.ui.loan;
 
 import com.vaadin.ui.Panel;
+import javax.money.MonetaryAmount;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MFormLayout;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
@@ -18,6 +19,9 @@ public class LoanStatusSummaryPanel extends Panel {
     private final MLabel nextChequeOnFile;
     private final MLabel daysToMaturity;
     private final MLabel perDiem;
+
+
+    private final int NUMBER_OF_DAYS_BEFORE_MATURITY_TO_WARN = 45;
 
 
     public LoanStatusSummaryPanel() {
@@ -55,17 +59,36 @@ public class LoanStatusSummaryPanel extends Panel {
 
     }
 
+
     public void refresh(LoanStatus loanStatus) {
 
         nextPaymentDate.setValue(loanStatus.getNextScheduledPaymentDate().toString());
-        regularDue.setValue(loanStatus.getRegularDue().toString());
-        actualDue.setValue(loanStatus.getActualDue().toString());
-        balance.setValue(loanStatus.getBalance().toString());
+        regularDue.setValue(formatMoney(loanStatus.getRegularDue()));
+
+        actualDue.setValue(formatMoney(loanStatus.getActualDue()));
+        if (loanStatus.getActualDue().isGreaterThan(loanStatus.getRegularDue())) {
+            actualDue.addStyleName("redLabel");
+        } else {
+            actualDue.removeStyleName("redLabel");
+        }
+
+        balance.setValue(formatMoney(loanStatus.getBalance()));
 
         nextChequeOnFile.setValue(loanStatus.getNextChequeOnFile());
+
         daysToMaturity.setValue(loanStatus.getDaysToMaturity().toString());
-        perDiem.setValue(loanStatus.getPerDiem().toString());
+        if (loanStatus.getDaysToMaturity() <= NUMBER_OF_DAYS_BEFORE_MATURITY_TO_WARN) {
+            daysToMaturity.addStyleName("redLabel");
+        } else {
+            daysToMaturity.removeStyleName("redLabel");
+        }
+
+        perDiem.setValue(formatMoney(loanStatus.getPerDiem()));
     }
 
+
+    private String formatMoney(MonetaryAmount amount) {
+        return String.format("$%(,.2f", amount.getNumber().doubleValue());
+    }
 
 }

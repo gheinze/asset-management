@@ -7814,3 +7814,9 @@ body .a4am.v-app .v-app-loading {
 .a4am .noImageButton .gwt-RichTextToolbar .gwt-RichTextToobar-top .gwt-PushButton gwt-PushButton-up [title="Insert Image"] {
 	display: none;
 }
+
+.a4am .v-label-redLabel {
+	font-size: 16px;
+	line-height: normal;
+	color: red;
+}
