@@ -247,7 +247,7 @@ public class LoanStatus {
     }
 
     public MonetaryAmount getBalance() {
-        return nextScheduledPaymentLineItem.getBalance();
+        return balance;
     }
 
 
