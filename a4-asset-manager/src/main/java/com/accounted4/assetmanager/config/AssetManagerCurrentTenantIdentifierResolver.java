@@ -1,6 +1,6 @@
 package com.accounted4.assetmanager.config;
 
-import com.accounted4.assetmanager.useraccount.UserSession;
+import com.accounted4.assetmanager.ui.useraccount.UserSession;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;

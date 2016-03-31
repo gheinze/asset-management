@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.useraccount;
+package com.accounted4.assetmanager.ui.useraccount;
 
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinSession;

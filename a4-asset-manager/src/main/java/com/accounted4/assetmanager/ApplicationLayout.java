@@ -1,6 +1,6 @@
 package com.accounted4.assetmanager;
 
-import com.accounted4.assetmanager.useraccount.UserSessionMenu;
+import com.accounted4.assetmanager.ui.useraccount.UserSessionMenu;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;

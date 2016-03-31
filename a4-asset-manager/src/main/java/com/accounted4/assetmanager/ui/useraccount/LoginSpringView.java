@@ -1,4 +1,4 @@
-package com.accounted4.assetmanager.useraccount;
+package com.accounted4.assetmanager.ui.useraccount;
 
 import com.accounted4.assetmanager.service.UserAccountService;
 import com.accounted4.assetmanager.entity.UserAccount;

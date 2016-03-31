@@ -1,7 +1,7 @@
 package com.accounted4.assetmanager;
 
-import com.accounted4.assetmanager.useraccount.LoginSpringView;
-import com.accounted4.assetmanager.useraccount.UserSession;
+import com.accounted4.assetmanager.ui.useraccount.LoginSpringView;
+import com.accounted4.assetmanager.ui.useraccount.UserSession;
 import com.accounted4.assetmanager.util.vaadin.converter.ConverterFactory;
 import com.vaadin.annotations.PreserveOnRefresh;
 
