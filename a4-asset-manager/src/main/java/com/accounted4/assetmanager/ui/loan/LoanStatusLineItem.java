@@ -23,6 +23,8 @@ public class LoanStatusLineItem {
     private MonetaryAmount fees;
     private String type;
     private String note;
+    private boolean capitalizing;
+
 
     public MonetaryAmount getScheduledAmount() {
         if (null != scheduledInterest) {

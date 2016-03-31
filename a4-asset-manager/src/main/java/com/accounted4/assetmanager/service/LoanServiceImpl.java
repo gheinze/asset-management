@@ -1,6 +1,7 @@
 package com.accounted4.assetmanager.service;
 
 import com.accounted4.assetmanager.entity.Loan;
+import com.accounted4.assetmanager.repository.LoanRepository;
 import com.accounted4.assetmanager.ui.loan.LoanStatus;
 import com.accounted4.assetmanager.ui.loan.LoanStatusLineItem;
 import com.accounted4.assetmanager.util.JasperReportRegistry;
@@ -34,6 +35,7 @@ public class LoanServiceImpl implements LoanService {
     private static final String LOAN_STATUS_REPORT = "com/accounted4/assetmanager/finance/loan/LoanStatus.jasper";
 
     @Autowired private JasperReportRegistry reportRegistry;
+    @Autowired private LoanRepository loanRepository;
 
 
     @Override
@@ -112,6 +114,12 @@ public class LoanServiceImpl implements LoanService {
 
         //File pdfFile = File.createTempFile("amSchedule", ".pdf");
         //JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFile.getCanonicalPath());
+    }
+
+
+    @Override
+    public List<Loan> findAllLoans() {
+        return loanRepository.findAll();
     }
 
 }

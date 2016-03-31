@@ -27,5 +27,7 @@ public interface LoanService {
     void writePdfScheduleToStream(final AmortizationAttributes amAttrs, final OutputStream outputStream) throws JRException, IOException;
 
     void writePdfLoanStatusToStream(final Loan loan, final OutputStream outputStream) throws JRException, IOException;
-    
+
+    List<Loan> findAllLoans();
+
 }

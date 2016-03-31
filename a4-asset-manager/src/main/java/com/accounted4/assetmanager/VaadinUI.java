@@ -29,7 +29,6 @@ import lombok.RequiredArgsConstructor;
 @Theme("a4am")
 @Title("Accounted4 Asset Management")
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
-@PreserveOnRefresh
 public class VaadinUI extends UI implements ViewChangeListener {
 
     public static final String LOCALE_KEY = "LOCALE";

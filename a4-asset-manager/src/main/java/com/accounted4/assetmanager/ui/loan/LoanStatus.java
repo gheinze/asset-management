@@ -24,18 +24,10 @@ import org.javamoney.moneta.Money;
 /**
  * Object to hold ordered transaction history of mortgage.
  *
- * TODO: Add header informing of:
+ *       	Expected				Actual
  *
-    Next Payment Date:
-    Regular Amount: (then remove scheduled amount col from table)
-    Arears Amount:
-    Next Available Cheque:
-
+ *   Date	Payment Interest Principal Balance    Payment Interest Principal Balance Fees Note
  *
-        	Expected				Actual
-
-    Date	Payment Interest Principal Balance    Payment Interest Principal Balance Fees Note
-
  *
  * @author gheinze
  */
@@ -146,6 +138,7 @@ public class LoanStatus {
         lineItem.setTransaction(charge.getDisplayAmount());
         lineItem.setType(charge.getLoanChargeType().getChargeType());
         lineItem.setNote(charge.getNote());
+        lineItem.setCapitalizing(charge.getLoanChargeType().isCapitalizing());
 
         if (charge.getLoanChargeType().isCapitalizing()) {
             balance = balance.add(charge.getDisplayAmount());
