@@ -56,10 +56,20 @@ public class LoanStatus {
 
 
     private LocalDate calculateNextScheduledPaymentDate() {
+
         TimePeriod paymentFrequency = TimePeriod.getTimePeriodWithPeriodCountOf(amAttr.getPaymentFrequency());
         LocalDate result = paymentFrequency.getDateFrom(loan.getTerms().getStartDate(), 1);
-        // TODO: This should be further restricted to the end of the mortgage if the mortgage is already completed
-        while (result.isBefore(now)) {
+
+        LocalDate interestAccrualUntil = now;
+
+        if (loan.isClosed()) {
+            interestAccrualUntil = paymentFrequency.getDateFrom(loan.getCloseDate(), -1);
+            if (interestAccrualUntil.isAfter(now)) {
+                interestAccrualUntil = now;
+            }
+        }
+
+        while (result.isBefore(interestAccrualUntil)) {
             result = paymentFrequency.getDateFrom(result, 1);
         }
         return result;

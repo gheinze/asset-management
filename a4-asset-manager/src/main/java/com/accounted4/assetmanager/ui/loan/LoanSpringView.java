@@ -36,6 +36,7 @@ public class LoanSpringView extends SelectorDetailPanel<Loan> {
     private final PaymentSpringView paymentDisplay;
     private final ChargeSpringView chargeDisplay;
     private final LoanStatusSpringView statusDisplay;
+    private final AdminSpringView adminDisplay;
 
 
     @Autowired
@@ -47,6 +48,7 @@ public class LoanSpringView extends SelectorDetailPanel<Loan> {
             ,PaymentSpringView paymentDisplay
             ,ChargeSpringView chargeDisplay
             ,LoanStatusSpringView statusDisplay
+            ,AdminSpringView adminSpringView
     ) {
         super("Loans");
         this.loanRepo = loanRepo;
@@ -56,6 +58,7 @@ public class LoanSpringView extends SelectorDetailPanel<Loan> {
         this.paymentDisplay = paymentDisplay;
         this.chargeDisplay = chargeDisplay;
         this.statusDisplay = statusDisplay;
+        this.adminDisplay = adminSpringView;
         defineTabs();
     }
 
@@ -68,6 +71,7 @@ public class LoanSpringView extends SelectorDetailPanel<Loan> {
         addDetailTab(getChequeDisplay(), "Cheques");
         addDetailTab(getStatusDisplay(), "Status");
         addDetailTab(getNotesAreaGenerator(), "Notes");
+        addDetailTab(getAdminDisplay(), "Admin");
     }
 
     // A function to generate the ui for the terms of the selected loan
@@ -108,6 +112,14 @@ public class LoanSpringView extends SelectorDetailPanel<Loan> {
         return (selectedLoan) -> {
             statusDisplay.setLoan(selectedLoan);
             return statusDisplay;
+        };
+    }
+
+
+    private Function<Loan, Component> getAdminDisplay() {
+        return (selectedLoan) -> {
+            adminDisplay.setLoan(selectedLoan);
+            return adminDisplay;
         };
     }
 

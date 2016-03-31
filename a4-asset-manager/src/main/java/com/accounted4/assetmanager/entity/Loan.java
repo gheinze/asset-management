@@ -1,6 +1,7 @@
 package com.accounted4.assetmanager.entity;
 
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Entity;
@@ -24,6 +25,8 @@ public class Loan extends AbstractEntity {
     private static final long serialVersionUID = 1L;
 
     private String loanName;
+
+    private LocalDate closeDate;
 
     @OneToOne(mappedBy="loan")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
@@ -49,6 +52,10 @@ public class Loan extends AbstractEntity {
     private LoanNote note;
 
 
+    public boolean isClosed() {
+        return null != closeDate;
+    }
+    
     @Override
     public String toString() {
         return loanName;
