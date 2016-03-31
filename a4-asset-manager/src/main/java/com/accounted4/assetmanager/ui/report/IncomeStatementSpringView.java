@@ -219,7 +219,9 @@ public class IncomeStatementSpringView extends Panel implements DefaultView {
             LoanStatusLineItem loanLineItem = entry.getValue();
             String key = entry.getKey();
 
-            if (loanLineItem.getDate().isAfter(lastTransactionDate)) {
+            boolean dateChanged = loanLineItem.getDate().isAfter(lastTransactionDate);
+
+            if (dateChanged) {
                 // New Transaction date forces a new Level 2 subheading row
                 transactionDateRowId = treeTable.addItem(new Object[] { loanLineItem.getDate().toString(), transactionDateInterest, transactionDateFees }, null);
                 treeTable.setParent(transactionDateRowId, rootTableRowId);
@@ -230,7 +232,9 @@ public class IncomeStatementSpringView extends Panel implements DefaultView {
             }
 
             String loanName = key.split(FIELD_SEPARATOR)[1];
-            if (loanLineItem.getDate().isAfter(lastTransactionDate) || !loanName.equals(lastLoanName)) {
+            boolean loanChanged = !loanName.equals(lastLoanName);
+
+            if (dateChanged || loanChanged) {
                 // New Loan name subheading forces a new Level 3 subheading row
                 loanRowId = treeTable.addItem(new Object[] { loanName, loanInterest, loanFees }, null);
                 treeTable.setParent(loanRowId, transactionDateRowId);
