@@ -230,8 +230,8 @@ public class IncomeStatementSpringView extends Panel implements DefaultView {
             }
 
             String loanName = key.split(FIELD_SEPARATOR)[1];
-            if (!loanName.equals(lastLoanName)) {
-                // New Loan name subheading orces a new Level 3 subheading row
+            if (loanLineItem.getDate().isAfter(lastTransactionDate) || !loanName.equals(lastLoanName)) {
+                // New Loan name subheading forces a new Level 3 subheading row
                 loanRowId = treeTable.addItem(new Object[] { loanName, loanInterest, loanFees }, null);
                 treeTable.setParent(loanRowId, transactionDateRowId);
                 treeTable.setCollapsed(loanRowId, true);
