@@ -9,6 +9,7 @@ import com.accounted4.finance.loan.AmortizationAttributes;
 import com.vaadin.data.Property;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Button;
 import javax.inject.Inject;
 import org.vaadin.viritin.layouts.MVerticalLayout;
 
@@ -29,11 +30,15 @@ public class LoanTermsSpringView extends MVerticalLayout implements DefaultView,
     private LoanTermsPanel termsPanel;
     private Loan selectedLoan;
 
+    private boolean locked = true;
+    private final Button lockButton;
+
 
     @Inject
     public LoanTermsSpringView(LoanRepository loanRepo, LoanService loanService) {
         this.loanRepo = loanRepo;
         this.loanService = loanService;
+        lockButton = createLockButton();
     }
 
     private void createTermsPanel(AmortizationAttributes amAttrs) {
@@ -44,8 +49,9 @@ public class LoanTermsSpringView extends MVerticalLayout implements DefaultView,
             selectedLoan.getTerms().refreshFrom(termsFromUi);
             termsChangedAction();
         });
+        termsPanel.lock(locked);
         removeAllComponents();
-        addComponent(new MVerticalLayout(termsPanel).expand(termsPanel));
+        addComponent(new MVerticalLayout(lockButton, termsPanel).expand(termsPanel));
         withFullWidth();
         withFullHeight();
     }
@@ -54,6 +60,17 @@ public class LoanTermsSpringView extends MVerticalLayout implements DefaultView,
         loanRepo.save(selectedLoan);
         selectedLoan = loanRepo.findOne(selectedLoan.getId());
         // new Notification("Detected change to the terms", "", Notification.Type.TRAY_NOTIFICATION, true).show(Page.getCurrent());
+    }
+
+
+    private Button createLockButton() {
+        Button button = new Button(locked ? "Edit" : "Lock");
+        button.addClickListener(e -> {
+            locked = !locked;
+            lockButton.setCaption(locked ? "Edit" : "Lock");
+            termsPanel.lock(locked);
+        });
+        return button;
     }
 
 

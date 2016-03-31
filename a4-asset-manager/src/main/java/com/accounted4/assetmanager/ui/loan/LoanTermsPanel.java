@@ -399,7 +399,11 @@ public class LoanTermsPanel extends Panel {
         }
     }
 
+    public void lock(boolean lock) {
+        amAttrBinder.setReadOnly(lock);
+    }
 
+    
     public static AmortizationAttributes getDefaultAmortizationAttributes() {
        // TODO: Currency from session
         Locale locale = (Locale)VaadinSession.getCurrent().getAttribute(VaadinUI.LOCALE_KEY);

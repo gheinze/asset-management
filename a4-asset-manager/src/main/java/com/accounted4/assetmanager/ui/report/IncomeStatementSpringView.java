@@ -57,16 +57,18 @@ public class IncomeStatementSpringView extends Panel implements DefaultView {
     @PostConstruct
     private void init() {
 
-        int year = LocalDate.now().getYear();
+        final int year = LocalDate.now().getYear();
 
-        Date defaultFromDate = Date.from(LocalDate.of(year, Month.JANUARY, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date defaultToDate   = Date.from(LocalDate.of(year, Month.DECEMBER, 31).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        final Date defaultFromDate = Date.from(LocalDate.of(year, Month.JANUARY, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        final Date defaultToDate   = Date.from(LocalDate.of(year, Month.DECEMBER, 31).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         fromDatePopup = createDateField("From Date");
         fromDatePopup.setValue(defaultFromDate);
 
         toDatePopup = createDateField("To Date");
         toDatePopup.setValue(defaultToDate);
+
+        setCaption("Accrued Income");
 
         MFormLayout reportCriteriaForm = new MFormLayout(fromDatePopup, toDatePopup).withWidth("");
 
@@ -119,13 +121,13 @@ public class IncomeStatementSpringView extends Panel implements DefaultView {
 
     private TreeMap<String, LoanStatusLineItem> getReportLineItems() {
 
-        LocalDate fromLocalDate = fromDatePopup.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate toLocalDate = toDatePopup.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        final LocalDate fromLocalDate = fromDatePopup.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        final LocalDate toLocalDate = toDatePopup.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
         // Key for sorting items: date (yyyy-mm-dd), mortgage name, interest|fee
-        TreeMap<String, LoanStatusLineItem> orderedLineItems = new TreeMap<>();
+        final TreeMap<String, LoanStatusLineItem> orderedLineItems = new TreeMap<>();
 
-        List<Loan> loans = loanService.findAllLoans();
+        final List<Loan> loans = loanService.findAllLoans();
 
         loans.stream().forEach(loan -> {
             LoanStatus loanStatus = new LoanStatus(loan);
