@@ -1,4 +1,4 @@
-package com.accounted4.assetmgr.util.spring.log;
+package com.accounted4.assetmanager.util.spring.log;
 
 import java.lang.reflect.Field;
 import org.slf4j.Logger;
@@ -11,7 +11,7 @@ import org.springframework.util.ReflectionUtils;
 /**
  * PostBeanProcessor to find member variables annotated with the @Loggable
  * and set the member to an slf logger.
- * 
+ *
  * See: http://java.dzone.com/articles/inject-slf4j-logger-annotation
  * @author gheinze
  */
@@ -25,21 +25,21 @@ public class LoggableInjector implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(final Object bean, String beanName) throws BeansException {
-        
+
         ReflectionUtils.doWithFields(bean.getClass(), (Field field) -> {
-            
+
             // make the field accessible if defined private
             ReflectionUtils.makeAccessible(field);
-            
+
             if (field.getAnnotation(Loggable.class) != null) {
                 Logger log = LoggerFactory.getLogger(bean.getClass());
                 field.set(bean, log);
             }
-            
+
         });
-        
+
         return bean;
-        
+
     }
-    
+
 }

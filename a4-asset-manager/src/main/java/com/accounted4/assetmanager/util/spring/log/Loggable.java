@@ -1,4 +1,4 @@
-package com.accounted4.assetmgr.util.spring.log;
+package com.accounted4.assetmanager.util.spring.log;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
  * See: http://java.dzone.com/articles/inject-slf4j-logger-annotation
  * @author gheinze
  */
-@Retention(RetentionPolicy.RUNTIME) 
-@Target(ElementType.FIELD) 
-@Documented 
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+@Documented
 public @interface Loggable {
     //for slf4j
 }
