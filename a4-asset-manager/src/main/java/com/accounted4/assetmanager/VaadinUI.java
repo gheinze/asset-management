@@ -3,10 +3,10 @@ package com.accounted4.assetmanager;
 import com.accounted4.assetmanager.ui.useraccount.LoginSpringView;
 import com.accounted4.assetmanager.ui.useraccount.UserSession;
 import com.accounted4.assetmanager.util.vaadin.converter.ConverterFactory;
-import com.vaadin.annotations.PreserveOnRefresh;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
+import com.vaadin.annotations.Widgetset;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -29,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 @Theme("a4am")
 @Title("Accounted4 Asset Management")
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
+@Widgetset("com.accounted4.assetmanager.WidgetSet")
 public class VaadinUI extends UI implements ViewChangeListener {
 
     public static final String LOCALE_KEY = "LOCALE";

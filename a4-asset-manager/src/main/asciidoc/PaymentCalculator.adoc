@@ -1,0 +1,99 @@
+== Payment Calculator
+
+=== Overview
+The payment calculator is used as an ad hoc tool for generating amortization schedules. Data from the payment calculator is not saved.
+
+Reports can be generated in a tabular format (useful for copying into a spreadsheet) or in a pdf format (useful for printing).
+
+=== Loan Details
+
+==== Start Date
+The date from which amortization calculations should commence. This is the starting point for regular payments. Note that sometimes a mortgage may actually start on a date other than the start date (say the 25th of the month) and then be adjusted to the following 1st of the month. In this case, the start date should be considered as the 1st of the month rather than the 25th as this is the date from which the periodic payments will be based.
+
+==== Term in Months
+Determines how far out the amortization schedule should be generated. The loan could be amortized over a longer period (ex 25 years) but only the first year of the schedule would be generated if `12` is selected as the term in months.
+
+Hover the mouse over the field to see a "years to months" conversion table.
+
+==== Interest only
+Restricts calculations to strictly period interest. No principal amount will be added to the regular payments. No principal over-payments will be included. The regular payments are what is required to maintain the principal over the term. Note that over-riding the `Regular payment` will have no effect on `Interest only` loans.
+
+==== Amortization months
+The number of months over which the entire principal amount of the loan is to be repaid. This determines the additional principal which needs to be added to each regular payment (in addition to the interest charge) in order to pay out the entire loan within this period.
+
+Hover the mouse over the field to see a "years to months" conversion table.
+
+==== Compounded
+Determines the frequency at which interest is calculated and "added" to the principal. The compounding period alters the effective interest rate.
+
+.Note:
+
+* Interest on Canadian mortgages are calculated semi-annually whereas other loans (car loans) are calculated monthly
+* Interest on US mortgages are calculated monthly
+
+As an example, a nominal interest rate of 10% can have an effective interest rate of 10% if compounded annually, 10.25% if compounded semi-annually, and 10.46% if compounded monthly:
+
+.$10,000 @ 10% compounded annually:
+
+* all interest calculated at the end of the year: `$10,000 x 0.1 = $1,000`
+* principal: `$10,000`
+* total principal + interest: `$11,000`
+* effective interest rate: `$1,000 / $10,000 = 10%`
+
+.$10,000 @ 10% compounded semi-annually:
+
+* interest for first 6 months (semi-annually):
+ `$10,000 x 0.1 / 2 = $500`
+ * interest for second 6 months: `$10,500 x 0.1 / 2 = $525`
+* principal: `$10,000`
+* total principal + interest: `$11,025`
+* effective interest rate: `$1,025 / $10,000 = 10.25%`
+
+.$10,000 @ 10% compounded monthly:
+
+* interest for first 1st month (monthly):
+ `$10,000 x 0.1 / 12 = $83.33`
+ * interest for 2nd month: `$10,083.33 x 0.1 / 12 = $84.03`
+ * interest for 3rd, 4th, ...12th month
+* principal: `$10,000`
+* total principal + interest: `$11,047.13`
+* effective interest rate: `$1,047.13 / $10,000 = 10.47%`
+
+==== Loan amount
+The principal of the loan.
+
+==== Interest rate
+The nominal interest rate expressed as a percentage.
+
+==== Payment frequency
+The number of times a year regular payments are to be made.
+
+.Payment Frequency
+[options="header"]
+|===
+|Frequency|Annual Payments|Description|Example
+|Weekly|52|Same day of the week all year|Mon Jan 4 2016, Mon Jan 11 2016, Mon Jan 18 2016, ...
+|BiWeekly|26|Every second week|Mon Jan 4 2016, Mon Jan 18 2016, ...
+|SemiMonthly|24|Two fixed dates a month, 14 days apart|Jan 1, Jan 15, Feb 1, Feb 15, ...
+|Monthly|12|Fixed date every month|Jan 15, Feb 15, Mar 15, ...
+|BiMonthly|6|Every second month|Jan 15, Mar 15, May 15, ...
+|Quarterly|4|Every three months|Jan 1, Apr 1, Jul 1, ...
+|SemiAnnually|2|Twice a year|Jan 1, Jul 1, ...
+|Annually|1|A payment on every anniversary date|Jan 1 2016, Jan 1 2017, ...
+|===
+
+==== Regular Payment
+The regular payment is the amount to be applied to the loan at `payment frequency` intervals. Click the `calculate` button to compute the actual amount required.
+
+If the regular payment is over-ridden with an amount greater than the computed regular payment, the exta amount will be applied to the principal. This will reduce the period balance and hence also reduce the amount of interest required in subsequent periods.
+
+If the regular payment is over-ridden with an amount less than the computed regular payment, the payment is first applied to the interest portion and any remainder will be applied to the principal portion of the computed payment. Shortfalls in the interest portion are added onto the loan balance increasing subsequent interest calculations.
+
+Overriding this field for `Interest Only` schedules will have no effect: only amortized schedules involve manipulating principal payments.
+
+=== Notes on Computations
+The nominal interest rate is used to compute the interest rate for the payment period. For example a 12% interest rate with monthly payments would result in a 1% interest rate per monthly payment period. The break down of the payments is performed in an iterative manner:
+
+* apply the period interest rate to the outstanding balance of the loan to calculate the interest charge for the period. Any fractional amounts are rounded up. For example a calculated interest amount for a period of $100.251 would result in an interest amount of $100.26
+* subtract the calculated period interest rate from the regular payment and apply any remainder to the balance. For example, if the period interest is calculated as $150 and the regular payment is $200, then $50 will be applied to reduce the balance. If payment were less than the calculated interest, then the balance would be increased accordingly.
+* repeat for the next period using the new balance
