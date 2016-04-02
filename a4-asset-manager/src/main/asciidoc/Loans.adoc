@@ -1,0 +1,102 @@
+== Loans
+
+Manage loans in order to keep track of:
+
+* outstanding balances
+* payments applied to the loan
+* charges against the loan
+* accrued interest
+* notes such as call logs and travel logs
+
+=== Loan Selector
+Select the loan to manage with the loan selector. Loans are listed in alphabetical order. The list shows "active" loans by default. Select the "show inactive" check box in order to include inactive loans in the list.
+
+Inactive loans are old loans which are no longer of interest. Marking a loan as inactive simply removes the loan from showing up in select lists.
+
+Loans are never deleted since they still serve an historical purpose. Even when a loan has been closed (has come to term and paid out), it may still be desirable to leave the loan marked as active so that it can be referenced. A typical time to mark a loan as inactive is when the loan has been closed in the previous tax year. A loan can always be made active again through the admin panel.
+
+==== Filter selection
+If the list of loans is long, you can start typing a part of the loan name into the selector and the list will start filtering. The filter is case-insensitive and the match can occur anywhere within the name.
+
+==== New loan creation
+To create a new loan, type the name of the new loan into the filter and press `ENTER`. A confirmation dialog will be displayed.
+
+A recommended naming convention for new loans is the mortgage start date in `YYYY-MM-DD` format followed by the mortgagor's name:
+
+****
+2016-12-15 Doe, John
+****
+
+=== Terms
+The terms for interest calculation are located under the `Terms` panel. This is the same information as found  on the
+link:PaymentCalculator.html[Payment Calculator]. Modifications to the terms are saved with the loan.
+
+Typically the terms are set once during the loan creation and are then static through the life of the loan. Hence the button at the top of the form to lock the terms into place so that they are not mistakenly modified. Use the Payment Calculator to generate alternate schedules.
+
+=== Payments
+Payments are amounts received from the mortgagor and applied to the mortgage. Payments are automatically applied to the loan in the following order:
+
+. fee balance
+. interest owing
+. principal
+
+The entry form for a payment consists of a transaction date and an amount. The amount will default to the regular payment expected for this loan.
+
+If a cheque is selected from the cheque selection list, the amount is fixed at the amount of the cheque. The transaction date still needs to be entered since it may be different from the cheque date.
+
+=== Charges
+Charges are amounts to be added to the loan _other than the regualr interest charges_. These amounts can be categorized into two types:
+
+. *capitalizing*: the amount will be added to the principal balance. These amounts are usually out-of-pocket expenses to the mortgagee. For example:
+- reversed payment (NSF cheque)
+- taxes
+- insurance
+
+. *non-capitalizing*: the amount will be listed as a _Fee_, is not added to the principal balance, and hence does not accrue interest. These are typically not out-of-pocket expenses to the mortgagee. For example:
+- NSF fee
+- late charge
+- inspection fee
+- pre-payment bonus
+
+Note that the *Interest* charge is not meant for regular periodic interest charges, but rather to account for:
+
+* interest earned during the initial adjustment to the loan start date
+* per diem interest earned between the last payment and the close of the loan
+
+This type of interest charge is capitalizing.
+
+=== Cheques
+The `Cheques` panel lists post-date cheques on hand. Maintaining a list of cheques  simplifies the payment process and allows for notifications for when it is time to start inquiring for a new batch of cheques.
+
+Cheques can be entered in a batch. Given a start date and an amount (default to the periodic payment amount), the batch number will dictate the number of cheque entries to create. While the amount of each cheque will be the same, the date of each cheque will be incremented by the number of days in the payment frequency of the loan.
+
+Optionally, a reference number (cheque number) can be added to the cheque definition. If a numeric is found within the reference number, batch generation will increment the reference number as well.
+
+After creating a batch of cheques, they will become available for selection in the Payments panel.  If used for a Payment, the cheque status will automatically be moved from "On File" to "Deposited".  The Payment panel will only list cheques that are "On File".
+
+=== Status
+The `Status` panel provides a snapshot of the current state of the loan.
+
+The history panel lists all transactions against the loan. There are three types of transactions:
+
+* *periodic interest* charges which are computed automatically and increase the balance
+* *charges* against the mortgage which are either "capitalizing" and applied to the balance or "non-capitalizing" and tracked in a separate "Fees" column
+* *payments* applied to the mortgage which are first applied to fees, then to the balance
+
+The actual transaction history can be compared to the scheduled transactions of the amortization schedule by adding extra columns to the table. This can be done by invoking the drop down arrow on the far right of the table header.
+
+The `Acutal due` field presents the amount of payment required to bring the loan back into good standing according to the original amortization schedule as of the specified date. With a loan in good standing, the `Actual due` matches the `Regular payment` amount. If these amounts do not match, the `Actual due` is highlighted to indicate the mortgage is in arrears.
+
+The `Days to maturity` will also be highlighted if the number of days falls below `45`. This is to warn that the loan is reaching maturity.
+
+=== Notes
+Record miscellaneous notes regarding the loan in the `Notes` section. Typical examples of notes which might be recorded:
+
+* a log of communications regarding the loan
+* a log of travel related to the loan (property inspections)
+
+=== Admin
+The `Admin` panel provides a means for managing the state of the loan. For example:
+
+* the loan can be closed so that it does not accrue any further interest
+* the loan can be made inactive so that it does not populate loan drop down lists

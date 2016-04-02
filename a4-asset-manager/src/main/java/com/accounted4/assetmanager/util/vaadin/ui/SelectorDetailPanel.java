@@ -3,6 +3,7 @@ package com.accounted4.assetmanager.util.vaadin.ui;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
@@ -14,6 +15,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
+import org.vaadin.sliderpanel.SliderPanel;
 
 /**
  * A master-detail panel with a "master" selector on the top of the pane and
@@ -28,11 +30,19 @@ public abstract class SelectorDetailPanel<T> extends Panel implements DefaultVie
     private Selector<T> masterSelector;
     private VerticalLayout detailContainer;
 
+    private final SliderPanel helpSlider;
+
     private final ArrayList<Tab> tabs = new ArrayList<>();
 
 
     public SelectorDetailPanel(String panelLabel) {
+        this(panelLabel, null);
+    }
+
+
+    public SelectorDetailPanel(String panelLabel, String helpUrl) {
         super(panelLabel);
+        helpSlider = null == helpUrl ? null : HelpSlider.create(helpUrl);
     }
 
 
@@ -72,7 +82,19 @@ public abstract class SelectorDetailPanel<T> extends Panel implements DefaultVie
         mainLayout.setSizeFull();
         mainLayout.setExpandRatio(detailContainer, 1.0f);
 
-        setContent(mainLayout);
+        if (null != helpSlider) {
+
+            // Wrap into a Horizontal layout in order to allow a slider for help info to slide out from the right
+            HorizontalLayout mainLayoutWrapper = new HorizontalLayout();
+            mainLayoutWrapper.setSizeFull();
+            mainLayoutWrapper.addComponents(mainLayout, helpSlider);
+            mainLayoutWrapper.setExpandRatio(mainLayout, 1.0f);
+
+            setContent(mainLayoutWrapper);
+
+        } else {
+            setContent(mainLayout);
+        }
 
         setSizeFull();
         addStyleName(Reindeer.PANEL_LIGHT);

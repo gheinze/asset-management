@@ -38,6 +38,9 @@ public class LoanSpringView extends SelectorDetailPanel<Loan> {
     private final LoanStatusSpringView statusDisplay;
     private final AdminSpringView adminDisplay;
 
+    private static final String HELP_URL = "Loans.html";
+
+
 
     @Autowired
     public LoanSpringView(
@@ -50,7 +53,7 @@ public class LoanSpringView extends SelectorDetailPanel<Loan> {
             ,LoanStatusSpringView statusDisplay
             ,AdminSpringView adminSpringView
     ) {
-        super("Loans");
+        super("Loans", HELP_URL);
         this.loanRepo = loanRepo;
         this.loanNoteRepo = loanNoteRepo;
         this.termsDisplay = termsDisplay;
