@@ -132,4 +132,9 @@ public class LoanServiceImpl implements LoanService {
         return loanRepository.findByCloseDateIsNull();
     }
 
+    @Override
+    public void save(Loan loan) {
+        loanRepository.save(loan);
+    }
+
 }

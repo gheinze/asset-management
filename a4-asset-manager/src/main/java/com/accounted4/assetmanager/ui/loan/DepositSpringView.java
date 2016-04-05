@@ -2,8 +2,11 @@ package com.accounted4.assetmanager.ui.loan;
 
 import com.accounted4.assetmanager.ui.loan.status.LoanStatus;
 import com.accounted4.assetmanager.UiRouter;
+import com.accounted4.assetmanager.entity.Cheque;
 import com.accounted4.assetmanager.entity.Loan;
+import com.accounted4.assetmanager.entity.LoanPayment;
 import com.accounted4.assetmanager.service.LoanService;
+import com.accounted4.assetmanager.util.Convert;
 import com.accounted4.assetmanager.util.vaadin.ui.AmMTable;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.vaadin.spring.annotation.SpringView;
@@ -15,8 +18,10 @@ import com.vaadin.ui.PopupDateField;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.themes.Reindeer;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -86,6 +91,7 @@ public class DepositSpringView extends Panel implements DefaultView {
     private Button createDepositButton() {
         Button generateButton = new Button("Deposit");
         generateButton.addClickListener(e -> {
+            deposit();
         });
         return generateButton;
     }
@@ -98,9 +104,13 @@ public class DepositSpringView extends Panel implements DefaultView {
         depositTable.addGeneratedColumn("selected", (Table source, Object itemId, Object columnId) -> {
 
             DepositLineItem lineItem = (DepositLineItem)itemId;
+
             boolean enabled = !lineItem.getCurrentDue().isZero() && null != lineItem.getCheque();
 
             CheckBox checkBox = new CheckBox();
+            checkBox.addValueChangeListener(e -> {
+                lineItem.setSelected(checkBox.getValue());
+            });
             checkBox.setValue(enabled);
             checkBox.setEnabled(enabled);
 
@@ -127,11 +137,53 @@ public class DepositSpringView extends Panel implements DefaultView {
                     depositItem.setRegularPayment(loanStatus.getRegularDue());
                     depositItem.setAsOf(loanStatus.getCurrentScheduledPaymentDate());
                     depositItem.setCurrentDue(loanStatus.getCurrentDue());
-                    depositItem.setCheque(loanStatus.getNextChequeOnFile().orElse(null));
+
+                    depositItem.setCheque(null);
+                    Optional<Cheque> nextChequeOptional = loanStatus.getNextChequeOnFile();
+                    if (nextChequeOptional.isPresent()) {
+                        Cheque nextCheque = nextChequeOptional.get();
+                        if (!nextCheque.getPostDate().isAfter(LocalDate.now())) {
+                            depositItem.setCheque(nextCheque);
+                        }
+                    }
                     return depositItem;
                 })
                 .collect(Collectors.toList());
     }
 
+
+    private void deposit() {
+
+        depositTable.commit();
+        Collection<DepositLineItem> itemIds = (Collection<DepositLineItem>)depositTable.getContainerDataSource().getItemIds();
+
+        itemIds.stream().forEach(depositLineItem -> {
+            boolean checked = (Boolean) depositTable.getItem(depositLineItem).getItemProperty("selected").getValue();
+            if (checked) {
+                Loan loan = depositLineItem.getLoan();
+                LoanPayment payment = createPayment(loan, depositLineItem.getCheque());
+                loan.getPayments().add(payment);
+                loanService.save(loan);
+            }
+        });
+
+        refresh();
+
+    }
+
+
+    private LoanPayment createPayment(Loan loan, Cheque cheque) {
+
+        LoanPayment payment = new LoanPayment();
+        payment.setLoan(loan);
+        payment.setCheque(cheque);
+        payment.setAmount(cheque.getAmount());
+        payment.setCurrency(cheque.getCurrency());
+        payment.setDepositDate(Convert.dateToLocalDate(depositDatePopup.getValue()));
+        payment.setNote("Batch deposit");
+
+        return payment;
+
+    }
 
 }

@@ -32,4 +32,6 @@ public interface LoanService {
 
     List<Loan> findByCloseDateIsNull();
 
+    void save(Loan loan);
+
 }

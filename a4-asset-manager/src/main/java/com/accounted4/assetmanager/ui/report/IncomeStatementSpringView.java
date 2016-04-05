@@ -7,6 +7,7 @@ import com.accounted4.assetmanager.ui.loan.status.LoanStatus;
 import com.accounted4.assetmanager.ui.loan.status.LoanStatusChargeLineItem;
 import com.accounted4.assetmanager.ui.loan.status.LoanStatusLineItem;
 import com.accounted4.assetmanager.ui.loan.status.LoanStatusPaymentLineItem;
+import com.accounted4.assetmanager.util.Convert;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -18,7 +19,6 @@ import com.vaadin.ui.themes.Reindeer;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
@@ -61,8 +61,8 @@ public class IncomeStatementSpringView extends Panel implements DefaultView {
 
         final int year = LocalDate.now().getYear();
 
-        final Date defaultFromDate = Date.from(LocalDate.of(year, Month.JANUARY, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
-        final Date defaultToDate   = Date.from(LocalDate.of(year, Month.DECEMBER, 31).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        final Date defaultFromDate = Convert.LocalDateToDate(LocalDate.of(year, Month.JANUARY, 1));
+        final Date defaultToDate   = Convert.LocalDateToDate(LocalDate.of(year, Month.DECEMBER, 31));
 
         fromDatePopup = createDateField("From Date");
         fromDatePopup.setValue(defaultFromDate);
@@ -123,8 +123,8 @@ public class IncomeStatementSpringView extends Panel implements DefaultView {
 
     private TreeMap<String, LoanStatusLineItem> getReportLineItems() {
 
-        final LocalDate fromLocalDate = fromDatePopup.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        final LocalDate toLocalDate = toDatePopup.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        final LocalDate fromLocalDate = Convert.dateToLocalDate(fromDatePopup.getValue());
+        final LocalDate toLocalDate = Convert.dateToLocalDate(toDatePopup.getValue());
 
         // Key for sorting items: date (yyyy-mm-dd), mortgage name, interest|fee
         final TreeMap<String, LoanStatusLineItem> orderedLineItems = new TreeMap<>();
@@ -217,7 +217,7 @@ public class IncomeStatementSpringView extends Panel implements DefaultView {
         Money loanFees = ZERO_MONEY;
 
         // Initialize triggers to indicate hierarchy change
-        LocalDate lastTransactionDate = fromDatePopup.getValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().minusDays(1L);
+        LocalDate lastTransactionDate = Convert.dateToLocalDate(fromDatePopup.getValue()).minusDays(1L);
         String lastLoanName = "";
 
         // Root table item: Level 1

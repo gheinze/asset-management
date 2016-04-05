@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.util.vaadin.converter;
 
+import com.accounted4.assetmanager.util.Convert;
 import com.vaadin.data.util.converter.Converter;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -39,11 +40,11 @@ public class LocalDateConverter implements Converter<Date, LocalDate> {
     // See: http://stackoverflow.com/questions/21242110/convert-java-util-date-to-java-time-localdate
 
     public static LocalDate convertDateToLocalDate(Date date) {
-        return null == date ? null : date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return null == date ? null : Convert.dateToLocalDate(date);
     }
 
     public static Date convertLocalDateToDate(LocalDate localDate) {
-        return null == localDate ? null : Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return null == localDate ? null : Convert.LocalDateToDate(localDate);
     }
 
 }
