@@ -5,6 +5,7 @@
  */
 package com.accounted4.assetmanager.ui.loan;
 
+import com.accounted4.assetmanager.ui.loan.status.LoanStatus;
 import com.accounted4.assetmanager.entity.Loan;
 import com.accounted4.assetmanager.entity.LoanCharge;
 import com.accounted4.assetmanager.entity.LoanTerms;

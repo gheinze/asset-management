@@ -3,8 +3,10 @@ package com.accounted4.assetmanager.ui.report;
 import com.accounted4.assetmanager.UiRouter;
 import com.accounted4.assetmanager.entity.Loan;
 import com.accounted4.assetmanager.service.LoanService;
-import com.accounted4.assetmanager.ui.loan.LoanStatus;
-import com.accounted4.assetmanager.ui.loan.LoanStatusLineItem;
+import com.accounted4.assetmanager.ui.loan.status.LoanStatus;
+import com.accounted4.assetmanager.ui.loan.status.LoanStatusChargeLineItem;
+import com.accounted4.assetmanager.ui.loan.status.LoanStatusLineItem;
+import com.accounted4.assetmanager.ui.loan.status.LoanStatusPaymentLineItem;
 import com.accounted4.assetmanager.util.vaadin.ui.DefaultView;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.spring.annotation.UIScope;
@@ -134,11 +136,19 @@ public class IncomeStatementSpringView extends Panel implements DefaultView {
             loanStatus.getOrderedLineItems()
                     .stream()
                     .filter(loanLineItem -> (
+
+                            // Don't report Payments
+                            !(loanLineItem instanceof LoanStatusPaymentLineItem) &&
+
+                            // Don't report Charges that are capitalizing (like tax, insurance, etc)
+                            !(loanLineItem instanceof LoanStatusChargeLineItem &&
+                                    ((LoanStatusChargeLineItem)loanLineItem).isCapitalizing()) &&
+
+                            // Respect date ranges
                             !loanLineItem.getDate().isBefore(fromLocalDate) &&
-                            !loanLineItem.getDate().isAfter(toLocalDate) &&
-                            !loanLineItem.getType().equals("Payment") &&
-                            !loanLineItem.isCapitalizing()
+                            !loanLineItem.getDate().isAfter(toLocalDate)
                                     ))
+
                     .forEach(loanLineItem -> {
                         String theKey = String.format(KEY_FORMAT
                                 ,loanLineItem.getDate().getYear()

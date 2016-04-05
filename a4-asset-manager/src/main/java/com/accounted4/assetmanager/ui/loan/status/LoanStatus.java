@@ -1,6 +1,5 @@
-package com.accounted4.assetmanager.ui.loan;
+package com.accounted4.assetmanager.ui.loan.status;
 
-import com.accounted4.assetmanager.entity.LoanPayment;
 import com.accounted4.assetmanager.entity.LoanChargeType;
 import com.accounted4.assetmanager.entity.LoanCharge;
 import com.accounted4.assetmanager.entity.Loan;
@@ -70,8 +69,7 @@ public class LoanStatus {
     @Getter private final LocalDate nextScheduledPaymentDate;
     private LoanStatusLineItem nextScheduledPaymentLineItem;
 
-    private MonetaryAmount balance;
-    private MonetaryAmount feeBalance;
+    private Accumulator balances;
 
 
     public LoanStatus(Loan loan) {
@@ -83,6 +81,9 @@ public class LoanStatus {
     }
 
 
+    /*
+     * next scheduled payment is >= today, unless the loan closed earlier
+    */
     private LocalDate calculateNextScheduledPaymentDate() {
 
         TimePeriod paymentFrequency = TimePeriod.getTimePeriodWithPeriodCountOf(amAttr.getPaymentFrequency());
@@ -104,6 +105,9 @@ public class LoanStatus {
     }
 
 
+    /*
+     * current scheduled payment is <= today, unless the loan closed earlier
+    */
     private LocalDate calculateLastScheduledPaymentDate(LocalDate nextScheduledPayment) {
         return !nextScheduledPayment.isAfter(now) ?
                 nextScheduledPayment :
@@ -113,68 +117,38 @@ public class LoanStatus {
     }
 
 
+    /*
+     * Add all charges, payments, and interest to a map in order to apply an order to the transactions,
+     * then convert the map to an ordered list of transactions.
+    */
     private void populateTransactionList() {
 
         // Key for sorting items: date (yyyy-mm-dd), type (scheduled interest payment, charges, payments), sequence #
         TreeMap<String, LoanStatusLineItem> transactionMap = new TreeMap<>();
 
         addOpeningBalanceTo(transactionMap);
-        addScheduledPaymentsTo(transactionMap);
-        addChargesTo(transactionMap);
-        addPaymentsTo(transactionMap);
+        addScheduledPaymentsToMap(transactionMap);
+        addChargesToMap(transactionMap);
+        addPaymentsToMap(transactionMap);
         createTransactionListWithRunningTotals(transactionMap);
 
     }
 
 
+    /*
+     * This is a pseudo charge, but makes the report look better to show the opening balance.
+    */
     private void addOpeningBalanceTo(Map<String, LoanStatusLineItem> map) {
         LoanCharge forwardedFunds = getOpeningCharge();
         LocalDate fundingDate = forwardedFunds.getChargeDate();
         String theKey = String.format("%04d-%02d-%02d  A %d",
                 fundingDate.getYear(), fundingDate.getMonthValue(), fundingDate.getDayOfMonth(), forwardedFunds.getId());
-        LoanStatusLineItem openingLineItem = convertChargeToLineItem(forwardedFunds);
+        LoanStatusLineItem openingLineItem = new LoanStatusChargeLineItem(forwardedFunds);
         MonetaryAmount zero = openingLineItem.getTransaction().multiply(0L);
         openingLineItem.setScheduledBalance(openingLineItem.getTransaction());
         openingLineItem.setScheduledInterest(zero);
         openingLineItem.setScheduledPrincipal(zero);
         map.put(theKey, openingLineItem);
-    }
-
-
-    private void addScheduledPaymentsTo(Map<String, LoanStatusLineItem> map) {
-
-        List<ScheduledPayment> scheduledPayments = AmortizationCalculator.generateSchedule(amAttr);
-
-        scheduledPayments.stream()
-                .filter(scheduledPayment -> !scheduledPayment.getPaymentDate().isAfter(nextScheduledPaymentDate))
-                .forEachOrdered(scheduledPayment -> {
-                    LocalDate paymentDate = scheduledPayment.getPaymentDate();
-                    String key = String.format("%04d-%02d-%02d  A %d",
-                            paymentDate.getYear(), paymentDate.getMonthValue(), paymentDate.getDayOfMonth(), scheduledPayment.getPaymentNumber());
-                    map.put(key, convertScheduledPaymentToLineItem(scheduledPayment));
-                }
-        );
-
-    }
-
-
-    private void addChargesTo(Map<String, LoanStatusLineItem> map) {
-        loan.getCharges().stream().forEach(charge -> {
-            LocalDate chargeDate = charge.getChargeDate();
-            String key = String.format("%04d-%02d-%02d  B %d",
-                    chargeDate.getYear(), chargeDate.getMonthValue(), chargeDate.getDayOfMonth(), charge.getId());
-            map.put(key, convertChargeToLineItem(charge));
-        });
-    }
-
-
-    private void addPaymentsTo(Map<String, LoanStatusLineItem> map) {
-        loan.getPayments().stream().forEach(payment -> {
-            LocalDate depositDate = payment.getDepositDate();
-            String key = String.format("%04d-%02d-%02d  C %d",
-                    depositDate.getYear(), depositDate.getMonthValue(), depositDate.getDayOfMonth(), payment.getId());
-            map.put(key, convertPaymentToLineItem(payment));
-        });
     }
 
 
@@ -192,138 +166,66 @@ public class LoanStatus {
     }
 
 
-    private LoanStatusLineItem convertChargeToLineItem(LoanCharge charge) {
+    private void addScheduledPaymentsToMap(Map<String, LoanStatusLineItem> map) {
 
-        LoanStatusLineItem lineItem = new LoanStatusLineItem();
+        List<ScheduledPayment> scheduledPayments = AmortizationCalculator.generateSchedule(amAttr);
 
-        lineItem.setCharge(true);
-        lineItem.setDate(charge.getChargeDate());
-        lineItem.setTransaction(charge.getDisplayAmount());
-        lineItem.setType(charge.getLoanChargeType().getChargeType());
-        lineItem.setNote(charge.getNote());
-        lineItem.setCapitalizing(charge.getLoanChargeType().isCapitalizing());
-
-        return lineItem;
-    }
-
-
-    private LoanStatusLineItem convertPaymentToLineItem(LoanPayment payment) {
-
-        LoanStatusLineItem lineItem = new LoanStatusLineItem();
-
-        lineItem.setPayment(true);
-        lineItem.setDate(payment.getDepositDate());
-        lineItem.setTransaction(payment.getDisplayAmount().negate());
-        lineItem.setType("Payment");
-        lineItem.setNote(payment.getNote());
-
-        return lineItem;
-    }
-
-
-    private LoanStatusLineItem convertScheduledPaymentToLineItem(ScheduledPayment scheduledPayment) {
-
-        LoanStatusLineItem lineItem = new LoanStatusLineItem();
-
-        lineItem.setScheduledPayment(true);
-        lineItem.setDate(scheduledPayment.getPaymentDate());
-        lineItem.setScheduledInterest(scheduledPayment.getInterest());
-        lineItem.setScheduledPrincipal(scheduledPayment.getPrincipal());
-        lineItem.setScheduledBalance(scheduledPayment.getBalance());
-
-        return lineItem;
+        scheduledPayments.stream()
+                .filter(scheduledPayment -> !scheduledPayment.getPaymentDate().isAfter(nextScheduledPaymentDate))
+                .forEachOrdered(scheduledPayment -> {
+                    LocalDate paymentDate = scheduledPayment.getPaymentDate();
+                    String key = String.format("%04d-%02d-%02d  A %d",
+                            paymentDate.getYear(), paymentDate.getMonthValue(), paymentDate.getDayOfMonth(), scheduledPayment.getPaymentNumber());
+                    LoanStatusScheduledPaymentLineItem item =
+                            new LoanStatusScheduledPaymentLineItem(scheduledPayment, nextScheduledPaymentDate, amAttr);
+                    map.put(key, item);
+                    if (null == nextScheduledPaymentLineItem || item.getDate().isEqual(nextScheduledPaymentDate)) {
+                        nextScheduledPaymentLineItem = item;
+                    }
+                }
+        );
 
     }
 
 
+    private void addChargesToMap(Map<String, LoanStatusLineItem> map) {
+        loan.getCharges().stream().forEach(charge -> {
+            LocalDate chargeDate = charge.getChargeDate();
+            String key = String.format("%04d-%02d-%02d  B %d",
+                    chargeDate.getYear(), chargeDate.getMonthValue(), chargeDate.getDayOfMonth(), charge.getId());
+            map.put(key, new LoanStatusChargeLineItem(charge));
+        });
+    }
 
 
+    private void addPaymentsToMap(Map<String, LoanStatusLineItem> map) {
+        loan.getPayments().stream().forEach(payment -> {
+            LocalDate depositDate = payment.getDepositDate();
+            String key = String.format("%04d-%02d-%02d  C %d",
+                    depositDate.getYear(), depositDate.getMonthValue(), depositDate.getDayOfMonth(), payment.getId());
+            map.put(key, new LoanStatusPaymentLineItem(payment));
+        });
+    }
+
+
+    /*
+     * Convert the ordered map of transactions into an ordered list of transactions
+     * (key can be thrown away at now since it was just used for sorting purposes)
+     * and update the running balance fields on each transaction as we go. We can
+     * only do this aggregation now, when we have all the items in order.
+    */
     private void createTransactionListWithRunningTotals(Map<String, LoanStatusLineItem> map) {
 
         // Initialize running balances
-        balance = Money.of(BigDecimal.ZERO, loan.getTerms().getLoanCurrency());
-        feeBalance = balance.multiply(0L);
+        MonetaryAmount zero = Money.of(BigDecimal.ZERO, loan.getTerms().getLoanCurrency()).multiply(0L);
+        balances = new Accumulator(zero, zero);
 
         map.values().stream().forEachOrdered((item) -> {
-            aggregate(item);
+            item.aggregate(balances);
             transactions.add(item);
         });
 
     }
-
-    private void aggregate(LoanStatusLineItem item) {
-        if (item.isCharge()) {
-            aggregateCharge(item);
-        } else if (item.isPayment()) {
-            aggregatePayment(item);
-        } else {
-            aggregateScheduledPayment(item);
-        }
-    }
-
-
-    private void aggregateCharge(LoanStatusLineItem item) {
-
-        if (item.isCapitalizing()) {
-            balance = balance.add(item.getTransaction());
-        } else {
-            feeBalance = feeBalance.add(item.getTransaction());
-        }
-
-        item.setBalance(balance);
-        item.setFees(feeBalance);
-
-    }
-
-
-    private void aggregatePayment(LoanStatusLineItem item) {
-
-        MonetaryAmount paymentAmount = item.getTransaction().negate();
-
-        if (feeBalance.isPositive()) {
-            if (paymentAmount.compareTo(feeBalance) < 0) {
-                // Full payment is applied to fees
-                feeBalance = feeBalance.subtract(paymentAmount);
-            } else {
-                // Part of the payment wipes out the fees, the rest is applied to principal
-                balance = balance.subtract(paymentAmount.subtract(feeBalance));
-                feeBalance = feeBalance.multiply(0L);
-            }
-        } else {
-            // No fees to pay off, apply full payment to principal
-            balance = balance.subtract(paymentAmount);
-        }
-
-        item.setBalance(balance);
-        item.setFees(feeBalance);
-
-    }
-
-    private void aggregateScheduledPayment(LoanStatusLineItem item) {
-
-        // Running balances if they are not into the future
-        if (!item.getDate().isAfter(nextScheduledPaymentDate)) {
-            AmortizationAttributes amAttrs = loan.getTerms().getAsAmAttributes();
-            amAttrs.setLoanAmount(balance);
-            MonetaryAmount periodInterest = AmortizationCalculator.getPeriodInterest(amAttrs);
-            item.setTransaction(periodInterest);
-            balance = balance.add(periodInterest);
-            item.setBalance(balance);
-            item.setFees(feeBalance);
-            item.setType("Period Interest");
-            item.setNote("Scheduled interest charge");
-        }
-
-        if (null == nextScheduledPaymentLineItem || item.getDate().isEqual(nextScheduledPaymentDate)) {
-            nextScheduledPaymentLineItem = item;
-        }
-
-
-    }
-
-
-
-
 
 
 
@@ -340,15 +242,27 @@ public class LoanStatus {
         return amAttr.getRegularPayment();
     }
 
+
+    /**
+     * As of next scheduled payment date (>= today)
+     *
+     * @return
+     */
     public MonetaryAmount getActualDue() {
-        return balance
+        return balances
+                .getBalance()
                 .subtract(nextScheduledPaymentLineItem.getScheduledBalance())
-                .add(feeBalance)
+                .add(balances.getFeeBalance())
                 ;
     }
 
+    /**
+     * As of next scheduled payment date (>= today)
+     *
+     * @return
+     */
     public MonetaryAmount getBalance() {
-        return balance;
+        return balances.getBalance();
     }
 
 
@@ -363,11 +277,22 @@ public class LoanStatus {
         return now.until(maturityDate, DAYS);
     }
 
+    /**
+     * As of next scheduled payment date (>= today)
+     *
+     * @return
+     */
     public MonetaryAmount getPerDiem() {
-        return AmortizationCalculator.getPerDiem(balance, amAttr.getInterestRateAsPercent());
+        return AmortizationCalculator.getPerDiem(balances.getBalance(), amAttr.getInterestRateAsPercent());
     }
 
 
+    /**
+     * As of the last scheduled payment date (<= today, used for Deposit form) rather than as of the next scheduled
+     * payment date (>= tpday, used by status report)).
+     *
+     * @return
+     */
     public MonetaryAmount getCurrentDue() {
 
         MonetaryAmount scheduleBalance = Money.of(BigDecimal.ZERO, loan.getTerms().getLoanCurrency()).multiply(0L);

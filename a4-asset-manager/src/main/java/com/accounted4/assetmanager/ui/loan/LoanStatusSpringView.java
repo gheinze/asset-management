@@ -1,5 +1,7 @@
 package com.accounted4.assetmanager.ui.loan;
 
+import com.accounted4.assetmanager.ui.loan.status.LoanStatusLineItem;
+import com.accounted4.assetmanager.ui.loan.status.LoanStatus;
 import com.accounted4.assetmanager.service.LoanService;
 import com.accounted4.assetmanager.repository.LoanRepository;
 import com.accounted4.assetmanager.entity.Loan;

@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.ui.loan;
 
+import com.accounted4.assetmanager.ui.loan.status.LoanStatus;
 import com.accounted4.assetmanager.entity.Cheque;
 import com.vaadin.ui.Panel;
 import java.util.Optional;
