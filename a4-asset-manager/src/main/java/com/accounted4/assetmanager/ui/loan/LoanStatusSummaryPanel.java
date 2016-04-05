@@ -1,6 +1,8 @@
 package com.accounted4.assetmanager.ui.loan;
 
+import com.accounted4.assetmanager.entity.Cheque;
 import com.vaadin.ui.Panel;
+import java.util.Optional;
 import javax.money.MonetaryAmount;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MFormLayout;
@@ -74,7 +76,8 @@ public class LoanStatusSummaryPanel extends Panel {
 
         balance.setValue(formatMoney(loanStatus.getBalance()));
 
-        nextChequeOnFile.setValue(loanStatus.getNextChequeOnFile());
+        Optional<Cheque> cheque = loanStatus.getNextChequeOnFile();
+        nextChequeOnFile.setValue(cheque.isPresent() ? cheque.toString() : "No cheque on file");
 
         daysToMaturity.setValue(loanStatus.getDaysToMaturity().toString());
         if (loanStatus.getDaysToMaturity() <= NUMBER_OF_DAYS_BEFORE_MATURITY_TO_WARN) {

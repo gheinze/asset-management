@@ -15,6 +15,7 @@ public enum UiRouter {
     ,PaymentCalculator(MortgageAdministration, ViewName.PAYMENT_CALCULATOR)
     ,Parties(MortgageAdministration, ViewName.PARTIES)
     ,Loans(MortgageAdministration, ViewName.LOANS)
+    ,Deposit(MortgageAdministration, ViewName.DEPOSIT)
     ,IncomeStatement(MortgageAdministration, ViewName.INCOME_STATEMENT)
 
     ;
@@ -44,6 +45,7 @@ public enum UiRouter {
         String PAYMENT_CALCULATOR = "Payment_Calculator";
         String PARTIES = "Parties";
         String LOANS = "Loans";
+        String DEPOSIT = "Deposit";
         String INCOME_STATEMENT = "Income_Statement";
     }
 

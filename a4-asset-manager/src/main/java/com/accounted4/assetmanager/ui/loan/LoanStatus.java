@@ -15,6 +15,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.MONTHS;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import javax.money.MonetaryAmount;
@@ -22,16 +23,41 @@ import lombok.Getter;
 import org.javamoney.moneta.Money;
 
 /**
- * Object to hold ordered transaction history of mortgage.
+ * Object to hold ordered transaction history of a loan.
  *
- *       	Expected				Actual
+ * There are 3 transaction types:
+ *  o Payments (entered on the Payments Tab)
+ *  o Charges (entered on the Charges Tab)
+ *  o Scheduled interest charges (automatically computed)
  *
- *   Date	Payment Interest Principal Balance    Payment Interest Principal Balance Fees Note
+ * A running total of these transactions is generated from the
+ * beginning of the mortgage until a specified time. The time
+ * is constrained to:
+ *  o the next payment date (for the status report)
+ *  o the last payment date (for the deposit form)
+ *
+ * All Payments and Charges, including future dated, will be listed
+ *
+ * Scheduled interest charges are only listed until the specified date.
+ * That is, future dated interest charges beyond the specified date
+ * are not shown. Also, scheduled interest charges after the loan
+ * has been "closed" are not computed.
+ *
+ * next scheduled payment date is >= now (if mortgage not closed)
+ * current scheduled payment is <= now (if mortgage not closed)
+ *
+ * A transaction list of line items in the following format is generated:
+ *
+ *          Expected                              Actual
+ *   Date   Payment Interest Principal Balance    Payment Interest Principal Balance Fees Note
  *
  *
  * @author gheinze
  */
 public class LoanStatus {
+
+    private static final String FORWARDED_FUNDS_NOTE = "Forwarded funds";
+
 
     private final Loan loan;
     private final AmortizationAttributes amAttr;
@@ -40,6 +66,7 @@ public class LoanStatus {
 
     private final ArrayList<LoanStatusLineItem> transactions = new ArrayList<>();
 
+    @Getter private final LocalDate currentScheduledPaymentDate;
     @Getter private final LocalDate nextScheduledPaymentDate;
     private LoanStatusLineItem nextScheduledPaymentLineItem;
 
@@ -51,14 +78,15 @@ public class LoanStatus {
         this.loan = loan;
         this.amAttr = loan.getTerms().getAsAmAttributes();
         nextScheduledPaymentDate = calculateNextScheduledPaymentDate();
-        populateScheduledPayments();
+        currentScheduledPaymentDate = calculateLastScheduledPaymentDate(nextScheduledPaymentDate);
+        populateTransactionList();
     }
 
 
     private LocalDate calculateNextScheduledPaymentDate() {
 
         TimePeriod paymentFrequency = TimePeriod.getTimePeriodWithPeriodCountOf(amAttr.getPaymentFrequency());
-        LocalDate result = paymentFrequency.getDateFrom(loan.getTerms().getStartDate(), 1);
+        LocalDate result = loan.getTerms().getStartDate();
 
         LocalDate interestAccrualUntil = now;
 
@@ -76,53 +104,77 @@ public class LoanStatus {
     }
 
 
-    private void populateScheduledPayments() {
+    private LocalDate calculateLastScheduledPaymentDate(LocalDate nextScheduledPayment) {
+        return !nextScheduledPayment.isAfter(now) ?
+                nextScheduledPayment :
+                TimePeriod
+                        .getTimePeriodWithPeriodCountOf(amAttr.getPaymentFrequency())
+                        .getDateFrom(nextScheduledPayment, -1);
+    }
+
+
+    private void populateTransactionList() {
 
         // Key for sorting items: date (yyyy-mm-dd), type (scheduled interest payment, charges, payments), sequence #
-        TreeMap<String, Object> orderedLineItems = new TreeMap<>();
+        TreeMap<String, LoanStatusLineItem> transactionMap = new TreeMap<>();
+
+        addOpeningBalanceTo(transactionMap);
+        addScheduledPaymentsTo(transactionMap);
+        addChargesTo(transactionMap);
+        addPaymentsTo(transactionMap);
+        createTransactionListWithRunningTotals(transactionMap);
+
+    }
+
+
+    private void addOpeningBalanceTo(Map<String, LoanStatusLineItem> map) {
+        LoanCharge forwardedFunds = getOpeningCharge();
+        LocalDate fundingDate = forwardedFunds.getChargeDate();
+        String theKey = String.format("%04d-%02d-%02d  A %d",
+                fundingDate.getYear(), fundingDate.getMonthValue(), fundingDate.getDayOfMonth(), forwardedFunds.getId());
+        LoanStatusLineItem openingLineItem = convertChargeToLineItem(forwardedFunds);
+        MonetaryAmount zero = openingLineItem.getTransaction().multiply(0L);
+        openingLineItem.setScheduledBalance(openingLineItem.getTransaction());
+        openingLineItem.setScheduledInterest(zero);
+        openingLineItem.setScheduledPrincipal(zero);
+        map.put(theKey, openingLineItem);
+    }
+
+
+    private void addScheduledPaymentsTo(Map<String, LoanStatusLineItem> map) {
 
         List<ScheduledPayment> scheduledPayments = AmortizationCalculator.generateSchedule(amAttr);
 
-        LoanCharge forwardedFunds = getOpeningCharge();
-        String theKey = String.format("%04d-%02d-%02d  A %d",
-                forwardedFunds.getChargeDate().getYear(), forwardedFunds.getChargeDate().getMonthValue(), forwardedFunds.getChargeDate().getDayOfMonth(), forwardedFunds.getId());
-        orderedLineItems.put(theKey, forwardedFunds);
-
         scheduledPayments.stream()
-                .filter(p -> !p.getPaymentDate().isAfter(nextScheduledPaymentDate))
-                .forEachOrdered(p -> {
+                .filter(scheduledPayment -> !scheduledPayment.getPaymentDate().isAfter(nextScheduledPaymentDate))
+                .forEachOrdered(scheduledPayment -> {
+                    LocalDate paymentDate = scheduledPayment.getPaymentDate();
                     String key = String.format("%04d-%02d-%02d  A %d",
-                            p.getPaymentDate().getYear(), p.getPaymentDate().getMonthValue(), p.getPaymentDate().getDayOfMonth(), p.getPaymentNumber());
-                    orderedLineItems.put(key, p);
+                            paymentDate.getYear(), paymentDate.getMonthValue(), paymentDate.getDayOfMonth(), scheduledPayment.getPaymentNumber());
+                    map.put(key, convertScheduledPaymentToLineItem(scheduledPayment));
                 }
         );
 
-        loan.getCharges().stream().forEach(c -> {
+    }
+
+
+    private void addChargesTo(Map<String, LoanStatusLineItem> map) {
+        loan.getCharges().stream().forEach(charge -> {
+            LocalDate chargeDate = charge.getChargeDate();
             String key = String.format("%04d-%02d-%02d  B %d",
-                    c.getChargeDate().getYear(), c.getChargeDate().getMonthValue(), c.getChargeDate().getDayOfMonth(), c.getId());
-            orderedLineItems.put(key, c);
+                    chargeDate.getYear(), chargeDate.getMonthValue(), chargeDate.getDayOfMonth(), charge.getId());
+            map.put(key, convertChargeToLineItem(charge));
         });
+    }
 
-        loan.getPayments().stream().forEach(p -> {
+
+    private void addPaymentsTo(Map<String, LoanStatusLineItem> map) {
+        loan.getPayments().stream().forEach(payment -> {
+            LocalDate depositDate = payment.getDepositDate();
             String key = String.format("%04d-%02d-%02d  C %d",
-                    p.getDepositDate().getYear(), p.getDepositDate().getMonthValue(), p.getDepositDate().getDayOfMonth(), p.getId());
-            orderedLineItems.put(key, p);
+                    depositDate.getYear(), depositDate.getMonthValue(), depositDate.getDayOfMonth(), payment.getId());
+            map.put(key, convertPaymentToLineItem(payment));
         });
-
-
-        balance = Money.of(BigDecimal.ZERO, loan.getTerms().getLoanCurrency());
-        feeBalance = balance.multiply(0L);
-
-        orderedLineItems.values().stream().forEachOrdered((item) -> {
-            if (item instanceof LoanCharge) {
-                transactions.add( getChargeLineItem( (LoanCharge)item ) );
-            } else if (item instanceof LoanPayment) {
-                transactions.add( getPaymentLineItem( (LoanPayment)item ) );
-            } else {
-                transactions.add( getScheduledLineItem( (ScheduledPayment)item ) );
-            }
-        });
-
     }
 
 
@@ -134,98 +186,144 @@ public class LoanStatus {
         openingCharge.setCurrency(loan.getTerms().getLoanCurrency());
         openingCharge.setAmount(loan.getTerms().getLoanAmount());
         openingCharge.setChargeDate(loan.getTerms().getStartDate());
-        openingCharge.setNote("Forwarded funds");
+        openingCharge.setNote(FORWARDED_FUNDS_NOTE);
 
         return openingCharge;
     }
 
 
-    private LoanStatusLineItem getChargeLineItem(LoanCharge charge) {
+    private LoanStatusLineItem convertChargeToLineItem(LoanCharge charge) {
 
         LoanStatusLineItem lineItem = new LoanStatusLineItem();
 
+        lineItem.setCharge(true);
         lineItem.setDate(charge.getChargeDate());
         lineItem.setTransaction(charge.getDisplayAmount());
         lineItem.setType(charge.getLoanChargeType().getChargeType());
         lineItem.setNote(charge.getNote());
         lineItem.setCapitalizing(charge.getLoanChargeType().isCapitalizing());
 
-        if (charge.getLoanChargeType().isCapitalizing()) {
-            balance = balance.add(charge.getDisplayAmount());
-        } else {
-            feeBalance = feeBalance.add(charge.getDisplayAmount());
-        }
-
-        lineItem.setBalance(balance);
-        lineItem.setFees(feeBalance);
-
         return lineItem;
     }
 
 
-    private LoanStatusLineItem getPaymentLineItem(LoanPayment payment) {
-
-        // Payments first apply to fees, then to principal
-
-        MonetaryAmount fullPayment =  payment.getDisplayAmount();
+    private LoanStatusLineItem convertPaymentToLineItem(LoanPayment payment) {
 
         LoanStatusLineItem lineItem = new LoanStatusLineItem();
 
+        lineItem.setPayment(true);
         lineItem.setDate(payment.getDepositDate());
-        lineItem.setTransaction(fullPayment.negate());
+        lineItem.setTransaction(payment.getDisplayAmount().negate());
         lineItem.setType("Payment");
         lineItem.setNote(payment.getNote());
 
-        if (feeBalance.isPositive()) {
-            if (fullPayment.compareTo(feeBalance) < 0) {
-                // Full payment is applied to fees
-                feeBalance = feeBalance.subtract(fullPayment);
-            } else {
-                // Part of the payment wipes out the fees, the rest is applied to principal
-                balance = balance.subtract(fullPayment.subtract(feeBalance));
-                feeBalance = feeBalance.multiply(0L);
-            }
-        } else {
-            // No fees to pay off, apply full payment to principal
-            balance = balance.subtract(fullPayment);
-        }
-
-        lineItem.setBalance(balance);
-        lineItem.setFees(feeBalance);
-
         return lineItem;
     }
 
 
-
-    private LoanStatusLineItem getScheduledLineItem(ScheduledPayment scheduledPayment) {
+    private LoanStatusLineItem convertScheduledPaymentToLineItem(ScheduledPayment scheduledPayment) {
 
         LoanStatusLineItem lineItem = new LoanStatusLineItem();
 
+        lineItem.setScheduledPayment(true);
         lineItem.setDate(scheduledPayment.getPaymentDate());
         lineItem.setScheduledInterest(scheduledPayment.getInterest());
         lineItem.setScheduledPrincipal(scheduledPayment.getPrincipal());
         lineItem.setScheduledBalance(scheduledPayment.getBalance());
 
-        if (!scheduledPayment.getPaymentDate().isAfter(nextScheduledPaymentDate)) {
-            AmortizationAttributes amAttrs = loan.getTerms().getAsAmAttributes();
-            amAttrs.setLoanAmount(balance);
-            MonetaryAmount periodInterest = AmortizationCalculator.getPeriodInterest(amAttrs);
-            lineItem.setTransaction(periodInterest);
-            balance = balance.add(periodInterest);
-            lineItem.setBalance(balance);
-            lineItem.setFees(feeBalance);
-            lineItem.setType("Period Interest");
-            lineItem.setNote("Scheduled interest charge");
-        }
-
-        if (null == nextScheduledPaymentLineItem || scheduledPayment.getPaymentDate().isEqual(nextScheduledPaymentDate)) {
-            nextScheduledPaymentLineItem = lineItem;
-        }
-
         return lineItem;
 
     }
+
+
+
+
+    private void createTransactionListWithRunningTotals(Map<String, LoanStatusLineItem> map) {
+
+        // Initialize running balances
+        balance = Money.of(BigDecimal.ZERO, loan.getTerms().getLoanCurrency());
+        feeBalance = balance.multiply(0L);
+
+        map.values().stream().forEachOrdered((item) -> {
+            aggregate(item);
+            transactions.add(item);
+        });
+
+    }
+
+    private void aggregate(LoanStatusLineItem item) {
+        if (item.isCharge()) {
+            aggregateCharge(item);
+        } else if (item.isPayment()) {
+            aggregatePayment(item);
+        } else {
+            aggregateScheduledPayment(item);
+        }
+    }
+
+
+    private void aggregateCharge(LoanStatusLineItem item) {
+
+        if (item.isCapitalizing()) {
+            balance = balance.add(item.getTransaction());
+        } else {
+            feeBalance = feeBalance.add(item.getTransaction());
+        }
+
+        item.setBalance(balance);
+        item.setFees(feeBalance);
+
+    }
+
+
+    private void aggregatePayment(LoanStatusLineItem item) {
+
+        MonetaryAmount paymentAmount = item.getTransaction().negate();
+
+        if (feeBalance.isPositive()) {
+            if (paymentAmount.compareTo(feeBalance) < 0) {
+                // Full payment is applied to fees
+                feeBalance = feeBalance.subtract(paymentAmount);
+            } else {
+                // Part of the payment wipes out the fees, the rest is applied to principal
+                balance = balance.subtract(paymentAmount.subtract(feeBalance));
+                feeBalance = feeBalance.multiply(0L);
+            }
+        } else {
+            // No fees to pay off, apply full payment to principal
+            balance = balance.subtract(paymentAmount);
+        }
+
+        item.setBalance(balance);
+        item.setFees(feeBalance);
+
+    }
+
+    private void aggregateScheduledPayment(LoanStatusLineItem item) {
+
+        // Running balances if they are not into the future
+        if (!item.getDate().isAfter(nextScheduledPaymentDate)) {
+            AmortizationAttributes amAttrs = loan.getTerms().getAsAmAttributes();
+            amAttrs.setLoanAmount(balance);
+            MonetaryAmount periodInterest = AmortizationCalculator.getPeriodInterest(amAttrs);
+            item.setTransaction(periodInterest);
+            balance = balance.add(periodInterest);
+            item.setBalance(balance);
+            item.setFees(feeBalance);
+            item.setType("Period Interest");
+            item.setNote("Scheduled interest charge");
+        }
+
+        if (null == nextScheduledPaymentLineItem || item.getDate().isEqual(nextScheduledPaymentDate)) {
+            nextScheduledPaymentLineItem = item;
+        }
+
+
+    }
+
+
+
+
 
 
 
@@ -254,14 +352,10 @@ public class LoanStatus {
     }
 
 
-    public String getNextChequeOnFile() {
-        Optional<Cheque> min = loan.getCheques().stream()
+    public Optional<Cheque> getNextChequeOnFile() {
+        return loan.getCheques().stream()
                 .filter(c -> c.getDocumentStatus().getDocumentStatus().equalsIgnoreCase("On file"))
                 .min( (c1, c2) -> { return c1.getPostDate().compareTo(c2.getPostDate()); } );
-        if (min.isPresent()) {
-            return min.get().toString();
-        }
-        return "No cheque on file";
     }
 
     public Long getDaysToMaturity() {
@@ -271,6 +365,32 @@ public class LoanStatus {
 
     public MonetaryAmount getPerDiem() {
         return AmortizationCalculator.getPerDiem(balance, amAttr.getInterestRateAsPercent());
+    }
+
+
+    public MonetaryAmount getCurrentDue() {
+
+        MonetaryAmount scheduleBalance = Money.of(BigDecimal.ZERO, loan.getTerms().getLoanCurrency()).multiply(0L);
+        MonetaryAmount result = scheduleBalance.multiply(0L);
+
+        for (LoanStatusLineItem transaction : transactions) {
+
+            if (transaction.getDate().isAfter(currentScheduledPaymentDate)) {
+                break;
+            }
+
+            if (null != transaction.getScheduledBalance()) {
+                // Scheduled payment OR opening funds
+                scheduleBalance = transaction.getScheduledBalance();
+            }
+
+            result = transaction.getBalance()
+                    .subtract(scheduleBalance)
+                    .add(transaction.getFees())
+                    ;
+        }
+
+        return result;
     }
 
 }

@@ -1,0 +1,4 @@
+. "Costs" tab for loans. Keep track of non-recoverable costs associated with the mortgage (bank's NSF fee, bank service charge).
+ These are not charges that can be added to the fees or balance of the mortgage, but they can affect the net rate of return.
+
+. Notification items in title bar (cheques required, mortgages maturing)

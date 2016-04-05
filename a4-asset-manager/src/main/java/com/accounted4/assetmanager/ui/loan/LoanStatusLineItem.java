@@ -25,6 +25,9 @@ public class LoanStatusLineItem {
     private String note;
     private boolean capitalizing;
 
+    private boolean charge;
+    private boolean payment;
+    private boolean scheduledPayment;
 
     public MonetaryAmount getScheduledAmount() {
         if (null != scheduledInterest) {

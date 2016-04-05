@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface LoanRepository extends JpaRepository<Loan, Long>, LoanRepositoryLov {
 
-	List<Loan> findByInactiveOrderByLoanName(boolean inactive);
+    List<Loan> findByInactiveOrderByLoanName(boolean inactive);
+
+    List<Loan> findByCloseDateIsNull();
         
 }

@@ -30,4 +30,6 @@ public interface LoanService {
 
     List<Loan> findAllLoans();
 
+    List<Loan> findByCloseDateIsNull();
+
 }

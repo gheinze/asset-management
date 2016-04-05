@@ -1,5 +1,6 @@
 package com.accounted4.assetmanager.service;
 
+import com.accounted4.assetmanager.entity.Cheque;
 import com.accounted4.assetmanager.entity.Loan;
 import com.accounted4.assetmanager.repository.LoanRepository;
 import com.accounted4.assetmanager.ui.loan.LoanStatus;
@@ -14,6 +15,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.money.MonetaryAmount;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -92,7 +94,10 @@ public class LoanServiceImpl implements LoanService {
         customParameters.put("regularDue", loanStatus.getRegularDue());
         customParameters.put("actualDue", loanStatus.getActualDue());
         customParameters.put("balance", loanStatus.getBalance());
-        customParameters.put("nextChequeOnFile", loanStatus.getNextChequeOnFile());
+
+        Optional<Cheque> cheque = loanStatus.getNextChequeOnFile();
+        customParameters.put("nextChequeOnFile", cheque.isPresent() ? cheque.toString() : "No cheque on file");
+
         customParameters.put("daysToMaturity", loanStatus.getDaysToMaturity());
         customParameters.put("perDiem", loanStatus.getPerDiem());
 
@@ -120,6 +125,11 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public List<Loan> findAllLoans() {
         return loanRepository.findAll();
+    }
+
+    @Override
+    public List<Loan> findByCloseDateIsNull() {
+        return loanRepository.findByCloseDateIsNull();
     }
 
 }

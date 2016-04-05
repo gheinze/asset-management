@@ -25,7 +25,7 @@
         <java.version>1.8</java.version>
         <lombok.version>1.16.6</lombok.version>
         <jasperReport.version>6.2.0</jasperReport.version>
-
+        <asciidoctor.version>1.5.3</asciidoctor.version>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 
@@ -217,6 +217,30 @@
                 <version>${vaadin.version}</version>
             </plugin>
 
+            <!--
+                For rendering source Aciidoctor files found in src/main/asciidoc/docs
+                to html documents in the target/docs directory
+            -->
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>${asciidoctor.version}</version>
+                <executions>
+                    <execution>
+                        <id>output-html</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sourceDirectory>src/main/asciidoc</sourceDirectory>
+                    <outputDirectory>target/classes/VAADIN/themes/a4am/helpPages/</outputDirectory>
+                    <backend>html</backend>
+                    <doctype>book</doctype>
+                </configuration>
+            </plugin>
 
 
             <!-- Compile Jasper Reports from  .jrxml (other sources) to .jasper (generated sources) -->

@@ -181,6 +181,7 @@ public class IncomeStatementSpringView extends Panel implements DefaultView {
      *                 Detail 2 fee
      *
      */
+    @SuppressWarnings("unchecked")
     private TreeTable createTable(TreeMap<String, LoanStatusLineItem> orderedLineItems) {
 
         TreeTable treeTable = new TreeTable();

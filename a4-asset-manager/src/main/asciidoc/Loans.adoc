@@ -85,7 +85,7 @@ The history panel lists all transactions against the loan. There are three types
 
 The actual transaction history can be compared to the scheduled transactions of the amortization schedule by adding extra columns to the table. This can be done by invoking the drop down arrow on the far right of the table header.
 
-The `Acutal due` field presents the amount of payment required to bring the loan back into good standing according to the original amortization schedule as of the specified date. With a loan in good standing, the `Actual due` matches the `Regular payment` amount. If these amounts do not match, the `Actual due` is highlighted to indicate the mortgage is in arrears.
+The `Actual due` field presents the amount of payment required to bring the loan back into good standing according to the original amortization schedule as of the specified date. This includes outstanding interest, principal, and fees. With a loan in good standing, the `Actual due` matches the `Regular payment` amount. If these amounts do not match, the `Actual due` is highlighted to indicate the mortgage is in arrears.
 
 The `Days to maturity` will also be highlighted if the number of days falls below `45`. This is to warn that the loan is reaching maturity.
 
